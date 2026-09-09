@@ -1,0 +1,15 @@
+<mujoco>
+  <worldbody>
+    <geom type="plane" size="3 3 0.1"/>
+    <body pos="0 0 0.5">
+      <joint type="slide" axis="0 0 1" damping="0.1"/>
+      <geom type="sphere" size="0.1" rgba="0.2 0.8 0.3 1"/>
+      <site name="ball_site" pos="0 0 -0.1" size="0.01"/>
+    </body>
+  </worldbody>
+
+  <sensor>
+    <touch site="ball_site"/>
+    <accelerometer site="ball_site"/>
+  </sensor>
+</mujoco>

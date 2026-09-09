@@ -1,0 +1,22 @@
+<mujoco model="MuJoCo Model">
+  <compiler angle="radian"/>
+
+  <worldbody>
+    <body name="pend0" pos="0 0 1">
+      <joint name="hinge0" damping="0.05" axis="0 1 0"/>
+      <geom size="0.02 0.15" pos="0 0 -0.15" type="capsule" rgba="0 0.5 1 1"/>
+    </body>
+    <body name="pend1" pos="0.3 0 1">
+      <joint name="hinge1" damping="0.05" axis="0 1 0"/>
+      <geom size="0.02 0.2" pos="0 0 -0.2" type="capsule" rgba="0.2 0.5 0.8 1"/>
+    </body>
+    <body name="pend2" pos="0.6 0 1">
+      <joint name="hinge2" damping="0.05" axis="0 1 0"/>
+      <geom size="0.02 0.25" pos="0 0 -0.25" type="capsule" rgba="0.4 0.5 0.6 1"/>
+    </body>
+    <body name="pend3" pos="0.9 0 1">
+      <joint name="hinge3" damping="0.05" axis="0 1 0"/>
+      <geom size="0.02 0.3" pos="0 0 -0.3" type="capsule" rgba="0.6 0.5 0.4 1"/>
+    </body>
+  </worldbody>
+</mujoco>

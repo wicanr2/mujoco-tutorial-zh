@@ -1,0 +1,13 @@
+<mujoco>
+  <worldbody>
+    <body pos="0 0 1">
+      <joint name="hinge" type="hinge" axis="0 1 0"/>
+      <geom type="capsule" fromto="0 0 0 0 0 -0.4" size="0.02" rgba="0.9 0.6 0.1 1"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- position 伺服：內建 PD，ctrl 直接是目標角度 -->
+    <position name="servo" joint="hinge" kp="10" ctrllimited="true" ctrlrange="-1.6 1.6"/>
+  </actuator>
+</mujoco>
