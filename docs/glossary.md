@@ -32,3 +32,9 @@
 | mesh | 網格 | 3D 模型檔不翻譯時可用 mesh |
 | keyframe | 關鍵影格 | |
 | Jacobian | 雅可比矩陣 | |
+| kinematic tree | 運動學樹 | |
+| weld | 焊死 / 焊接 | 無 joint 的 body 被固定於父 body |
+| damping | 阻尼 | |
+| stiffness | 剛性 | |
+| quaternion | 四元數 | |
+| default settings | 預設值機制 | MJCF 的類 CSS 機制 |

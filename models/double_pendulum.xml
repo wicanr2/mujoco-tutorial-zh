@@ -1,0 +1,20 @@
+<mujoco>
+  <compiler angle="radian"/>
+
+  <default>
+    <joint type="hinge" axis="0 1 0" damping="0.1"/>
+    <geom type="capsule" size="0.02" rgba="0.8 0.2 0.2 1"/>
+  </default>
+
+  <worldbody>
+    <light pos="0 -1 2"/>
+    <body pos="0 0 1">
+      <joint name="hinge1"/>
+      <geom fromto="0 0 0 0 0 -0.4"/>
+      <body pos="0 0 -0.4">
+        <joint name="hinge2"/>
+        <geom fromto="0 0 0 0 0 -0.4"/>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
