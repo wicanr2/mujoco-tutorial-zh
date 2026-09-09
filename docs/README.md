@@ -14,7 +14,8 @@
   - [04｜URDF 模型匯入 MuJoCo](03-urdf-import/01-import-urdf.md)
 - **04 Isaac Sim 中使用/替換 MuJoCo**
   - [05｜Isaac Sim 與 MuJoCo：模型互通與工作流程](04-isaac-sim/01-isaac-sim-mujoco.md)
-- **05 Gazebo 中使用/替換 MuJoCo**（規劃中）
+- **05 Gazebo 中使用/替換 MuJoCo**
+  - [06｜Gazebo 與 MuJoCo：物理引擎外掛機制與模型互通](05-gazebo/01-gazebo-mujoco.md)
 
 ## 附錄
 

@@ -13,6 +13,10 @@
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html | 2026-09-09 | latest | MJCFImporter Python API |
 | docs/04-isaac-sim | https://github.com/isaac-sim/IsaacSim/discussions/160 | 2026-09-09 | Isaac Sim 6.0.0+ | MJCF 轉換器以 mujoco-usd-converter 重寫 |
 | docs/04-isaac-sim | https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html | 2026-09-09 | main | Isaac Lab 匯入 MJCF 範例（Unitree H1） |
+| docs/05-gazebo | https://gazebosim.org/api/sim/9/physics.html | 2026-09-09 | Gazebo Sim 9 | 物理引擎外掛架構，預設 DART |
+| docs/05-gazebo | https://gazebosim.org/api/physics/6/switchphysicsengines.html | 2026-09-09 | gz-physics 6 | 執行期切換引擎（DART/Bullet） |
+| docs/05-gazebo | https://gazebosim.org/api/physics/9/usecustomengine.html | 2026-09-09 | gz-physics 9 | 客製引擎外掛教學 |
+| docs/05-gazebo | https://github.com/ignitionrobotics/ign-physics/issues/299 | 2026-09-09 | （實驗分支） | MuJoCo gz-physics 外掛 MVP 現況 |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
 | docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |
