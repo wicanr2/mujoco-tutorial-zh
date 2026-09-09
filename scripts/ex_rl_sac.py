@@ -10,14 +10,16 @@ from ex_rl_ppo import SwingUpEnv
 
 
 def make_env():
-    return SwingUpEnv()
+    # 隨機初始狀態：讓 replay buffer 收錄靠近直立的經驗，解決冷啟動探索問題
+    return SwingUpEnv(random_start=True)
 
 
 if __name__ == "__main__":
     env = SubprocVecEnv([make_env for _ in range(4)])
 
     model = SAC("MlpPolicy", env, learning_rate=3e-4,
-                buffer_size=100_000, batch_size=256, verbose=0, seed=0)
+                buffer_size=50_000, batch_size=256, verbose=0, seed=0,
+                train_freq=(4, "step"), gradient_steps=1)  # 每 4 步才更新，CPU 友善
 
     eval_env = SwingUpEnv()
 
@@ -30,9 +32,12 @@ if __name__ == "__main__":
             total += r
         return total / 500
 
-    print(f"訓練前評估: {evaluate():.4f}")
-    model.learn(total_timesteps=30_000, progress_bar=False)
-    print(f"訓練後評估: {evaluate():.4f}（-0.3 以上代表穩定直立）")
+    print(f"訓練前評估: {evaluate():.4f}", flush=True)
+    # 分階段訓練，每 3000 步報告一次（SAC 每步都做梯度更新，CPU 上較慢）
+    for i in range(20):
+        model.learn(total_timesteps=3_000, reset_num_timesteps=False)
+        print(f"  {(i + 1) * 3000} 步後評估: {evaluate():.4f}", flush=True)
+    print("（-0.3 以上代表穩定直立）", flush=True)
 
     model.save("models/swingup_sac.zip")
     print("已儲存 models/swingup_sac.zip")

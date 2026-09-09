@@ -19,11 +19,12 @@ class SwingUpEnv(gym.Env):
 
     metadata = {"render_modes": []}
 
-    def __init__(self, max_steps=500):
+    def __init__(self, max_steps=500, random_start=False):
         super().__init__()
         self.model = mujoco.MjModel.from_xml_path(str(REPO_ROOT / "models/pendulum_swingup.xml"))
         self.data = mujoco.MjData(self.model)
         self.max_steps = max_steps
+        self.random_start = random_start
         self.observation_space = spaces.Box(-1.0, 1.0, shape=(3,), dtype=np.float32)
         self.action_space = spaces.Box(-1.0, 1.0, shape=(1,), dtype=np.float32)
         self._steps = 0
@@ -36,7 +37,12 @@ class SwingUpEnv(gym.Env):
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         mujoco.mj_resetData(self.model, self.data)
-        self.data.qpos[0] = self.np_random.uniform(-0.1, 0.1)
+        if self.random_start:
+            # 全域隨機初始化：讓 replay buffer 見過各種角度（SAC 冷啟動用）
+            self.data.qpos[0] = self.np_random.uniform(-np.pi, np.pi)
+            self.data.qvel[0] = self.np_random.uniform(-2.0, 2.0)
+        else:
+            self.data.qpos[0] = self.np_random.uniform(-0.1, 0.1)
         self._steps = 0
         return self._obs(), {}
 
