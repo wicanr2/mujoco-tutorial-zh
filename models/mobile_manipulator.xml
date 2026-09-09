@@ -1,0 +1,51 @@
+<mujoco>
+  <compiler angle="radian"/>
+
+  <worldbody>
+    <light pos="0 -2 3" dir="0 0.5 -1"/>
+    <geom name="floor" type="plane" size="10 10 0.1" rgba="0.2 0.2 0.2 1"/>
+
+    <!-- ===== AMR 底盤（平面式簡化模型）===== -->
+    <body name="base" pos="0 0 0.11">
+      <joint name="move_x" type="slide" axis="1 0 0" damping="2"/>
+      <joint name="move_y" type="slide" axis="0 1 0" damping="2"/>
+      <joint name="yaw"    type="hinge" axis="0 0 1" damping="2"/>
+      <geom type="box" size="0.3 0.22 0.08" rgba="0.2 0.5 0.7 1"/>
+
+      <!-- ===== 車載二軸機械手臂 ===== -->
+      <body name="arm_link1" pos="0 0 0.10">
+        <joint name="shoulder" type="hinge" axis="0 0 1" damping="0.5"/>
+        <geom type="cylinder" size="0.05 0.15" pos="0 0 0.15" rgba="0.7 0.7 0.75 1"/>
+        <body name="arm_link2" pos="0 0 0.3">
+          <joint name="elbow" type="hinge" axis="0 1 0" damping="0.5" range="-2.8 2.8"/>
+          <geom type="capsule" fromto="0 0 0 0.35 0 0" size="0.03" rgba="0.9 0.4 0.1 1"/>
+          <body name="arm_link3" pos="0.35 0 0">
+            <joint name="wrist" type="hinge" axis="0 1 0" damping="0.3" range="-2.8 2.8"/>
+            <geom type="capsule" fromto="0 0 0 0.25 0 0" size="0.025" rgba="0.9 0.7 0.1 1"/>
+            <site name="ee" pos="0.27 0 0" size="0.015" rgba="1 0 0 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- 目標貨物（要抓取的箱子，放在貨架上） -->
+    <geom name="shelf" type="box" size="0.3 0.3 0.02" pos="1.2 0.5 0.4" rgba="0.4 0.4 0.45 1"/>
+    <body name="box_target" pos="1.2 0.5 0.48">
+      <freejoint/>
+      <geom type="box" size="0.05 0.05 0.05" rgba="0.2 0.8 0.3 1" mass="0.3"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <velocity name="vx"   joint="move_x" kv="60" ctrlrange="-1.5 1.5"/>
+    <velocity name="vy"   joint="move_y" kv="60" ctrlrange="-1.5 1.5"/>
+    <velocity name="wyaw" joint="yaw"    kv="10" ctrlrange="-2 2"/>
+    <position name="shoulder_ctl" joint="shoulder" kp="100" ctrllimited="true" ctrlrange="-3.14 3.14"/>
+    <position name="elbow_ctl"    joint="elbow"    kp="100" ctrllimited="true" ctrlrange="-2.8 2.8"/>
+    <position name="wrist_ctl"    joint="wrist"    kp="60"  ctrllimited="true" ctrlrange="-2.8 2.8"/>
+  </actuator>
+
+  <sensor>
+    <framepos objtype="site" objname="ee"/>
+  </sensor>
+</mujoco>

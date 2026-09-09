@@ -22,6 +22,9 @@
   - [05｜Isaac Sim 與 MuJoCo：模型互通與工作流程](04-isaac-sim/01-isaac-sim-mujoco.md)
 - **05 Gazebo 中使用/替換 MuJoCo**
   - [06｜Gazebo 與 MuJoCo：物理引擎外掛機制與模型互通](05-gazebo/01-gazebo-mujoco.md)
+- **06 AMR 實驗**
+  - [13｜AMR 實驗（一）：叉車建模與牙叉控制](06-amr/01-amr-forklift.md)
+  - [14｜AMR 實驗（二）：搬運車上的機械手臂（逆運動學 IK）](06-amr/02-mobile-manipulator.md)
 
 ## 附錄
 
