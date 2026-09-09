@@ -8,6 +8,7 @@
 | docs/00-intro | https://github.com/google-deepmind/mujoco | 2026-09-09 | latest | 安裝方式 pip install mujoco |
 | docs/01-basics | https://mujoco.readthedocs.io/en/stable/modeling.html | 2026-09-09 | stable (3.x) | Kinematic tree、Default settings、Coordinate frames |
 | docs/02-programming | https://mujoco.readthedocs.io/en/stable/programming/ | 2026-09-09 | stable (3.x) | 架構、命名慣例、mjModel/mjData |
+| docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/modeling.html#urdf-extensions | 2026-09-09 | stable (3.x) | `<mujoco>` 擴充區段、URDF 預設值差異、建議工作流程 |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
 | docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |

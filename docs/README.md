@@ -10,7 +10,8 @@
   - [02｜MJCF 建模基礎：body、geom、joint、defaults](01-basics/01-mjcf-basics.md)
 - **02 Programming：Python/C API**
   - [03｜程式設計入門：模擬迴圈、命名慣例與致動器控制](02-programming/01-simulation-loop.md)
-- **03 URDF 匯入**（規劃中）
+- **03 URDF 匯入**
+  - [04｜URDF 模型匯入 MuJoCo](03-urdf-import/01-import-urdf.md)
 - **04 Isaac Sim 中使用/替換 MuJoCo**（規劃中）
 - **05 Gazebo 中使用/替換 MuJoCo**（規劃中）
 
