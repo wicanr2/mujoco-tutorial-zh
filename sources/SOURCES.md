@@ -22,6 +22,8 @@
 | docs/02-programming/04 | https://stable-baselines3.readthedocs.io/ | 2026-09-09 | sb3 2.9.0 | PPO 實作 |
 | docs/02-programming/04 | https://gymnasium.farama.org/ | 2026-09-09 | gymnasium 1.3.0 | 標準 Env 介面 |
 | docs/02-programming/04 | https://arxiv.org/abs/1707.06347 | 2026-09-09 | 2017 論文 | PPO 演算法 |
+| docs/02-programming/05 | https://mujoco.readthedocs.io/en/stable/APIreference/ | 2026-09-09 | stable (3.x) | mjd_transitionFD 數值線性化 |
+| docs/02-programming/06 | https://mujoco.readthedocs.io/en/stable/python.html | 2026-09-09 | stable (3.x) | viewer、Renderer、MUJOCO_GL |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
 | docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |

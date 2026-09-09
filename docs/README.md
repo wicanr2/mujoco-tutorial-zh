@@ -13,6 +13,8 @@
   - [07｜更多 Python 範例：感測器、伺服、Keyframe、平行取樣、mjSpec](02-programming/02-more-examples.md)
   - [08｜RL 訓練範例：單擺 Swing-up（ARS 隨機搜索）](02-programming/03-rl-swingup.md)
   - [09｜接軌標準 RL 工具鏈：Gymnasium + Stable-Baselines3 PPO](02-programming/04-ppo-gymnasium.md)
+  - [10｜進階任務：車桿 Swing-up（能量整形 + LQR）](02-programming/05-cartpole-swingup.md)
+  - [11｜視覺化：互動式 Viewer 與離屏渲染](02-programming/06-viewer-rendering.md)
 - **03 URDF 匯入**
   - [04｜URDF 模型匯入 MuJoCo](03-urdf-import/01-import-urdf.md)
 - **04 Isaac Sim 中使用/替換 MuJoCo**

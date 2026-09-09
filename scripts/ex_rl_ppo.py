@@ -5,10 +5,13 @@
 import mujoco
 import gymnasium as gym
 import numpy as np
+from pathlib import Path
 from gymnasium import spaces
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import SubprocVecEnv
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 class SwingUpEnv(gym.Env):
@@ -18,7 +21,7 @@ class SwingUpEnv(gym.Env):
 
     def __init__(self, max_steps=500):
         super().__init__()
-        self.model = mujoco.MjModel.from_xml_path("models/pendulum_swingup.xml")
+        self.model = mujoco.MjModel.from_xml_path(str(REPO_ROOT / "models/pendulum_swingup.xml"))
         self.data = mujoco.MjData(self.model)
         self.max_steps = max_steps
         self.observation_space = spaces.Box(-1.0, 1.0, shape=(3,), dtype=np.float32)
