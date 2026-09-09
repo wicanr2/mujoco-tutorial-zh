@@ -9,6 +9,10 @@
 | docs/01-basics | https://mujoco.readthedocs.io/en/stable/modeling.html | 2026-09-09 | stable (3.x) | Kinematic tree、Default settings、Coordinate frames |
 | docs/02-programming | https://mujoco.readthedocs.io/en/stable/programming/ | 2026-09-09 | stable (3.x) | 架構、命名慣例、mjModel/mjData |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/modeling.html#urdf-extensions | 2026-09-09 | stable (3.x) | `<mujoco>` 擴充區段、URDF 預設值差異、建議工作流程 |
+| docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/5.1.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html | 2026-09-09 | Isaac Sim 5.1 | MJCF Importer 擴充 |
+| docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html | 2026-09-09 | latest | MJCFImporter Python API |
+| docs/04-isaac-sim | https://github.com/isaac-sim/IsaacSim/discussions/160 | 2026-09-09 | Isaac Sim 6.0.0+ | MJCF 轉換器以 mujoco-usd-converter 重寫 |
+| docs/04-isaac-sim | https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html | 2026-09-09 | main | Isaac Lab 匯入 MJCF 範例（Unitree H1） |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
 | docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |
