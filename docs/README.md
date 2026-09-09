@@ -25,6 +25,7 @@
 - **06 AMR 實驗**
   - [13｜AMR 實驗（一）：叉車建模與牙叉控制](06-amr/01-amr-forklift.md)
   - [14｜AMR 實驗（二）：搬運車上的機械手臂（逆運動學 IK）](06-amr/02-mobile-manipulator.md)
+  - [15｜六軸手臂的 6D IK：位置與姿態同時控制](06-amr/03-ik-6d.md)
 
 ## 附錄
 

@@ -1,0 +1,49 @@
+<mujoco>
+  <compiler angle="radian"/>
+
+  <default>
+    <joint damping="0.5"/>
+    <geom rgba="0.75 0.75 0.8 1"/>
+  </default>
+
+  <worldbody>
+    <light pos="0 -2 3" dir="0 0.5 -1"/>
+    <geom type="plane" size="5 5 0.1" rgba="0.2 0.2 0.2 1"/>
+
+    <!-- 六軸手臂：yaw-pitch-pitch-pitch-roll-twist -->
+    <body name="link1" pos="0 0 0.1">
+      <joint name="j1" type="hinge" axis="0 0 1"/>
+      <geom type="cylinder" size="0.06 0.1"/>
+      <body name="link2" pos="0 0 0.1">
+        <joint name="j2" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+        <geom type="capsule" fromto="0 0 0 0 0 0.25" size="0.04"/>
+        <body name="link3" pos="0 0 0.25">
+          <joint name="j3" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+          <geom type="capsule" fromto="0 0 0 0 0 0.22" size="0.035" rgba="0.9 0.5 0.1 1"/>
+          <body name="link4" pos="0 0 0.22">
+            <joint name="j4" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+            <geom type="capsule" fromto="0 0 0 0 0 0.1" size="0.03"/>
+            <body name="link5" pos="0 0 0.1">
+              <joint name="j5" type="hinge" axis="0 0 1" range="-3.14 3.14"/>
+              <geom type="capsule" fromto="0 0 0 0 0 0.08" size="0.025" rgba="0.9 0.8 0.1 1"/>
+              <body name="link6" pos="0 0 0.08">
+                <joint name="j6" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
+                <geom type="sphere" size="0.03" rgba="0.3 0.3 0.9 1"/>
+                <site name="ee" pos="0 0 0.08" size="0.012" rgba="1 0 0 1"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position joint="j1" kp="200" ctrlrange="-3.14 3.14"/>
+    <position joint="j2" kp="200" ctrlrange="-3.14 3.14"/>
+    <position joint="j3" kp="200" ctrlrange="-3.14 3.14"/>
+    <position joint="j4" kp="100" ctrlrange="-3.14 3.14"/>
+    <position joint="j5" kp="100" ctrlrange="-3.14 3.14"/>
+    <position joint="j6" kp="60"  ctrlrange="-3.14 3.14"/>
+  </actuator>
+</mujoco>
