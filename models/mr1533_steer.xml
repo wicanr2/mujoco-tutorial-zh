@@ -1,7 +1,7 @@
 <mujoco model="mr1533_steer">
   <compiler angle="radian"/>
   <option timestep="0.0005" iterations="100"/>
-  <compiler meshdir="/home/anr2/tmp2/mujoco/models/meshes/mr1533/"/>
+  <compiler meshdir="meshes/mr1533/"/>
 
   <!-- MR1533 舵輪底盤版：前雙固定輪 + 後舵輪（swivel 轉向 + drive 驅動），
        底盤用 freejoint，靠輪子與地面摩擦驅動（真實輪系物理）。
@@ -12,7 +12,7 @@
     <mesh name="mast"      file="lift_fixed.obj"/>
     <mesh name="carriage"  file="fork_liftA1.obj"/>
     <mesh name="tiltfix"   file="tilt_fixed.obj"/>
-    <mesh name="yreach"    file="/home/anr2/tmp2/mujoco/models/meshes/yreach_carriage.stl"/>
+    <mesh name="yreach"    file="../yreach_carriage.stl"/>
     <mesh name="wheel"     file="front_left.obj"/>
     <mesh name="drive"     file="drive.obj"/>
     <mesh name="swivel"    file="swivel.obj"/>

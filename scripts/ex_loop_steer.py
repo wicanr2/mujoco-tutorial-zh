@@ -6,13 +6,15 @@
 輸出：runs/loop_log.csv、runs/loop.mp4、runs/loop_traj.png
 """
 import mujoco
+from pathlib import Path
 import numpy as np
 import os
 import csv
 
 os.makedirs("runs", exist_ok=True)
 
-model = mujoco.MjModel.from_xml_path("models/mr1533_steer.xml")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+model = mujoco.MjModel.from_xml_path(str(REPO_ROOT / "models/mr1533_steer.xml"))
 data = mujoco.MjData(model)
 
 renderer = mujoco.Renderer(model, 480, 640)
