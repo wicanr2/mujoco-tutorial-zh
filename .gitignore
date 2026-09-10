@@ -1,3 +1,10 @@
 .venv/
 __pycache__/
 *.pyc
+
+# MuJoCo 執行時的警告紀錄，寫在 cwd，內容隨每次執行變動
+MUJOCO_LOG.TXT
+
+# 工作區：驗證輸出、備份、訓練中間檔，不進版控
+workspace/*
+!workspace/README.md

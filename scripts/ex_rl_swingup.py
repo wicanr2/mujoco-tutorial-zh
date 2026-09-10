@@ -54,5 +54,5 @@ for it in range(1, 31):
 
 print(f"最終策略 w = {np.round(w, 3)}")
 print(f"最終評估回報: {evaluate(w, n=8):.4f}")
-np.save("models/swingup_policy.npy", w)
+np.save("policies/swingup_policy.npy", w)
 POOL.shutdown()

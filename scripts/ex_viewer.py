@@ -7,7 +7,7 @@
 2. 離屏渲染（無顯示器 / 伺服器）：mujoco.Renderer 把畫面渲染成 numpy 陣列，
    可存圖、做影片、或當 CNN 的視覺觀測。
 
-本腳本示範第 2 種：渲染車桿 swing-up 過程，輸出連續影格。
+本腳本示範第 2 種：渲染車桿自由擺盪的連續影格。
 無顯示器環境需設 MUJOCO_GL=osmesa（或 egl，視機器而定）。
 """
 import mujoco
@@ -16,16 +16,17 @@ from PIL import Image
 
 model = mujoco.MjModel.from_xml_path("models/cartpole_swingup.xml")
 data = mujoco.MjData(model)
-data.qpos[1] = np.pi  # 桿從垂下出發
+data.qpos[1] = np.pi - 0.6   # 桿從偏離垂下 0.6 rad 出發，靠重力自然擺盪
+# 註：正好放在 np.pi（垂下）是穩定平衡點，沒有控制輸入時畫面會完全靜止。
 
 renderer = mujoco.Renderer(model, height=480, width=640)
 
 frames = []
-for step in range(400):  # 0.8 秒：盪起中的幾個瞬間
+for step in range(400):  # 0.8 秒，約半個擺盪週期
     mujoco.mj_step(model, data)
     if step % 100 == 0:
         renderer.update_scene(data)
-        frames.append(renderer.render())
+        frames.append(renderer.render().copy())   # render() 回傳內部 buffer，不 copy 會全部指向同一張
 
 for i, f in enumerate(frames):
     Image.fromarray(f).save(f"docs/assets/viewer_frame{i}.png")

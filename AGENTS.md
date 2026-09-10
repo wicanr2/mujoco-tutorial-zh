@@ -4,12 +4,13 @@
 
 ## 專案目標
 
-建立一套以 MuJoCo 物理引擎為核心的**繁體中文教學文件**，涵蓋四大主題：
+建立一套以 MuJoCo 物理引擎為核心的**繁體中文教學文件**，涵蓋五條主線：
 
 1. **MuJoCo 基礎教學**：以官方文件 <https://mujoco.readthedocs.io/en/stable/overview.html> 為起點，逐步整理 Overview、Programming、Modeling（MJCF）、API 等章節。
 2. **資料收集與翻譯**：蒐集官方文件、範例與社群資源，翻譯為繁體中文並補充本地讀者需要的說明。
 3. **在 Isaac Sim 與 Gazebo 中替換 / 使用 MuJoCo 引擎**：教學如何整合或改用 MuJoCo 作為物理後端。
 4. **URDF 模型匯入**：教學如何將 URDF 模型轉換 / 匯入 MuJoCo（含常見陷阱與修正）。
+5. **模擬實驗**：以強化學習（RL）訓練與 AMR 叉車 / 搬運車的搬運任務為題材，把前四條線的內容用在會動、可量測、有輸出的完整實驗上。
 
 ## 目錄結構
 
@@ -17,15 +18,36 @@
 docs/
   00-intro/            # 導論、安裝、環境設定
   01-basics/           # MJCF 建模基礎（body, geom, joint, actuator...）
-  02-programming/      # Python/C API、模擬迴圈
+  02-programming/      # Python/C API、模擬迴圈、RL 訓練
   03-urdf-import/      # URDF 匯入與轉換
   04-isaac-sim/        # Isaac Sim 中使用/替換 MuJoCo
   05-gazebo/           # Gazebo 中使用/替換 MuJoCo
+  06-amr/              # AMR 叉車 / 搬運車實驗
+  assets/              # 教學插圖、渲染圖、filmstrip
   glossary.md          # 中英術語對照表
-models/                # 教學用範例模型（MJCF、URDF、mesh）
-scripts/               # 可執行的範例程式
-sources/               # 收集的原始資料清單與出處（SOURCES.md）
+  README.md            # 章節索引（唯一的章節清單）
+models/                # 模擬模型：MJCF、URDF、mesh（OBJ/STL）
+scripts/               # 可執行範例與建模 / 驗證工具
+runs/                  # 實驗輸出：影片、CSV、軌跡圖（見 runs/README.md）
+policies/              # 訓練好的策略權重（.npy / .zip）
+sources/SOURCES.md     # 資料出處登記
+workspace/             # 本機工作區，不進版控（見 workspace/README.md）
+requirements.txt       # 實測過的套件版本
 ```
+
+### 檔案歸屬（決定東西該放哪）
+
+| 類型 | 位置 | 進版控 |
+| --- | --- | --- |
+| 模擬模型、mesh | `models/` | 是 |
+| 可執行範例、建模與驗證工具 | `scripts/` | 是 |
+| 實驗輸出（影片、CSV、軌跡圖） | `runs/` | 是 |
+| 訓練好的策略權重 | `policies/` | 是 |
+| 教學文件與插圖 | `docs/` | 是 |
+| 重跑 log、備份、訓練中間檔 | `workspace/` | 否 |
+| MuJoCo 執行時警告紀錄（`MUJOCO_LOG.TXT`） | 產生於 cwd | 否 |
+
+新增檔案前先對照這張表；沒有對應欄位的產物，預設放 `workspace/`。
 
 ## 資料收集規範
 
@@ -46,10 +68,38 @@ sources/               # 收集的原始資料清單與出處（SOURCES.md）
 ## 教學文件撰寫規範
 
 1. 每篇教學包含：學習目標、前置知識、步驟、**可執行的完整範例**、常見錯誤與除錯、延伸閱讀。
-2. 所有程式範例放在 `scripts/` 或 models 放 `models/`，文件中引用路徑，不得只貼無法驗證的片段。
+2. 所有程式範例放在 `scripts/`、模型放 `models/`，文件中引用路徑，不得只貼無法驗證的片段。
 3. 範例以 **Python（mujoco 官方 pip 套件）** 為主；C API 僅在必要時補充。
-4. 範例程式必須實際跑過驗證，並註明測試環境（OS、MuJoCo 版本、Python 版本）。
+4. 範例程式必須實際跑過驗證，並在文件開頭註明測試環境（OS、MuJoCo 版本、Python 版本）。
 5. 截圖 / 動畫有助於理解時應附上，圖檔放 `docs/assets/`。
+6. **除錯紀錄要寫進文件**：開發過程踩到的坑（現象 → 原因 → 解法）是本專案的主要價值之一，不要在收尾時刪掉。
+7. **文件描述的是現況**，不是「相對上一版改了什麼」。修正錯誤時直接改寫成正確內容，不在正文留「原本以為…後來發現…」的敘述；已經修好的 bug 不留註記，否則下一位讀者會照著不存在的問題去查。
+
+## 實驗紀錄規範
+
+實驗類章節（RL、AMR）除了文件本身，還要留下可重跑、可查證的輸出。
+
+1. **輸出位置與命名**：一律寫進 `runs/`，同一個實驗共用前綴 — `<實驗名>.mp4`、`<實驗名>_log.csv`、`<實驗名>_traj.png`。腳本自己 `os.makedirs("runs", exist_ok=True)`。
+2. **登記**：新增輸出時同步更新 `runs/README.md` 的檔案清單（檔名、產生腳本、對應章節、內容摘要），CSV 要有欄位說明。
+3. **CSV**：50 Hz 取樣、第一欄為 `time`（模擬時間，秒）。姿態用 RPY（弧度）並註明四元數轉換方式；滑動 / 漂移量要說明**參考座標系**與**基準時刻**。
+4. **影片**：30 fps，`mujoco.Renderer` 離屏渲染。無顯示器環境需 `MUJOCO_GL=osmesa`（或 `egl`）。
+5. **數字來自實跑**：文件裡的每個數字都要能在對應的 log 或 stdout 找到。心算的幾何值不算 — 用 `site_xpos` 之類的實際量測驗證。
+6. **失敗的實驗照實寫**：不收斂、平台限制、與理論對不上的結果都保留，並寫清楚原因與適用邊界。
+
+## 驗證與交付
+
+1. 改動腳本或模型後，用 `scripts/verify_examples.sh` 重跑受影響的範例，確認 exit code 與輸出仍符合文件所述。
+
+   ```bash
+   bash scripts/verify_examples.sh basic scripts/hello_mujoco.py
+   MUJOCO_GL=osmesa bash scripts/verify_examples.sh render scripts/ex_loop_steer.py
+   ```
+
+2. 重跑會覆蓋 `runs/` 既有輸出，動手前先備份到 `workspace/backup/`，跑完比對差異再決定是否保留新版。
+   MuJoCo 的模擬與 Blender 匯出的 STL 都是確定性的，重跑後檔案應該位元相同；出現差異就是真的
+   有東西變了，要查清楚。例外是 Blender 的 EEVEE 渲染圖，每次取樣不同、位元必然不一致但視覺
+   內容相同 — 這類圖驗證完直接還原，不要拿去覆蓋版控裡的檔案。
+3. **章節清單只維護一份**：`docs/README.md` 是唯一的章節索引，根目錄 `README.md` 只放成果摘要與入口連結。新增章節時，`docs/README.md`、`README.md` 的成果段落、`sources/SOURCES.md` 一起更新。
 
 ## 主題特定要求
 
@@ -61,14 +111,19 @@ sources/               # 收集的原始資料清單與出處（SOURCES.md）
 - 說明各平台物理引擎架構（PhysX、DART 等）與 MuJoCo 的定位差異。
 - 若官方無直接支援，教學以**橋接 / 遷移 workflow** 呈現（例如 MJCF/URDF 模型在兩邊共用、或以 MuJoCo 做獨立物理驗證），並明確標示可行性與限制，**不得宣稱不存在的外掛支援**。
 
+### AMR 實驗
+- 視覺與碰撞分離：高面數 mesh 設 `contype="0" conaffinity="0"`，碰撞另用簡化幾何。
+- 機構內部零件之間預設不互相碰撞（用 `contact/exclude` 或關掉碰撞），避免摩擦鎖死造成「關節不動」。
+- 用外部資產（TB3 mesh 等）時在文件標明來源路徑與授權狀態。
+
 ## 版本與相依性
 
-- MuJoCo：以最新穩定版為主，文件中標明版本。
-- Python 範例需列出相依套件（`pip install mujoco` 等）。
+- 套件版本以 `requirements.txt` 為準，那是實際跑過的組合；文件內提到版本時要與它一致。
+- MuJoCo 以最新穩定版為主，升版後需重跑 `scripts/verify_examples.sh` 確認範例仍可執行。
 - 修改程式或模型後，需確認對應教學步驟仍然可執行。
 
 ## 協作流程
 
-1. 新章節先在 issue/待辦中列出大綱再動筆。
-2. 修改教學內容時，同步更新 `glossary.md`、`SOURCES.md` 與相關索引。
-3. 完成標準：文件可讀、範例可跑、出處可查、術語一致。
+1. 新章節先列出大綱再動筆。
+2. 修改教學內容時，同步更新 `docs/glossary.md`、`sources/SOURCES.md` 與 `docs/README.md`。
+3. 完成標準：文件可讀、範例可跑、出處可查、術語一致、輸出可重現。

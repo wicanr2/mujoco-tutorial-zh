@@ -39,5 +39,5 @@ if __name__ == "__main__":
         print(f"  {(i + 1) * 3000} 步後評估: {evaluate():.4f}", flush=True)
     print("（-0.3 以上代表穩定直立）", flush=True)
 
-    model.save("models/swingup_sac.zip")
-    print("已儲存 models/swingup_sac.zip")
+    model.save("policies/swingup_sac.zip")
+    print("已儲存 policies/swingup_sac.zip")

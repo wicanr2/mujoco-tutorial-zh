@@ -11,15 +11,18 @@ sys.path.insert(0, ".")  # 讓 import 找到 ex_rl_ppo
 import mujoco
 import gymnasium as gym
 import numpy as np
+from pathlib import Path
 from gymnasium import spaces
 from stable_baselines3 import SAC
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
 from stable_baselines3.common.vec_env import SubprocVecEnv
 
 
 class SwingUpEnv(gym.Env):
     def __init__(self, max_steps=500, random_start=True):
         super().__init__()
-        self.model = mujoco.MjModel.from_xml_path("pendulum_swingup.xml")
+        self.model = mujoco.MjModel.from_xml_path(str(REPO_ROOT / "models/pendulum_swingup.xml"))
         self.data = mujoco.MjData(self.model)
         self.max_steps = max_steps
         self.random_start = random_start
@@ -80,5 +83,5 @@ if __name__ == "__main__":
         model.learn(total_timesteps=3_000, reset_num_timesteps=False)
         print(f"  {(i + 1) * 3000} 步後評估: {evaluate():.4f}", flush=True)
 
-    model.save("swingup_sac_gpu.zip")
-    print("已儲存 swingup_sac_gpu.zip", flush=True)
+    model.save(str(REPO_ROOT / "policies/swingup_sac_gpu.zip"))
+    print("已儲存 policies/swingup_sac_gpu.zip", flush=True)

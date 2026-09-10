@@ -1,0 +1,26 @@
+# 本專案範例的實測環境（Ubuntu 24.04、Python 3.12.3）
+# 安裝：python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+#
+# 分三層：核心是每支範例都要的，其餘按章節需要再裝。
+
+# --- 核心：所有範例 ---
+mujoco==3.12.0
+numpy==2.5.3
+
+# --- 錄影、軌跡圖、離屏渲染（docs/02-programming/06、docs/06-amr 全系列）---
+imageio==2.37.4
+imageio-ffmpeg==0.6.0
+matplotlib==3.11.1
+pillow==12.3.0
+
+# --- 互動式 viewer（docs/02-programming/06）---
+glfw==2.10.2
+PyOpenGL==3.1.10
+
+# --- LQR 線性化（docs/02-programming/05）---
+scipy==1.18.1
+
+# --- RL 章節（docs/02-programming/04、07）---
+gymnasium==1.3.0
+stable-baselines3==2.9.0
+torch==2.14.0

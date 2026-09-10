@@ -90,5 +90,5 @@ if __name__ == "__main__":
         post += r
     print(f"訓練後平均回報/步: {post / 1000:.4f}（-0.3 以上代表穩定直立）")
 
-    model.save("models/swingup_ppo.zip")
-    print("已儲存 models/swingup_ppo.zip")
+    model.save("policies/swingup_ppo.zip")
+    print("已儲存 policies/swingup_ppo.zip")
