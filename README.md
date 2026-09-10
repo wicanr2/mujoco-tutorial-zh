@@ -4,6 +4,8 @@
 從盒子堆出來的簡化模型，一路做到真實 mesh 舵輪叉車的完整取放任務。每個實驗都留下影片、
 CSV 軌跡記錄與實測數字，文件裡的每個數字都能在對應的 log 找到出處。
 
+**線上閱讀：<https://wicanr2.github.io/mujoco-tutorial-zh/>**
+
 [教學索引](docs/README.md)｜[實驗紀錄](runs/README.md)｜[完整成果報告](REPORT.md)｜[協作規範](AGENTS.md)
 
 ![MR1533 叉車抬起木棧板](docs/assets/mr1533_pallet_lift.png)
