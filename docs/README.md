@@ -32,6 +32,7 @@
   - [19｜Blender 程序化建模：木棧板 / 塑膠棧板 + 匯入 MuJoCo](06-amr/07-blender-pallet.md)
   - [20｜新模型重跑：MR1533 + Blender 棧板的完整搬運驗證](06-amr/08-rerun-real-model.md)
   - [21｜新車型：MR1533 + y 向 reach 滑台（Blender headless 建模）](06-amr/09-yreach.md)
+  - [22｜y-reach 取放任務：錄影 + 6DOF 軌跡記錄](06-amr/10-yreach-mission.md)
 
 ## 附錄
 

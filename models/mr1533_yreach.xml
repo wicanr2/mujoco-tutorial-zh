@@ -60,13 +60,13 @@
               <inertial pos="0 0 0" mass="15" diaginertia="1 1 1"/>
 
               <!-- y 向 reach 滑台（Blender 建模，mesh 原點在背板底緣中心） -->
-              <body name="yreach" pos="0 0 -0.375">
+              <body name="yreach" pos="0 0 -0.39">
                 <joint name="reach_y" type="slide" axis="0 1 0" range="-0.45 0.45" damping="30"/>
                 <inertial pos="0 0 0.3" mass="45" diaginertia="4 4 1.5"/>
                 <geom class="visual" type="mesh" mesh="yreach" rgba="0.85 0.65 0.1 1"/>
                 <!-- 碰撞：兩根叉齒（Blender 尺寸：x -0.925~0.025, y ±0.315, z 0.135~0.185） -->
-                <geom type="box" size="0.475 0.07 0.025" pos="-0.45  0.315 0.16" group="3" friction="0.1 0.05 0.01"/>
-                <geom type="box" size="0.475 0.07 0.025" pos="-0.45 -0.315 0.16" group="3" friction="0.1 0.05 0.01"/>
+                <geom type="box" size="0.475 0.05 0.025" pos="-0.45  0.21 0.16" group="3" friction="0.1 0.05 0.01"/>
+                <geom type="box" size="0.475 0.05 0.025" pos="-0.45 -0.21 0.16" group="3" friction="0.1 0.05 0.01"/>
                 <site name="fork_tip" pos="-0.9 0 0.16" size="0.01"/>
               </body>
             </body>

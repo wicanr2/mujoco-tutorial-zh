@@ -58,9 +58,9 @@ parts.append(box("rail_bot", (0.045, 0, 0.08), (0.05, 0.68, 0.06), steel))
 # 伸叉座（沿 y 滑出的部分）+ 兩根叉齒（叉齒沿 -x 伸出）
 parts.append(box("reach_block", (0.09, 0, 0.35), (0.10, 0.30, 0.55), steel))
 for sgn in (1, -1):
-    parts.append(box(f"fork_{sgn}", (-0.45, sgn * 0.315, 0.16), (0.95, 0.14, 0.05), yellow, 0.008))
+    parts.append(box(f"fork_{sgn}", (-0.45, sgn * 0.21, 0.16), (0.95, 0.10, 0.05), yellow, 0.008))
     # 叉齒後端垂直段（L 形）
-    parts.append(box(f"fork_heel_{sgn}", (0.06, sgn * 0.315, 0.30), (0.07, 0.14, 0.33), yellow, 0.008))
+    parts.append(box(f"fork_heel_{sgn}", (0.06, sgn * 0.21, 0.30), (0.07, 0.10, 0.33), yellow, 0.008))
 
 # 合併成單一 mesh → STL（join 會烘培世界變換，原點保持在世界原點）
 bpy.ops.object.select_all(action="DESELECT")
