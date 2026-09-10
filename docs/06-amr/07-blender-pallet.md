@@ -2,7 +2,7 @@
 
 > 參考來源：[mesh — MuJoCo XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html#asset-mesh)（stable，MuJoCo 3.x）
 > 擷取日期：2026-09-10
-> 測試環境：Linux、Blender 4.2.11（headless）、MuJoCo 3.12.3、Python 3.12.3；範例已實測通過。
+> 測試環境：Linux、Blender 4.2.11（headless）、MuJoCo 3.12.0、Python 3.12.3；範例已實測通過。
 
 ## 學習目標
 
@@ -60,7 +60,7 @@ MuJoCo 編譯器對每個 mesh 做預處理：**以質量中心重新置中，�
 ```
 插入後: 底盤 x=-0.28, 棧板 z=0.000
 抬起後: 棧板 z=0.369
-上下左右後: 相對滑動 2.4 cm, 無掉落 ✓（兩種材質皆通過）
+上下左右後: 相對滑動 1.7 cm, 無掉落 ✓（兩種材質皆通過）
 ```
 
 ![MR1533 抬起木棧板](../assets/mr1533_pallet_lift.png)

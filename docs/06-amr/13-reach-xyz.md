@@ -1,7 +1,7 @@
 # 25｜真實化重跑（二）：reach X/Y/Z 全軸取放
 
 > 擷取日期：2026-09-10
-> 測試環境：Linux、MuJoCo 3.12.0、timestep 0.0005；範例已實測通過。
+> 測試環境：Linux、Python 3.12.3、MuJoCo 3.12.0、timestep 0.0005；範例已實測通過。
 
 ## 學習目標
 
@@ -17,8 +17,8 @@
 
 ```
 drive_to(-0.65) → lift1=0.39 → stage -0.65（X 深插）
-→ 微升離開層板（Z）→ 升搬運高度 0.70
-→ reach -0.40（Y 側移）→ 放低（Z）→ reach 收回 → 往前開離開貨架
+→ 微升 lift1=0.48/lift2=0.08（+4 cm 離開層板）→ 升搬運高度 lift1=0.70/lift2=0.35
+→ reach -0.40（Y 側移）→ 放低 lift1=0.05/lift2=0.02 → reach 收回 → 往前開離開貨架
 ```
 
 實測軌跡（`runs/reach_xyz_log.csv`）：

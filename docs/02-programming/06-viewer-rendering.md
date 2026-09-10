@@ -41,17 +41,27 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 
 ## 方式二：離屏渲染（無顯示器 / 伺服器）
 
-`mujoco.Renderer` 把場景渲染成 numpy 陣列，用途：存圖、剪影片、CNN 視覺觀測。範例 `scripts/ex_viewer.py` 渲染車桿 swing-up 過程：
+`mujoco.Renderer` 把場景渲染成 numpy 陣列，用途：存圖、剪影片、CNN 視覺觀測。範例
+`scripts/ex_viewer.py` 每 0.2 秒抓一張車桿自由擺盪的影格：
 
 ```python
 renderer = mujoco.Renderer(model, height=480, width=640)
-renderer.update_scene(data)     # 捕捉當前狀態
-img = renderer.render()         # (H, W, 3) uint8
+renderer.update_scene(data)             # 捕捉當前狀態
+img = renderer.render().copy()          # (H, W, 3) uint8
 ```
 
-實測輸出（車桿盪起過程，0.6 秒處）：
+`render()` 回傳的是 renderer 內部的緩衝區，收集連續影格時要 `.copy()`，否則清單裡每個
+元素都指向同一張畫面（[22 章](../06-amr/10-yreach-mission.md) 錄影時踩過這個坑）。
 
-![車桿渲染](../assets/cartpole_render.png)
+實測輸出（t = 0、0.2、0.4、0.6 秒）：
+
+| | |
+| --- | --- |
+| ![t=0.0](../assets/viewer_frame0.png) | ![t=0.2](../assets/viewer_frame1.png) |
+| ![t=0.4](../assets/viewer_frame2.png) | ![t=0.6](../assets/viewer_frame3.png) |
+
+初始角度要避開平衡點：桿正好放在 `qpos[1] = π`（垂下）時是穩定平衡，沒有控制輸入的話
+四張影格會一模一樣。範例從偏離 0.6 rad 出發，靠重力自然擺盪。
 
 ### 無顯示器環境的 GL 後端
 

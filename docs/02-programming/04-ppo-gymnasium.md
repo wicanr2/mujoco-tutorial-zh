@@ -62,18 +62,18 @@ model.learn(total_timesteps=150_000)
 ```
 
 - **SubprocVecEnv**：用子行程而非執行緒，繞過 GIL 限制（對照 [07 章](02-more-examples.md) ThreadPoolExecutor 的討論）。
-- 訓練後 `model.save("models/swingup_ppo.zip")` 儲存策略，`PPO.load()` 可在部署端使用。
+- 訓練後 `model.save("policies/swingup_ppo.zip")` 儲存策略，`PPO.load()` 可在部署端使用。
 
 ## 實測結果
 
-> 測試環境：Linux、MuJoCo 3.12.0、sb3 2.9.0、torch 2.14.0。
+> 測試環境：Linux、Python 3.12.3、MuJoCo 3.12.0、sb3 2.9.0、torch 2.14.0。
 
 ```
 訓練前平均回報/步: -1.9997        ← 完全躺平
 訓練後平均回報/步: -0.1065        ← 穩定直立（比 ARS 的 -0.30 更好）
 ```
 
-訓練約 6 分鐘（150k timesteps，4 個平行環境），策略存為 `models/swingup_ppo.zip`（已收錄於 repo，可直接 `PPO.load()` 載入試玩）。
+訓練約 6 分鐘（150k timesteps，4 個平行環境），策略存為 `policies/swingup_ppo.zip`（已收錄於 repo，可直接 `PPO.load()` 載入試玩）。
 
 ## 除錯紀錄
 

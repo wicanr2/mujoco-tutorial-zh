@@ -29,7 +29,9 @@
 | docs/06-amr | https://mujoco.readthedocs.io/en/stable/XMLreference.html#actuator | 2026-09-09 | stable (3.x) | velocity/position 致動器 |
 | docs/06-amr | https://mujoco.readthedocs.io/en/stable/APIreference/ | 2026-09-09 | stable (3.x) | mj_jacSite 雅可比 |
 | docs/06-amr | https://mujoco.readthedocs.io/en/stable/XMLreference.html#asset-mesh | 2026-09-10 | stable (3.x) | mesh 主軸對齊、refpos/refquat |
-| docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
-| docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
-| docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |
+| docs/06-amr/12 | https://mujoco.readthedocs.io/en/stable/XMLreference.html#contact-exclude | 2026-09-10 | stable (3.x) | contact/exclude 排除機構內部碰撞 |
+| docs/06-amr/14 | https://mujoco.readthedocs.io/en/stable/XMLreference.html#equality-weld | 2026-09-10 | stable (3.x) | weld equality constraint 抓取 |
+| docs/06-amr/15 | https://mujoco.readthedocs.io/en/stable/XMLreference.html#option | 2026-09-10 | stable (3.x) | timestep 與接觸求解穩定性 |
+| docs/06-amr/06,09,12 | 本機資產 `~/tmp2/TB3/assets/mr1533_light/`（MR1533 三輪舵輪叉車，OBJ mesh + URDF） | 2026-09-10 | — | 內部實驗資產，非公開來源 |
+| docs/06-amr/07,09 | https://docs.blender.org/api/4.2/ | 2026-09-10 | Blender 4.2 LTS | headless 程序化建模 Python API |
 | （通用模型庫）| https://github.com/google-deepmind/mujoco_menagerie | 2026-09-09 | latest | 官方模型庫，URDF/MJCF 範例來源 |

@@ -41,7 +41,7 @@ model = SAC("MlpPolicy", env, learning_rate=3e-4,
 
 ## 實測結果（上）：CPU 版 — 未收斂
 
-> 測試環境：Linux、MuJoCo 3.12.0、sb3 2.9.0、torch 2.14.0（**CPU**）。
+> 測試環境：Linux、Python 3.12.3、MuJoCo 3.12.0、sb3 2.9.0、torch 2.14.0（**CPU**）。
 
 ```
 訓練前評估: -1.9651
@@ -68,7 +68,7 @@ model = SAC("MlpPolicy", env, learning_rate=3e-4,
   ...
 ```
 
-**約 18k 步開始脫離躺平、21k 步後快速收斂，最終 -0.21，成功學會 swing-up。** 訓練好的策略存為 `models/swingup_sac_gpu.zip`（已收錄於 repo），本地 CPU 回放驗證同為 -0.2101。
+**約 18k 步開始脫離躺平、21k 步後快速收斂，最終 -0.21，成功學會 swing-up。** 訓練好的策略存為 `policies/swingup_sac_gpu.zip`（已收錄於 repo），本地 CPU 回放驗證同為 -0.2101。
 
 GPU 解決的正是上面第 1 點：`train_freq=1` 的完整更新頻率在 GPU 上負擔得起，更新量補足後 SAC 的樣本效率優勢才真正發揮（60k 步即收斂，PPO 用了 150k 步）。
 

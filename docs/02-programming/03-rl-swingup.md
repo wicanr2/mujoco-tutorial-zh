@@ -70,7 +70,7 @@ for it in range(30):
 最終評估回報: -0.3040          ← 大部分時間維持直立附近
 ```
 
-約 21 秒完成訓練；訓練好的權重存為 `models/swingup_policy.npy`。
+約 21 秒完成訓練；訓練好的權重存為 `policies/swingup_policy.npy`。
 
 ## 除錯紀錄（真實發生在本章開發過程）
 
@@ -83,7 +83,7 @@ for it in range(30):
 - **回報不動**：先印出 episode 中的狀態範圍，確認策略真的影響了系統（ctrl 是否被 range 限死）。
 - **多執行緒沒有加速**：Python 有 GIL，速度取決於 `mj_step` 釋放 GIL 的程度；更大規模請改用 `multiprocessing` 或 GPU 後端（MJX / MuJoCo Warp）。
 - **每次結果不同**：固定 `seed` 可重現；評估時用一組獨立種子避免過擬合訓練種子。
-- **要上真機**：把 `models/swingup_policy.npy` 載進部署程式，用同一個 `features()` 函式計算控制量即可。
+- **要上真機**：把 `policies/swingup_policy.npy` 載進部署程式，用同一個 `features()` 函式計算控制量即可。
 
 ## 延伸閱讀
 
