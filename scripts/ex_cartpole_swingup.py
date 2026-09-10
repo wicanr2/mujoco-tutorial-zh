@@ -6,6 +6,9 @@
 
 需安裝 scipy：pip install scipy
 """
+import csv
+import os
+
 import mujoco
 import numpy as np
 from scipy.linalg import solve_continuous_are
@@ -38,6 +41,7 @@ data = mujoco.MjData(model)
 data.qpos[1] = np.pi            # 桿從垂下出發
 swung_up = False
 t_up = None
+ROWS = []                       # 50 Hz 取樣：time, x, theta, xdot, thetadot, ctrl, mode
 
 for _ in range(8000):           # 16 秒
     x, th = data.qpos
@@ -56,9 +60,21 @@ for _ in range(8000):           # 16 秒
             u = 3.0                                    # 靜止時踢一下啟動
     data.ctrl[0] = float(np.clip(u, -10, 10))
     mujoco.mj_step(model, data)
+    if not ROWS or data.time - ROWS[-1][0] >= 0.0199:
+        ROWS.append([round(data.time, 4), round(float(x), 5), round(float(th), 5),
+                     round(float(xd), 5), round(float(thd), 5),
+                     round(float(data.ctrl[0]), 5), int(swung_up)])
 
 x, th = data.qpos
 print(f"swing-up 時刻: {t_up:.2f} s")
 print(f"最終狀態: x = {x:.3f} m, θ = {th:.3f} rad（應都接近 0）")
 assert abs(x) < 0.05 and abs(th) < 0.05, "swing-up 失敗"
+
+os.makedirs("runs", exist_ok=True)
+with open("runs/cartpole_log.csv", "w", newline="") as f:
+    w = csv.writer(f)
+    # mode: 0 = 能量整形盪起，1 = 已切換到 LQR
+    w.writerow(["time", "x", "theta", "xdot", "thetadot", "ctrl", "mode"])
+    w.writerows(ROWS)
+print(f"runs/cartpole_log.csv 已寫出（{len(ROWS)} 列）")
 print("結果: 成功直立並穩定 ✓")

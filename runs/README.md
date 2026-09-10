@@ -13,8 +13,16 @@
 | `reach_xyz.mp4` / `reach_xyz_log.csv` | `scripts/ex_reach_xyz.py` | [25](../docs/06-amr/13-reach-xyz.md) | 同流程加 y 向 reach 側移對位 0.49 m 再放置（漂移峰值 12.1 cm） |
 | `gripper.mp4` / `gripper_log.csv` | `scripts/ex_gripper_ab.py` | [26](../docs/06-amr/14-gripper-ab.md) | 搬運車三軸手臂 + 二指夾爪，A 桌取箱 B 桌放下 |
 | `loop.mp4` / `loop_log.csv` / `loop_traj.png` | `scripts/ex_loop_steer.py` | [27](../docs/06-amr/15-steer-loop.md) | 舵輪繞圈 waypoint 追蹤，2×2 m 正方形兩圈（4500 幀） |
+| `tilt_boundary_log.csv` / `tilt_kp_sweep.csv` / `tilt_boundary.png` | `scripts/ex_tilt_boundary.py` ＋ `scripts/make_curves.py` | [17](../docs/06-amr/05-tilt-boundary.md) | 門架前傾掃描三案例，兩種座標系的滑移對照，以及 kp 對追隨誤差的影響 |
+| `cartpole_log.csv` / `cartpole_traj.png` | `scripts/ex_cartpole_swingup.py` ＋ `scripts/make_curves.py` | [10](../docs/02-programming/05-cartpole-swingup.md) | 車桿 swing-up 16 秒：能量整形盪起、1.20 s 切 LQR 後穩定 |
+| `rl_ars_log.csv` / `rl_ppo_log.csv` / `rl_sac_gpu_log.csv` / `rl_curves.png` | `scripts/ex_rl_swingup.py`、`ex_rl_ppo.py`、`ex_rl_sac_gpu.py` ＋ `scripts/make_curves.py` | [08](../docs/02-programming/03-rl-swingup.md)、[09](../docs/02-programming/04-ppo-gymnasium.md)、[12](../docs/02-programming/07-sac.md) | 三種演算法在同一個單擺 swing-up 任務上的學習曲線 |
 
-影片一律 30 fps，CSV 一律 50 Hz 取樣、第一欄為模擬時間 `time`（秒）。
+影片一律 30 fps。時間序列的 CSV 一律 50 Hz 取樣、第一欄為模擬時間 `time`（秒）；
+學習曲線的 CSV 以訓練進度為橫軸（`iteration` 或 `steps`），不是時間。
+
+`rl_sac_gpu_log.csv` 的資料來自 2026-09-11 在遠端 RTX Pro 6000 上的那次訓練
+（`N_ENVS=4`，見 [12 章](../docs/02-programming/07-sac.md)），不是本機跑出來的 —— 本機沒有
+可用的 CUDA 裝置。腳本現在會自己寫出這個檔案，在有 GPU 的機器上重跑就會覆蓋。
 
 ## CSV 欄位說明
 
@@ -96,3 +104,30 @@ python scripts/make_video_strips.py                    # 全部
 python scripts/make_video_strips.py reach_xz           # 單一支
 python scripts/make_video_strips.py --suggest reach_xz # 重挑時間點時看候選
 ```
+
+### tilt_boundary_log.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `case` | 案例名稱（木頭 / 塑膠 / 塑膠+重心前移） |
+| `target_deg` | 送進 position 致動器的目標角（`ctrl`） |
+| `tilt_deg` | 門架**實際**傾角（從 `qpos` 讀）— 載重下與目標差很多 |
+| `slip_cm` | 棧板在**叉齒座標系**中的位移，這是真實滑移 |
+| `slip_world_cm` | 同一件事在世界座標量到的值，含門架轉動帶走的部分（會高估） |
+| `pallet_vs_fork_deg` | 棧板相對叉齒的姿態偏離，用來判翻倒 |
+
+### cartpole_log.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `x`, `xdot` | 台車位置（m）與速度 |
+| `theta`, `thetadot` | 桿角（rad，從垂下 π 出發，直立為 0）與角速度；未 wrap 到 [-π, π] |
+| `ctrl` | 施加在台車上的力（N，限幅 ±10） |
+| `mode` | 0 = 能量整形盪起，1 = 已切換到 LQR |
+
+### rl_*_log.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `iteration`（ARS）/ `steps`（PPO、SAC） | 訓練進度。ARS 每輪跑 16 個 episode × 1000 步 = 16,000 環境步 |
+| `reward_per_step` | 以固定 seed 評估的平均回報／步，越接近 0 越好 |

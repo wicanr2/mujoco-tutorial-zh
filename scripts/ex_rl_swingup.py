@@ -4,6 +4,9 @@
 利用「一個 mjModel + 多個 mjData」做平行 episode rollout。
 不依賴任何 RL 套件 — 重點是展示 MuJoCo 在訓練迴圈中的角色。
 """
+import csv
+import os
+
 import mujoco
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
@@ -36,7 +39,12 @@ def evaluate(w, n=4):
 
 rng = np.random.default_rng(0)
 w = np.zeros(3)
-print(f"初始策略回報: {evaluate(w):.4f}")
+r0 = evaluate(w)
+print(f"初始策略回報: {r0:.4f}")
+
+# 每輪都評估（不是每 10 輪）—— 學習曲線要有足夠的點才看得出「什麼時候學會的」，
+# 那是跟 PPO、SAC 對照的重點。每輪多跑 4 個 episode，總時間增加約四分之一。
+curve = [(0, r0)]
 
 for it in range(1, 31):
     noises = rng.normal(size=(N_DIR, 3)) * 0.5
@@ -49,10 +57,20 @@ for it in range(1, 31):
     signs = np.where(order < N_DIR, 1.0, -1.0)[:, None]
     top = signs * noises[order % N_DIR]
     w += 0.5 * top.mean(axis=0)
+    r = evaluate(w)
+    curve.append((it, r))
     if it % 10 == 0:
-        print(f"第 {it:2d} 輪: 評估回報 = {evaluate(w):.4f}")
+        print(f"第 {it:2d} 輪: 評估回報 = {r:.4f}")
 
 print(f"最終策略 w = {np.round(w, 3)}")
 print(f"最終評估回報: {evaluate(w, n=8):.4f}")
+
+os.makedirs("runs", exist_ok=True)
+with open("runs/rl_ars_log.csv", "w", newline="") as f:
+    wr = csv.writer(f)
+    wr.writerow(["iteration", "reward_per_step"])
+    wr.writerows(curve)
+print("runs/rl_ars_log.csv 已寫出")
+
 np.save("policies/swingup_policy.npy", w)
 POOL.shutdown()

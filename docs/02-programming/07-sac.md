@@ -74,6 +74,13 @@ model = SAC("MlpPolicy", env, learning_rate=3e-4,
 
 GPU 解決的正是上面第 1 點：`train_freq=1` 的完整更新頻率在 GPU 上負擔得起，更新量補足後 SAC 的樣本效率優勢才真正發揮（60k 步即收斂，PPO 用了 150k 步）。
 
+[![三種演算法的學習曲線](../../runs/rl_curves.png)](../../runs/rl_curves.png)
+
+右圖（前 80k 步）看得最清楚：SAC 在約 12k 步就跳離躺平區並收斂，ARS 走到 80k 步還在
+-0.65。這就是 off-policy 的樣本效率 —— 代價是每一步都貴得多，所以 CPU 上跑不動
+（上一節），要 GPU 才划算。曲線資料在
+[runs/rl_sac_gpu_log.csv](../../runs/rl_sac_gpu_log.csv)。
+
 ### 重現驗證（2026-09-11）
 
 同一支腳本在 RTX Pro 6000 Blackwell（vGPU，`torch 2.14.0+cu130`）上重跑，這次用 `N_ENVS=4`：
@@ -114,7 +121,7 @@ N_ENVS=4 python scripts/ex_rl_sac_gpu.py
 
 | | ARS（08） | PPO（09） | SAC（12） |
 | --- | --- | --- | --- |
-| 最終回報 | -0.30 | -0.11 | -0.21（GPU）；CPU 60k 步未收斂 |
+| 最終回報 | -0.30 | -0.10 | -0.21（GPU）；CPU 60k 步未收斂 |
 | 訓練時間 | ~21 秒 | ~6 分鐘（CPU） | 60k 步 86 秒（GPU、4 個平行環境） |
 | 適用場景 | 低維線性策略、快速驗證 | 通用、穩定 | 樣本昂貴（真機）、連續控制 |
 

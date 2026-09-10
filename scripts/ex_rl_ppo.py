@@ -4,6 +4,9 @@
 """
 import mujoco
 import gymnasium as gym
+import csv
+import os
+
 import numpy as np
 from pathlib import Path
 from gymnasium import spaces
@@ -70,25 +73,39 @@ if __name__ == "__main__":
     model = PPO("MlpPolicy", env, n_steps=512, batch_size=256,
                 learning_rate=3e-4, verbose=0, seed=0)
 
-    print("訓練前評估...")
     eval_env = SwingUpEnv()
-    obs, _ = eval_env.reset(seed=42)
-    pre = 0.0
-    for _ in range(1000):
-        action, _ = model.predict(obs, deterministic=True)
-        obs, r, term, trunc, _ = eval_env.step(action)
-        pre += r
-    print(f"  平均回報/步: {pre / 1000:.4f}")
 
-    model.learn(total_timesteps=150_000, progress_bar=False)
+    def evaluate(n=1000):
+        obs, _ = eval_env.reset(seed=42)
+        total = 0.0
+        for _ in range(n):
+            action, _ = model.predict(obs, deterministic=True)
+            obs, r, term, trunc, _ = eval_env.step(action)
+            total += r
+        return total / n
 
-    obs, _ = eval_env.reset(seed=42)
-    post = 0.0
-    for _ in range(1000):
-        action, _ = model.predict(obs, deterministic=True)
-        obs, r, term, trunc, _ = eval_env.step(action)
-        post += r
-    print(f"訓練後平均回報/步: {post / 1000:.4f}（-0.3 以上代表穩定直立）")
+    # 分段訓練，每段評估一次 —— 只量訓練前後看不出「什麼時候學會的」，
+    # 而那正是拿來跟 ARS、SAC 對照的東西（見 runs/rl_curves.png）。
+    STEP = 10_000
+    TOTAL = 150_000
+    pre = evaluate()
+    print("訓練前評估...")
+    print(f"  平均回報/步: {pre:.4f}", flush=True)
+    curve = [(0, pre)]
+    for i in range(TOTAL // STEP):
+        model.learn(total_timesteps=STEP, reset_num_timesteps=False, progress_bar=False)
+        r = evaluate()
+        curve.append(((i + 1) * STEP, r))
+        print(f"  {(i + 1) * STEP} 步後評估: {r:.4f}", flush=True)
+
+    print(f"訓練後平均回報/步: {curve[-1][1]:.4f}（-0.3 以上代表穩定直立）")
+
+    os.makedirs("runs", exist_ok=True)
+    with open("runs/rl_ppo_log.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["steps", "reward_per_step"])
+        w.writerows(curve)
+    print("runs/rl_ppo_log.csv 已寫出")
 
     model.save("policies/swingup_ppo.zip")
     print("已儲存 policies/swingup_ppo.zip")

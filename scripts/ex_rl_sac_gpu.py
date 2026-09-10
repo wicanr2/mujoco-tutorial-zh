@@ -8,6 +8,7 @@
 import sys
 sys.path.insert(0, ".")  # 讓 import 找到 ex_rl_ppo
 
+import csv
 import os
 
 import mujoco
@@ -84,10 +85,21 @@ if __name__ == "__main__":
             total += r
         return total / 500
 
-    print(f"訓練前評估: {evaluate():.4f}", flush=True)
+    r0 = evaluate()
+    print(f"訓練前評估: {r0:.4f}", flush=True)
+    curve = [(0, r0)]
     for i in range(20):
         model.learn(total_timesteps=3_000, reset_num_timesteps=False)
-        print(f"  {(i + 1) * 3000} 步後評估: {evaluate():.4f}", flush=True)
+        r = evaluate()
+        curve.append(((i + 1) * 3000, r))
+        print(f"  {(i + 1) * 3000} 步後評估: {r:.4f}", flush=True)
+
+    os.makedirs(REPO_ROOT / "runs", exist_ok=True)
+    with open(REPO_ROOT / "runs/rl_sac_gpu_log.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["steps", "reward_per_step"])
+        w.writerows(curve)
+    print("runs/rl_sac_gpu_log.csv 已寫出", flush=True)
 
     model.save(str(REPO_ROOT / "policies/swingup_sac_gpu.zip"))
     print("已儲存 policies/swingup_sac_gpu.zip", flush=True)

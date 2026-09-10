@@ -5,7 +5,7 @@ RL 章節訓練出來的權重，可以直接載入試玩，不必重新訓練�
 | 檔案 | 演算法 | 最終回報 | 訓練環境 | 章節 |
 | --- | --- | --- | --- | --- |
 | `swingup_policy.npy` | ARS（手寫 numpy） | -0.30 | CPU，21 秒 | [08](../docs/02-programming/03-rl-swingup.md) |
-| `swingup_ppo.zip` | PPO（SB3） | -0.11 | CPU，6 分鐘、150k 步 | [09](../docs/02-programming/04-ppo-gymnasium.md) |
+| `swingup_ppo.zip` | PPO（SB3） | -0.10 | CPU，150k 步（空閒機器約 6 分鐘） | [09](../docs/02-programming/04-ppo-gymnasium.md) |
 | `swingup_sac_gpu.zip` | SAC（SB3，zoo 超參） | -0.21 | RTX Pro 6000，4 分鐘、60k 步 | [12](../docs/02-programming/07-sac.md) |
 
 三者是同一個單擺 swing-up 任務（`models/pendulum_swingup.xml`），觀測為
