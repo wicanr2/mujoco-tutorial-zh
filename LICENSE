@@ -1,0 +1,339 @@
+source-available 授權條款（教學專案適配版，基於 RRSAL-1.0）
+Source-Available License for tutorial projects (adapted from RRSAL-1.0)
+SPDX-License-Identifier: LicenseRef-RRSAL-1.0-edu
+
+本條款基於「復古重製 source-available 授權條款 1.0（RRSAL-1.0）」。本專案不是遊戲
+重製，因此把原條款的「原版素材」重新定義為「第三方素材」，並調整前言與第 1、2、5、
+9、10、12 條的相應用語。條款編號、非商業授權範圍、第 4 條明示允許的傳播（含平台
+分潤與觀眾贊助）、第 7 條貢獻回授與第 11 條準據法，均與 RRSAL-1.0 相同。
+
+適用作品：MuJoCo 繁體中文教學與模擬實驗
+          （MuJoCo Traditional Chinese Tutorial and Simulation Experiments）
+Copyright (c) 2026 Wang Chun-Yu (wicanr2) <wicanr2@gmail.com>
+
+繁體中文為準，英文譯本僅供參考（The Traditional Chinese text governs;
+the English translation below is provided for convenience only）。
+
+────────────────────────────────────────────────────────────
+
+前言
+
+本作品是以 MuJoCo 物理引擎及其官方文件為題的繁體中文教學整理、翻譯與延伸模擬
+實驗。著作權人希望它被廣泛使用、討論與展示，同時保留本作品的商業權利。本條款
+據此設計：非商業用途免費且寬鬆，商業用途保留給著作權人另行洽談。
+
+第 1 條　定義
+
+  (a) 「本作品」指本儲存庫中由著作權人創作的一切內容，包括但不限於：教學文件、
+      譯文與術語對照、範例程式、建模與驗證工具、模擬模型與 mesh、實驗輸出
+      （影片、軌跡記錄、圖表）、訓練所得的策略權重、依第 7 條納入的貢獻，
+      以及上述內容的編譯或封裝產物。
+  (b) 「第三方素材」指 MuJoCo 物理引擎本身、其官方文件的原文，以及本儲存庫
+      所依賴的第三方程式庫、工具與資料集。第三方素材屬於 Google DeepMind
+      或其他各自的權利人，依各自的授權條款提供。
+  (c) 「修改版」指以本作品為基礎，經修改、翻譯、移植、擴充或與其他作品結合
+      而成的作品。
+  (d) 「商業性使用」指以直接或間接取得金錢或其他對價為目的之使用，包括但不
+      限於：販售本作品或修改版；以付費、訂閱或會員形式提供；隨商品、硬體或
+      服務一併散布；在本作品或修改版中加入廣告、內購或贊助置入；在營利事業
+      的營運、產品或服務中使用；以及用於商業性的展覽、活動或行銷。
+  (e) 「貢獻」指任何人有意提交給著作權人以納入本作品的內容，包括程式碼、
+      文件、譯文、素材與其修改建議。
+
+第 2 條　涵蓋範圍與排除事項
+
+  (a) 本條款只適用於本作品。
+  (b) 本條款不適用於第三方素材。本作品不重新散布 MuJoCo 引擎或其官方文件的
+      原文；使用本作品的人依各該權利人的條款自行取得（MuJoCo 為 Apache
+      License 2.0）。著作權人對第三方素材不主張任何權利，也無權授權它們。
+  (c) 本儲存庫為了文件、研究與展示的目的，收錄了少量含有第三方素材的片段，
+      包括：摘譯或摘述自 MuJoCo 官方文件（Apache License 2.0）的段落，以及
+      其中的 API 名稱、XML 標籤與參數說明。這些片段中屬於第三方素材的部分
+      不在本條款的授權範圍內，依原權利人的條款（MuJoCo 官方
+      文件為 Apache License 2.0）提供。著作權人創作的譯文、改寫與說明屬於本
+      作品，在著作權人享有權利的範圍內依本條款授權；譯文是官方文件原文的
+      衍生著作，使用時仍應遵守原文的授權條款。
+  (d) 本儲存庫或發行包中含有的第三方元件（例如 MuJoCo、NumPy、SciPy、
+      Matplotlib、imageio、Gymnasium、Stable-Baselines3、PyTorch 等 Python
+      套件）依各自的授權條款提供，不受本條款拘束；其授權聲明隨同散布。
+
+第 3 條　非商業授權
+
+在遵守第 5 條的前提下，任何人都可以免費、不必事先取得同意：
+
+  (a) 為個人、教育、研究、保存、評論或其他非商業目的，使用、執行、重製與
+      散布本作品；
+  (b) 製作修改版，並在同樣的非商業前提下依本條款散布修改版；散布修改版的人
+      就其修改的部分，同意以與本條款相同的條件授權他人；
+  (c) 製作其他語言的譯文或語言包，並在同樣的非商業前提下依本條款散布。
+
+第 4 條　明示允許的展示與傳播
+
+下列行為即使伴隨收入，也不視為第 1 條 (d) 的商業性使用，著作權人明示允許：
+
+  (a) 以本作品或修改版進行錄影、直播、評論、教學或報導，包括在
+      YouTube、Twitch、Bilibili 等平台上依該平台一般規則取得廣告分潤、
+      觀眾贊助或會員收入；
+  (b) 在文章、書籍、學術論文、演講、展覽或課程中引用、展示或討論本作品，
+      包括其截圖、程式碼片段與文件；
+  (c) 在保存、學術、非營利或社群性質的活動中展示或提供本作品。
+
+前述行為應依第 5 條 (b) 標示出處。下列行為不在本條範圍內，仍是商業性使用：
+以本作品或修改版作為主要販售標的；將其封裝為付費產品或服務；以其作為
+其他商品、硬體或服務的行銷工具或展示內容。
+
+第 5 條　條件
+
+  (a) 散布本作品或修改版時，要保留本授權條款全文與著作權聲明。
+  (b) 公開散布、展示或傳播本作品或修改版時，要以合理且明顯的方式標示：
+      本作品名稱、著作權人姓名（Wang Chun-Yu／wicanr2），以及原始出處
+      https://github.com/wicanr2/mujoco-tutorial-zh 。
+  (c) 散布修改版時，要明確標示這是修改版、改動了什麼、由誰修改。不得讓人
+      誤以為修改版出自著作權人或經其認可，也不得以會造成混淆的方式使用
+      著作權人的姓名或本作品的名稱。
+  (d) 不得為取得或使用本作品或修改版本身收取費用（實體媒介與運送的實際成本
+      除外），不得以本作品或修改版換取其他對價。第 4 條允許的收入不受本款
+      限制。
+  (e) 與本作品一併散布第三方素材時，要遵守各該第三方素材自己的授權條款，
+      並隨同散布其授權聲明。
+  (f) 不得移除、遮蔽或改動本作品中的著作權聲明、授權聲明與出處標示。
+  (g) 不得規避本條款。以自動轉換、重新排版、改寫、翻譯成其他程式語言等方式
+      製作的作品，仍是修改版，受本條款拘束。
+
+第 6 條　保留權利與商業授權
+
+  (a) 本條款未明示授與的一切權利，均由著作權人保留。商業性使用需要事先取得
+      著作權人的書面授權。
+  (b) 著作權人得以本條款以外的條件，向任何人另行授權本作品（包括商業授權與
+      專屬授權）。另行授權不影響他人依本條款已取得的非商業權利。
+  (c) 商業洽談請寄 wicanr2@gmail.com。歡迎來談——本條的用意是保留商業條件的
+      決定權，不是拒絕合作。
+
+第 7 條　貢獻
+
+  (a) 任何人向本作品提交貢獻，即表示同意：授與著作權人一項永久、不可撤銷、
+      全球性、免權利金、可再授權的授權，得以任何方式使用、重製、修改、散布
+      該貢獻，並得將其納入本作品後以本條款或任何其他條件（包括商業條件）
+      授權他人。
+  (b) 貢獻者保證自己有權作出前項授權，且貢獻不含未經授權的第三方內容。
+  (c) 貢獻者保留自己對該貢獻的著作權；著作權人會在合理範圍內於專案紀錄中
+      標示貢獻者。
+  (d) 不接受本條的人，請勿提交貢獻。
+
+第 8 條　名稱
+
+「MuJoCo 繁體中文教學與模擬實驗」、「MuJoCo Traditional Chinese Tutorial and
+Simulation Experiments」及本儲存庫名稱是本作品的識別名稱。修改版可以說明自己
+「基於」本作品，但不得使用相同或近似的名稱作為修改版自己的名稱，除非取得著作
+權人書面同意。
+
+第 9 條　無擔保與責任限制
+
+本作品以「現狀」提供，不附任何明示或默示的擔保，包括但不限於適售性、特定
+目的適用性與未侵權的擔保。在法律允許的最大範圍內，著作權人不就因本作品或其
+使用而產生的任何請求、損害或其他責任負責，也不就使用者取得或使用第三方素材
+的合法性負責。
+
+第 10 條　終止與回復
+
+  (a) 違反本條款時，本條款授與違反者的權利自動終止。
+  (b) 若違反者在知悉違反後三十日內改正並通知著作權人，授權自改正之日起回復。
+  (c) 對未經授權的商業性使用（第 6 條 (a)），著作權人得拒絕回復。
+  (d) 終止不影響他人依本條款自違反者處善意取得本作品副本的權利，只要他們
+      自己遵守本條款。
+
+第 11 條　準據法與管轄
+
+本條款以中華民國（台灣）法律為準據法。因本條款所生的爭議，以臺灣臺北地方
+法院為第一審管轄法院。本條款以繁體中文版本為準；譯本與繁體中文版本有出入時，
+以繁體中文版本為準。
+
+第 12 條　與第三方權利人的關係
+
+本作品與Google DeepMind沒有隸屬、合作、贊助或授權關係，是獨立的第三方教學
+與研究專案。若第三方權利人提出合法的權利主張，著作權人保留調整本作品內容
+的權利。
+
+第 13 條　版本
+
+著作權人得發布本條款的新版本（以版號識別，本版基於 RRSAL-1.0）。已依某一版本取得的
+授權，依該版本的條件繼續有效；新版本適用於其發布後散布的本作品副本。
+
+────────────────────────────────────────────────────────────
+English translation (for convenience; the Chinese text governs)
+
+PREAMBLE. This work is a Traditional Chinese tutorial compilation, translation
+and derived simulation experiments built around the MuJoCo physics engine and
+its official documentation. The copyright holder wants it widely used,
+discussed and shown, while keeping its commercial rights. This license is built
+accordingly: non-commercial use is free and permissive; commercial use is
+reserved for a separate agreement with the copyright holder.
+
+1. DEFINITIONS.
+   (a) "Work" means everything in this repository authored by the copyright
+       holder, including tutorial documentation, translations and glossaries,
+       example programs, modelling and verification tools, simulation models
+       and meshes, experiment outputs (videos, trajectory logs, plots),
+       trained policy weights, Contributions incorporated under Section 7,
+       and compiled or packaged forms of any of these.
+   (b) "Third-Party Materials" means the MuJoCo physics engine itself, the
+       original text of its official documentation, and the third-party
+       libraries, tools and datasets this repository depends on. They belong
+       to Google DeepMind or their respective rights holders and are provided
+       under their own licenses.
+   (c) "Modified Version" means any work based on the Work through
+       modification, translation, porting, extension or combination.
+   (d) "Commercial Use" means use aimed at obtaining money or other
+       consideration, directly or indirectly, including without limitation:
+       selling the Work or a Modified Version; offering it for a fee, by
+       subscription or membership; bundling it with goods, hardware or
+       services; adding advertising, in-app purchases or sponsorship
+       placements; using it in the operations, products or services of a
+       for-profit entity; and using it in commercial exhibitions, events or
+       marketing.
+   (e) "Contribution" means anything intentionally submitted to the copyright
+       holder for inclusion in the Work: code, documentation, translations,
+       assets and proposed changes.
+
+2. SCOPE AND EXCLUSIONS.
+   (a) This license applies only to the Work.
+   (b) This license does not apply to Third-Party Materials. The Work does not
+       redistribute the MuJoCo engine or the original text of its
+       documentation; users obtain those under the respective rights holders'
+       terms (MuJoCo is under Apache License 2.0). The copyright holder claims
+       no rights in Third-Party Materials and cannot license them.
+   (c) For documentation, research and demonstration this repository contains
+       small excerpts of Third-Party Materials: passages translated or
+       summarised from the MuJoCo official documentation (Apache License 2.0),
+       together with the API names, XML tags and parameter descriptions they
+       contain. Those portions are outside this license and remain under the
+       original rights holder's terms. Translations, rewrites and explanations
+       authored by the copyright holder are part of the Work and are licensed
+       under these terms to the extent of the copyright holder's rights in
+       them; the translations are derivative of the original documentation and
+       their use remains subject to the original license.
+   (d) Third-party components in this repository or its packages (for example
+       the MuJoCo, NumPy, SciPy, Matplotlib, imageio, Gymnasium,
+       Stable-Baselines3 and PyTorch Python packages)
+       are provided under their own licenses, which are distributed with them,
+       and are not governed by this license.
+
+3. NON-COMMERCIAL GRANT. Subject to Section 5, anyone may, free of charge and
+   without prior permission:
+   (a) use, run, reproduce and distribute the Work for personal, educational,
+       research, preservation, commentary or other non-commercial purposes;
+   (b) make Modified Versions and distribute them under this license on the
+       same non-commercial condition; whoever distributes a Modified Version
+       agrees to license their own changes to others on the same terms as
+       this license;
+   (c) make translations or language packs and distribute them under this
+       license on the same non-commercial condition.
+
+4. EXPRESSLY PERMITTED SHOWCASE AND COVERAGE. The following are not
+   Commercial Use under Section 1(d) even if they generate income, and are
+   expressly permitted:
+   (a) recording, streaming, broadcasting, reviewing, teaching or reporting
+       on the Work or a Modified Version, including earning advertising
+       revenue, viewer donations or membership income under the ordinary
+       rules of platforms such as YouTube, Twitch or Bilibili;
+   (b) quoting, showing or discussing the Work — including screenshots, code
+       excerpts and documentation — in articles, books, academic papers,
+       talks, exhibitions or courses;
+   (c) showing or providing the Work at preservation, academic, non-profit or
+       community events.
+   Attribution under Section 5(b) applies. The following remain Commercial
+   Use and are not covered by this Section: selling the Work or a Modified
+   Version as the main object of sale; packaging it as a paid product or
+   service; and using it as a marketing tool or demonstration content for
+   other goods, hardware or services.
+
+5. CONDITIONS.
+   (a) Keep this license and the copyright notice in every distribution of
+       the Work or a Modified Version.
+   (b) When publicly distributing, showing or transmitting the Work or a
+       Modified Version, give reasonable and visible credit: the name of the
+       Work, the copyright holder (Wang Chun-Yu / wicanr2), and the original
+       source at https://github.com/wicanr2/mujoco-tutorial-zh .
+   (c) When distributing a Modified Version, state clearly that it is
+       modified, what was changed and by whom. Do not imply that it comes
+       from or is endorsed by the copyright holder, and do not use the
+       copyright holder's name or the Work's name in a confusing way.
+   (d) Do not charge for obtaining or using the Work or a Modified Version
+       itself (actual cost of physical media and shipping excepted), and do
+       not exchange them for other consideration. Income permitted by
+       Section 4 is not restricted by this paragraph.
+   (e) When distributing Third-Party Materials alongside the Work, comply with
+       their own licenses and distribute their license notices with them.
+   (f) Do not remove, obscure or alter copyright, license or attribution
+       notices in the Work.
+   (g) Do not circumvent this license. Works produced by automated
+       conversion, reformatting, rewriting or translation into another
+       programming language remain Modified Versions bound by this license.
+
+6. RESERVED RIGHTS AND COMMERCIAL LICENSING.
+   (a) All rights not expressly granted are reserved. Commercial Use requires
+       prior written permission from the copyright holder.
+   (b) The copyright holder may license the Work to anyone on terms other
+       than this license, including commercial and exclusive terms. Such
+       licenses do not affect non-commercial rights others have already
+       obtained under this license.
+   (c) Commercial enquiries: wicanr2@gmail.com. Enquiries are welcome — this
+       Section exists to keep commercial terms negotiable, not to refuse
+       cooperation.
+
+7. CONTRIBUTIONS.
+   (a) By submitting a Contribution, the contributor grants the copyright
+       holder a perpetual, irrevocable, worldwide, royalty-free,
+       sublicensable license to use, reproduce, modify and distribute the
+       Contribution in any way, and to license it as part of the Work under
+       this license or any other terms, including commercial terms.
+   (b) The contributor warrants that they are entitled to grant that license
+       and that the Contribution contains no unlicensed third-party material.
+   (c) Contributors keep copyright in their Contributions; the copyright
+       holder will credit contributors in the project records where
+       reasonable.
+   (d) Do not submit a Contribution if you do not accept this Section.
+
+8. NAMES. "MuJoCo 繁體中文教學與模擬實驗", "MuJoCo Traditional Chinese
+   Tutorial and Simulation Experiments" and this repository's name identify
+   the Work. A Modified Version may state that it
+   is based on the Work, but may not use the same or a confusingly similar
+   name as its own name without the copyright holder's written consent.
+
+9. NO WARRANTY; LIMITATION OF LIABILITY. THE WORK IS PROVIDED "AS IS",
+   WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+   TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER IS NOT LIABLE
+   FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE WORK OR ITS USE,
+   NOR FOR THE LAWFULNESS OF THE USER'S ACQUISITION OR USE OF THIRD-PARTY
+   MATERIALS.
+
+10. TERMINATION AND REINSTATEMENT.
+   (a) Rights under this license terminate automatically for anyone who
+       breaches it.
+   (b) If the breach is cured within thirty days of becoming aware of it and
+       the copyright holder is notified, the license is reinstated as of the
+       date of cure.
+   (c) The copyright holder may refuse reinstatement for unauthorised
+       Commercial Use (Section 6(a)).
+   (d) Termination does not affect the rights of others who received copies
+       of the Work from the breaching party in good faith, as long as they
+       themselves comply with this license.
+
+11. GOVERNING LAW AND VENUE. This license is governed by the laws of the
+   Republic of China (Taiwan). The Taiwan Taipei District Court is the court
+   of first instance for disputes arising from it. The Traditional Chinese
+   text governs; in case of discrepancy, the Traditional Chinese text
+   prevails over any translation.
+
+12. RELATIONSHIP TO THIRD-PARTY RIGHTS HOLDERS. The Work is not affiliated
+   with, endorsed, sponsored or licensed by Google DeepMind; it is an
+   independent third-party tutorial and research project. The copyright holder
+   reserves the right to adjust the Work's contents in response to a lawful
+   claim by a third-party rights holder.
+
+13. VERSIONS. The copyright holder may publish new versions of RRSAL
+   (identified by version number; this is version 1.0).
+   Rights obtained under a given version remain governed by that version; a
+   new version applies to copies of the Work distributed after its
+   publication.

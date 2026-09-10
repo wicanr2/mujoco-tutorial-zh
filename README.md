@@ -134,6 +134,7 @@ runs/       實驗輸出：影片、CSV、軌跡圖
 policies/   訓練好的策略權重
 sources/    資料出處登記
 workspace/  本機工作區（不進版控）
+LICENSE     授權條款
 ```
 
 ## 環境
@@ -147,7 +148,21 @@ workspace/  本機工作區（不進版控）
 - Blender 建模：Blender 4.2.11 LTS（headless EEVEE）
 - GPU 訓練（12 章）：RTX Pro 6000，環境已於實驗後清除
 
-## 出處與致謝
+## 授權、出處與致謝
+
+本專案採 source-available 授權（教學專案適配版，基於 RRSAL-1.0），全文見
+[LICENSE](LICENSE)：
+
+- **非商業用途免費**，不必事先取得同意：使用、重製、散布、修改並散布修改版，
+  條件是保留條款、標示出處、修改版說明改了什麼。
+- **實況、影片、評論、教學、報導、論文、展覽明示允許**，平台分潤與觀眾贊助不算商業使用。
+- **商業使用需要另行洽談**（wicanr2@gmail.com）。
+- 授權範圍是著作權人創作的部分：教學文件、譯文、範例程式、模擬模型與 mesh、實驗
+  輸出、策略權重。**MuJoCo 引擎本身與其官方文件原文不在此列**，依 Apache License 2.0
+  提供；本專案摘譯官方文件的段落，其中屬於原文的部分仍受原授權拘束。
+- 本專案與 Google DeepMind 沒有隸屬或授權關係。
+
+出處：
 
 - [MuJoCo 官方文件](https://mujoco.readthedocs.io/en/stable/) — 各章翻譯與摘譯的主要來源，逐筆登記在 [sources/SOURCES.md](sources/SOURCES.md)
 - MR1533 叉車 mesh 取自本機 TB3 實驗資產（Blender 4.2 建模）
