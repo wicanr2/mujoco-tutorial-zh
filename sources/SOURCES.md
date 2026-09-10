@@ -28,6 +28,7 @@
 | docs/02-programming/07 | https://arxiv.org/abs/1801.01290 | 2026-09-09 | 2018 論文 | SAC 演算法 |
 | docs/06-amr | https://mujoco.readthedocs.io/en/stable/XMLreference.html#actuator | 2026-09-09 | stable (3.x) | velocity/position 致動器 |
 | docs/06-amr | https://mujoco.readthedocs.io/en/stable/APIreference/ | 2026-09-09 | stable (3.x) | mj_jacSite 雅可比 |
+| docs/06-amr | https://mujoco.readthedocs.io/en/stable/XMLreference.html#asset-mesh | 2026-09-10 | stable (3.x) | mesh 主軸對齊、refpos/refquat |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/XMLreference.html | — | stable | 待收集 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/ | — | — | 待收集 |
 | docs/05-gazebo | https://gazebosim.org/docs | — | — | 待收集 |
