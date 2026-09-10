@@ -37,6 +37,7 @@
   - [24｜真實化重跑（一）：舵輪底盤 + 環氧地板 + 貨架原地取放（reach X/Z）](06-amr/12-steer-reach-xz.md)
   - [25｜真實化重跑（二）：reach X/Y/Z 全軸取放](06-amr/13-reach-xyz.md)
   - [26｜真實化重跑（三）：搬運車夾爪 A 取 B 放](06-amr/14-gripper-ab.md)
+  - [27｜舵輪繞圈：waypoint 追蹤（loop）](06-amr/15-steer-loop.md)
 
 ## 附錄
 
