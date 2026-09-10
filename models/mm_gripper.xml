@@ -1,0 +1,72 @@
+<mujoco model="mm_gripper">
+  <compiler angle="radian"/>
+
+  <!-- 搬運車 + 三軸手臂 + 二指夾爪（平面底盤簡化） -->
+
+  <worldbody>
+    <light pos="0 -2 3" dir="0 0.5 -1"/>
+    <geom name="floor" type="plane" size="10 10 0.1" rgba="0.55 0.58 0.60 1" friction="0.7 0.05 0.01"/>
+
+    <body name="base" pos="0 0 0.11">
+      <joint name="move_x" type="slide" axis="1 0 0" damping="2"/>
+      <joint name="move_y" type="slide" axis="0 1 0" damping="2"/>
+      <joint name="yaw"    type="hinge" axis="0 0 1" damping="2"/>
+      <geom type="box" size="0.3 0.22 0.08" rgba="0.2 0.5 0.7 1"/>
+
+      <body name="arm_link1" pos="0 0 0.10">
+        <joint name="shoulder" type="hinge" axis="0 0 1" damping="0.5"/>
+        <geom type="cylinder" size="0.05 0.15" pos="0 0 0.15" rgba="0.7 0.7 0.75 1"/>
+        <body name="arm_link2" pos="0 0 0.3">
+          <joint name="elbow" type="hinge" axis="0 1 0" damping="0.5" range="-2.8 2.8"/>
+          <geom type="capsule" fromto="0 0 0 0.35 0 0" size="0.03" rgba="0.9 0.4 0.1 1"/>
+          <body name="arm_link3" pos="0.35 0 0">
+            <joint name="wrist" type="hinge" axis="0 1 0" damping="0.3" range="-2.8 2.8"/>
+            <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.025" rgba="0.9 0.7 0.1 1"/>
+            <site name="ee" pos="0.15 0 0" size="0.01" rgba="1 0 0 1"/>
+
+            <!-- 二指夾爪：左右滑軌對夾 -->
+            <body name="finger_l" pos="0.15 0.035 0">
+              <joint name="grip_l" type="slide" axis="0 -1 0" range="0 0.035" damping="0.2"/>
+              <geom type="box" size="0.04 0.008 0.06" pos="0.03 0 0" rgba="0.3 0.3 0.35 1" friction="1.2 0.05 0.01"/>
+              <inertial pos="0.03 0 0" mass="0.1" diaginertia="0.0001 0.0001 0.0001"/>
+            </body>
+            <body name="finger_r" pos="0.15 -0.035 0">
+              <joint name="grip_r" type="slide" axis="0 1 0" range="0 0.035" damping="0.2"/>
+              <geom type="box" size="0.04 0.008 0.06" pos="0.03 0 0" rgba="0.3 0.3 0.35 1" friction="1.2 0.05 0.01"/>
+              <inertial pos="0.03 0 0" mass="0.1" diaginertia="0.0001 0.0001 0.0001"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- A 點：平台上的箱子（要取） -->
+    <geom name="table_a" type="box" size="0.2 0.2 0.02" pos="0.9 0.4 0.38" rgba="0.4 0.4 0.45 1"/>
+    <body name="box_target" pos="0.9 0.4 0.46">
+      <freejoint/>
+      <geom type="box" size="0.03 0.03 0.03" rgba="0.2 0.8 0.3 1" mass="0.3" friction="1.0 0.05 0.01"/>
+    </body>
+
+    <!-- B 點：放置平台 -->
+    <geom name="table_b" type="box" size="0.2 0.2 0.02" pos="0.9 -0.5 0.38" rgba="0.6 0.3 0.3 1"/>
+  </worldbody>
+
+  <actuator>
+    <velocity name="vx"   joint="move_x" kv="60" ctrlrange="-1.5 1.5"/>
+    <velocity name="vy"   joint="move_y" kv="60" ctrlrange="-1.5 1.5"/>
+    <velocity name="wyaw" joint="yaw"    kv="10" ctrlrange="-2 2"/>
+    <position name="shoulder_ctl" joint="shoulder" kp="200" ctrllimited="true" ctrlrange="-3.14 3.14"/>
+    <position name="elbow_ctl"    joint="elbow"    kp="400" ctrllimited="true" ctrlrange="-2.8 2.8"/>
+    <position name="wrist_ctl"    joint="wrist"    kp="150"  ctrllimited="true" ctrlrange="-2.8 2.8"/>
+    <position name="grip_l_ctl"   joint="grip_l"   kp="300" forcerange="-30 30" ctrllimited="true" ctrlrange="0 0.035"/>
+    <position name="grip_r_ctl"   joint="grip_r"   kp="300" forcerange="-30 30" ctrllimited="true" ctrlrange="0 0.035"/>
+  </actuator>
+
+  <equality>
+    <weld name="grasp" body1="finger_l" body2="box_target" anchor="0.03 0 0" active="false"/>
+  </equality>
+
+  <sensor>
+    <framepos objtype="site" objname="ee"/>
+  </sensor>
+</mujoco>

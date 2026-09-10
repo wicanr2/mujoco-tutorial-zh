@@ -14,6 +14,11 @@
 | `fork_cyclic_log.csv` | 同上 | 23 | 50 Hz，底盤/lift/reach + 棧板 6DOF + 相對牙叉位置 |
 | `fork_cyclic_traj.png` | 同上 | 23 | lift / reach / 棧板 z 與漂移 |
 
+| `reach_xz.mp4` / `reach_xz_log.csv` | `scripts/ex_reach_xz.py` | [24](../docs/06-amr/12-steer-reach-xz.md) | 貨架原地取放（舵輪底盤） |
+| `reach_xyz.mp4` / `reach_xyz_log.csv` | `scripts/ex_reach_xyz.py` | [25](../docs/06-amr/13-reach-xyz.md) | reach X/Y/Z 全軸取放 |
+| `gripper.mp4` / `gripper_log.csv` | `scripts/ex_gripper_ab.py` | [26](../docs/06-amr/14-gripper-ab.md) | 夾爪 A 取 B 放 |
+| `loop.mp4` / `loop_log.csv` / `loop_traj.png` | `scripts/ex_loop_steer.py` | 27（撰寫中） | 舵輪繞圈 waypoint 追蹤 |
+
 ## CSV 欄位說明
 
 ### mission_log.csv

@@ -1,0 +1,120 @@
+<mujoco model="mr1533_steer">
+  <compiler angle="radian"/>
+  <option timestep="0.0005" iterations="100"/>
+  <compiler meshdir="/home/anr2/tmp2/mujoco/models/meshes/mr1533/"/>
+
+  <!-- MR1533 舵輪底盤版：前雙固定輪 + 後舵輪（swivel 轉向 + drive 驅動），
+       底盤用 freejoint，靠輪子與地面摩擦驅動（真實輪系物理）。
+       地板摩擦 = 環氧樹脂地坪（μ≈0.7）。關節配置依 TB3 mr1533_light.urdf。 -->
+
+  <asset>
+    <mesh name="chassis"   file="forward_fixed.obj"/>
+    <mesh name="mast"      file="lift_fixed.obj"/>
+    <mesh name="carriage"  file="fork_liftA1.obj"/>
+    <mesh name="tiltfix"   file="tilt_fixed.obj"/>
+    <mesh name="yreach"    file="/home/anr2/tmp2/mujoco/models/meshes/yreach_carriage.stl"/>
+    <mesh name="wheel"     file="front_left.obj"/>
+    <mesh name="drive"     file="drive.obj"/>
+    <mesh name="swivel"    file="swivel.obj"/>
+  </asset>
+
+  <default>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="2"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light pos="2 -3 4" dir="-0.4 0.6 -1"/>
+    <light pos="-3 1 3" dir="0.6 -0.2 -0.6"/>
+    <!-- 環氧樹脂地坪：μ=0.7，略帶光澤色 -->
+    <geom name="floor" type="plane" size="15 15 0.1" rgba="0.55 0.58 0.60 1" friction="0.7 0.05 0.01"/>
+
+    <!-- ===== 底盤（freejoint，靠輪子驅動）===== -->
+    <body name="base" pos="0 0 0">
+      <freejoint name="base_free"/>
+      <inertial pos="0.85 0 0.6" mass="2000" diaginertia="800 800 800"/>
+      <geom type="box" size="0.55 0.65 0.22" pos="1.15 0 0.28" group="3" rgba="0.6 0.6 0.62 1"/>
+      <geom class="visual" type="mesh" mesh="chassis" rgba="0.75 0.76 0.78 1"/>
+
+      <!-- 前雙固定輪（僅滾動） -->
+      <body name="wheel_fl" pos="0  0.454 0.127">
+        <joint name="roll_fl" type="hinge" axis="0 1 0" damping="1"/>
+        <inertial pos="0 0 0" mass="15" diaginertia="0.09 0.16 0.09"/>
+        <geom class="visual" type="mesh" mesh="wheel" rgba="0.05 0.05 0.05 1"/>
+        <geom type="cylinder" size="0.127 0.05" euler="1.5708 0 0" group="3" friction="0.7 0.01 0.001"/>
+      </body>
+      <body name="wheel_fr" pos="0 -0.454 0.127">
+        <joint name="roll_fr" type="hinge" axis="0 1 0" damping="1"/>
+        <inertial pos="0 0 0" mass="15" diaginertia="0.09 0.16 0.09"/>
+        <geom class="visual" type="mesh" mesh="wheel" rgba="0.05 0.05 0.05 1"/>
+        <geom type="cylinder" size="0.127 0.05" euler="1.5708 0 0" group="3" friction="0.7 0.01 0.001"/>
+      </body>
+
+      <!-- 後舵輪：swivel（繞 z 轉向）+ drive（繞 y 滾動驅動） -->
+      <body name="swivel" pos="1.4115 0 0.2">
+        <joint name="swivel" type="hinge" axis="0 0 1" range="-1.5708 1.5708" damping="5"/>
+        <inertial pos="0 0 0.07" mass="10" diaginertia="0.04 0.04 0.05"/>
+        <geom class="visual" type="mesh" mesh="swivel" rgba="0.12 0.12 0.13 1"/>
+        <body name="drive" pos="0 0 -0.085">
+          <joint name="drive" type="hinge" axis="0 1 0" damping="1"/>
+          <inertial pos="0 0 0" mass="15" diaginertia="0.07 0.13 0.07"/>
+          <geom class="visual" type="mesh" mesh="drive" rgba="0.05 0.05 0.05 1"/>
+          <geom type="cylinder" size="0.115 0.04" euler="1.5708 0 0" group="3" friction="0.9 0.01 0.001"/>
+        </body>
+      </body>
+
+      <!-- ===== 門架（含 stage 前移 reach X）===== -->
+      <body name="mast_stage" pos="0.85 0 0">
+        <joint name="stage" type="slide" axis="1 0 0" range="-0.7 0" damping="50"/>
+        <inertial pos="0 0 1.17" mass="150" diaginertia="70 60 10"/>
+        <geom class="visual" type="mesh" mesh="mast" rgba="0.35 0.36 0.38 1"/>
+        <geom type="box" size="0.04 0.45 1.1" pos="0 0 1.17" group="3" rgba="0.35 0.36 0.38 1"/>
+
+        <body name="carriage1" pos="-0.14 0 0">
+          <joint name="lift1" type="slide" axis="0 0 1" range="0 1.5" damping="20"/>
+          <inertial pos="0 0 1.3" mass="60" diaginertia="26 24 2.5"/>
+          <geom class="visual" type="mesh" mesh="carriage" rgba="0.35 0.36 0.38 1"/>
+
+          <body name="carriage2" pos="-0.09 0 0.29">
+            <joint name="lift2" type="slide" axis="0 0 1" range="0 1.5" damping="20"/>
+            <inertial pos="0 0 0.24" mass="50" diaginertia="2.2 1.2 1.3"/>
+            <geom class="visual" type="mesh" mesh="tiltfix" rgba="0.35 0.36 0.38 1"/>
+
+            <body name="fork" pos="-0.12 0 0">
+              <joint name="tilt" type="hinge" axis="0 1 0" range="-0.3 0.3" damping="10"/>
+              <inertial pos="0 0 0" mass="15" diaginertia="1 1 1"/>
+              <body name="yreach" pos="0 0 -0.39">
+                <joint name="reach_y" type="slide" axis="0 1 0" range="-0.45 0.45" damping="30"/>
+                <inertial pos="0 0 0.3" mass="45" diaginertia="4 4 1.5"/>
+                <geom class="visual" type="mesh" mesh="yreach" rgba="0.85 0.65 0.1 1"/>
+                <geom type="box" size="0.475 0.05 0.025" pos="-0.45  0.21 0.16" group="3" friction="0.1 0.05 0.01"/>
+                <geom type="box" size="0.475 0.05 0.025" pos="-0.45 -0.21 0.16" group="3" friction="0.1 0.05 0.01"/>
+                <site name="fork_tip" pos="-0.9 0 0.16" size="0.01"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <velocity name="drive_v"  joint="drive"  kv="200" ctrlrange="-12 12"/>
+    <position name="steer_p"  joint="swivel" kp="1500" kv="200" ctrllimited="true" ctrlrange="-1.5708 1.5708"/>
+    <position name="stage_ctl" joint="stage" kp="20000" kv="2000" ctrllimited="true" ctrlrange="-0.7 0"/>
+    <position name="lift1_ctl" joint="lift1" kp="30000" kv="3000" ctrllimited="true" ctrlrange="0 1.5"/>
+    <position name="lift2_ctl" joint="lift2" kp="20000" kv="2000" ctrllimited="true" ctrlrange="0 1.5"/>
+    <position name="tilt_ctl"  joint="tilt"  kp="30000" kv="3000"  ctrllimited="true" ctrlrange="-0.3 0.3"/>
+    <position name="reach_ctl" joint="reach_y" kp="8000" kv="800" ctrllimited="true" ctrlrange="-0.45 0.45"/>
+  </actuator>
+
+  <contact>
+    <exclude body1="base" body2="swivel"/>
+    <exclude body1="base" body2="drive"/>
+  </contact>
+
+  <sensor>
+    <framepos objtype="site" objname="fork_tip"/>
+  </sensor>
+</mujoco>

@@ -34,6 +34,9 @@
   - [21｜新車型：MR1533 + y 向 reach 滑台（Blender headless 建模）](06-amr/09-yreach.md)
   - [22｜y-reach 取放任務：錄影 + 6DOF 軌跡記錄](06-amr/10-yreach-mission.md)
   - [23｜連續動作實驗：牙叉上上下下 ×3 + 左右左右 ×3（錄影）](06-amr/11-fork-cyclic.md)
+  - [24｜真實化重跑（一）：舵輪底盤 + 環氧地板 + 貨架原地取放（reach X/Z）](06-amr/12-steer-reach-xz.md)
+  - [25｜真實化重跑（二）：reach X/Y/Z 全軸取放](06-amr/13-reach-xyz.md)
+  - [26｜真實化重跑（三）：搬運車夾爪 A 取 B 放](06-amr/14-gripper-ab.md)
 
 ## 附錄
 
