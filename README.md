@@ -1,6 +1,6 @@
 # MuJoCo 繁體中文教學與模擬實驗
 
-用 MuJoCo 物理引擎寫的 27 篇繁體中文教學、34 支 Python 腳本，以及一整條 AMR 叉車搬運實驗線 —
+用 MuJoCo 物理引擎寫的 27 篇繁體中文教學、35 支 Python 腳本，以及一整條 AMR 叉車搬運實驗線 —
 從盒子堆出來的簡化模型，一路做到真實 mesh 舵輪叉車的完整取放任務。每個實驗都留下影片、
 CSV 軌跡記錄與實測數字，文件裡的每個數字都能在對應的 log 找到出處。
 
@@ -127,11 +127,16 @@ Blender 建模腳本需要本機 Blender 4.x：
 blender --background --python scripts/make_pallet_blender.py -- "$PWD"
 ```
 
-改過腳本或模型後重跑驗證：
+改過腳本或模型後重跑驗證，或跑一次靜態稽核：
 
 ```bash
 bash scripts/verify_examples.sh basic scripts/hello_mujoco.py scripts/ex_ik6d.py
+python scripts/check_docs.py     # 絕對路徑、連結、模型、章節結構、數字一致性
 ```
+
+這兩件事每次 push 也會在 GitHub Actions 上用**乾淨的 checkout** 跑一遍
+（[verify.yml](.github/workflows/verify.yml)）—— 絕對路徑這類「在作者機器上永遠正常」
+的問題只有這樣才抓得到。
 
 ## 目錄結構
 

@@ -1,0 +1,114 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_render:
+        description: 也跑渲染與錄影批次（約 40 分鐘）
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  # 靜態稽核 ＋ 不需要渲染的範例。在乾淨的 checkout 上跑 —— 那是唯一能自動抓出
+  # 絕對路徑這類「在作者機器上永遠正常」問題的方式。
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安裝相依（靜態檢查與非渲染範例只需要這三個）
+        run: pip install mujoco==3.12.0 numpy==2.5.3 scipy==1.18.1
+
+      - name: 靜態稽核
+        run: python scripts/check_docs.py
+
+      - name: 重跑基礎與 AMR 非渲染範例
+        run: |
+          PYTHON=python bash scripts/verify_examples.sh ci \
+            scripts/hello_mujoco.py scripts/run_pendulum.py scripts/pd_control.py \
+            scripts/load_urdf.py scripts/ex_sensors.py scripts/ex_position_servo.py \
+            scripts/ex_keyframe.py scripts/ex_mjspec.py scripts/ex_parallel_rollout.py \
+            scripts/ex_cartpole_swingup.py scripts/ex_ik6d.py scripts/ex_mobile_manipulator.py \
+            scripts/ex_forklift.py scripts/ex_pallet_materials.py scripts/ex_tilt_boundary.py \
+            scripts/ex_mr1533.py scripts/ex_yreach.py
+
+      - name: 檢查是否有腳本失敗
+        run: |
+          if awk -F'\t' '$2 != 0 {found=1} END {exit !found}' workspace/verify/ci/result.tsv; then
+            echo "以下腳本非零結束："
+            awk -F'\t' '$2 != 0 {print "  " $1 " rc=" $2}' workspace/verify/ci/result.tsv
+            echo "--- 失敗腳本的輸出 ---"
+            awk -F'\t' '$2 != 0 {print $1}' workspace/verify/ci/result.tsv |
+              while read -r n; do echo "### $n"; cat "workspace/verify/ci/$n.log"; done
+            exit 1
+          fi
+          echo "全部通過："
+          cat workspace/verify/ci/result.tsv
+
+      - name: 確認範例沒有改動版控中的輸出
+        run: |
+          if ! git diff --quiet -- runs/ models/ docs/assets/; then
+            echo "重跑後這些版控檔案被改動了（模擬應該是確定性的，出現差異要查清楚）："
+            git diff --stat -- runs/ models/ docs/assets/
+            exit 1
+          fi
+          echo "runs/、models/、docs/assets/ 與版控一致"
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-logs
+          path: workspace/verify/
+
+  # 渲染與錄影批次很慢（loop 一支就要 18 分鐘），只在手動觸發時跑。
+  render:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_render
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安裝 OSMesa（無顯示器環境的軟體渲染）
+        run: sudo apt-get update && sudo apt-get install -y libosmesa6-dev
+
+      - name: 安裝相依
+        run: pip install mujoco==3.12.0 numpy==2.5.3 imageio==2.37.4 imageio-ffmpeg==0.6.0 matplotlib==3.11.1 pillow==12.3.0
+
+      - name: 重跑渲染與錄影範例
+        env:
+          MUJOCO_GL: osmesa
+        run: |
+          PYTHON=python bash scripts/verify_examples.sh ci-render \
+            scripts/ex_viewer.py scripts/ex_mesh_pallet.py scripts/ex_rerun_materials.py \
+            scripts/ex_yreach_mission.py scripts/ex_fork_cyclic.py scripts/ex_reach_xz.py \
+            scripts/ex_reach_xyz.py scripts/ex_gripper_ab.py scripts/make_strips.py
+
+      - name: 檢查是否有腳本失敗
+        run: |
+          if awk -F'\t' '$2 != 0 {found=1} END {exit !found}' workspace/verify/ci-render/result.tsv; then
+            awk -F'\t' '$2 != 0 {print "  " $1 " rc=" $2}' workspace/verify/ci-render/result.tsv
+            exit 1
+          fi
+          cat workspace/verify/ci-render/result.tsv
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-outputs
+          path: |
+            workspace/verify/
+            runs/

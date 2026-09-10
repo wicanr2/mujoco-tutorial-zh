@@ -34,6 +34,7 @@ sources/SOURCES.md     # 資料出處登記
 workspace/             # 本機工作區，不進版控（見 workspace/README.md）
 requirements.txt       # 實測過的套件版本
 LICENSE                # 授權條款（source-available，基於 RRSAL-1.0）
+.github/workflows/    # CI（靜態稽核 ＋ 範例重跑）
 _config.yml            # GitHub Pages（Jekyll）設定
 _layouts/default.html  # 網站版面樣板
 assets/css/main.css    # 網站樣式
@@ -51,6 +52,7 @@ assets/css/main.css    # 網站樣式
 | 重跑 log、備份、訓練中間檔 | `workspace/` | 否 |
 | 授權條款 | 根目錄 `LICENSE` | 是（發行包也要帶一份） |
 | 網站設定與版面 | `_config.yml`、`_layouts/`、`assets/css/` | 是 |
+| CI 設定 | `.github/workflows/` | 是 |
 | Jekyll 建置產物 | `_site/` | 否 |
 | MuJoCo 執行時警告紀錄（`MUJOCO_LOG.TXT`） | 產生於 cwd | 否 |
 
@@ -119,7 +121,20 @@ assets/css/main.css    # 網站樣式
    MuJoCo 的模擬與 Blender 匯出的 STL 都是確定性的，重跑後檔案應該位元相同；出現差異就是真的
    有東西變了，要查清楚。例外是 Blender 的 EEVEE 渲染圖，每次取樣不同、位元必然不一致但視覺
    內容相同 — 這類圖驗證完直接還原，不要拿去覆蓋版控裡的檔案。
-3. **章節清單只維護一份**：`docs/README.md` 是唯一的章節索引，根目錄 `README.md` 只放成果摘要與入口連結。新增章節時，`docs/README.md`、`README.md` 的成果段落、`sources/SOURCES.md` 一起更新。
+3. **CI 會在乾淨的 checkout 上重跑**（`.github/workflows/verify.yml`）：靜態稽核
+   （`scripts/check_docs.py`）＋ 17 支不需要渲染的範例，每次 push 與 PR 都跑。渲染與錄影
+   批次很慢（`ex_loop_steer.py` 一支 18 分鐘），設成手動觸發（Actions 頁面選 workflow →
+   Run workflow → 勾 `run_render`）。
+
+   `check_docs.py` 檢查十項：絕對路徑、文件相對連結、模型可載入、文件裡的 MJCF 區塊、
+   章節結構、章節編號與依賴順序、各目錄 README 的清單登記、孤兒圖片、相依套件登記、
+   README/REPORT 宣稱的數量。**新增檢查請加進這支腳本**，不要只在對話裡跑一次 —— 稽核
+   要能重複執行才有意義。
+
+   CI 另外檢查「重跑後 `runs/`、`models/`、`docs/assets/` 沒有變動」。模擬是確定性的，
+   出現差異就是真的有東西變了。
+
+4. **章節清單只維護一份**：`docs/README.md` 是唯一的章節索引，根目錄 `README.md` 只放成果摘要與入口連結。新增章節時，`docs/README.md`、`README.md` 的成果段落、`sources/SOURCES.md` 一起更新。
 
 ## 主題特定要求
 

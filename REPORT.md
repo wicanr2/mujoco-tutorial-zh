@@ -14,7 +14,7 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 
 ## 二、產出總覽
 
-27 篇教學、34 支 Python 腳本、6 組錄影實驗、31 筆資料出處登記。
+27 篇教學、35 支 Python 腳本、6 組錄影實驗、31 筆資料出處登記。
 
 ### 基礎系列（docs/00–05）
 
@@ -188,7 +188,7 @@ MR1533 沒有側移機構，橫移只能靠底盤 vy，加速度不是太小（�
 
 ### 第一輪：重跑比對
 
-用 `scripts/verify_examples.sh` 把 34 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
+用 `scripts/verify_examples.sh` 把 35 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
 成立，**全部 exit code 0**；三支 Blender 腳本另外用 Blender 4.2.11 跑過，也都通過。沒跑的
 2 支是 `ex_rl_sac.py`（CPU 上要 30 分鐘且已知不收斂，結論已記在 12 章）與
 `ex_rl_sac_gpu.py`（需要 CUDA）。
