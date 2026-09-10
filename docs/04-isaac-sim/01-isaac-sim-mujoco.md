@@ -1,6 +1,7 @@
 # 05｜Isaac Sim 與 MuJoCo：模型互通與工作流程
 
 > 來源：[MJCF Importer Extension — Isaac Sim Documentation](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html)、[isaacsim.asset.importer.mjcf API](https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html)、[Importing a New Asset — Isaac Lab](https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html)、[Isaac Sim Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)
+>
 > 擷取日期：2026-09-09
 >
 > ⚠️ 本章依 AGENTS.md 規範如實標示可行性：本章範例需在 Isaac Sim 環境執行，**本機未安裝 Isaac Sim，程式碼僅依官方文件整理、未實測**。

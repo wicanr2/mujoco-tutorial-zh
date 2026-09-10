@@ -1,0 +1,38 @@
+title: MuJoCo 繁體中文教學與模擬實驗
+description: 27 篇繁體中文 MuJoCo 教學、34 支可執行範例，與一整條 AMR 叉車搬運實驗線
+lang: zh-Hant
+
+url: https://wicanr2.github.io
+baseurl: /mujoco-tutorial-zh
+repo: https://github.com/wicanr2/mujoco-tutorial-zh
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    default_lang: text
+
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: false
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - workspace/
+  - .venv/
+  - scripts/__pycache__/
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - MUJOCO_LOG.TXT
+
+include:
+  - LICENSE

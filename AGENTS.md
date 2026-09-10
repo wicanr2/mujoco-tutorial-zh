@@ -34,6 +34,9 @@ sources/SOURCES.md     # 資料出處登記
 workspace/             # 本機工作區，不進版控（見 workspace/README.md）
 requirements.txt       # 實測過的套件版本
 LICENSE                # 授權條款（source-available，基於 RRSAL-1.0）
+_config.yml            # GitHub Pages（Jekyll）設定
+_layouts/default.html  # 網站版面樣板
+assets/css/main.css    # 網站樣式
 ```
 
 ### 檔案歸屬（決定東西該放哪）
@@ -47,6 +50,8 @@ LICENSE                # 授權條款（source-available，基於 RRSAL-1.0）
 | 教學文件與插圖 | `docs/` | 是 |
 | 重跑 log、備份、訓練中間檔 | `workspace/` | 否 |
 | 授權條款 | 根目錄 `LICENSE` | 是（發行包也要帶一份） |
+| 網站設定與版面 | `_config.yml`、`_layouts/`、`assets/css/` | 是 |
+| Jekyll 建置產物 | `_site/` | 否 |
 | MuJoCo 執行時警告紀錄（`MUJOCO_LOG.TXT`） | 產生於 cwd | 否 |
 
 新增檔案前先對照這張表；沒有對應欄位的產物，預設放 `workspace/`。
@@ -123,6 +128,24 @@ LICENSE                # 授權條款（source-available，基於 RRSAL-1.0）
 範例直接在本機 venv 執行（`.venv/`），不走容器 — GPU 訓練那台 RTX Pro 6000 不能跑
 Docker，只能用 userland 執行，本機端跟著用同一種方式，兩邊的驗證結果才對得起來。
 `requirements.txt` 是這套環境的實測版本組合。
+
+## 網站（GitHub Pages）
+
+<https://wicanr2.github.io/mujoco-tutorial-zh/> 由 Jekyll 從 repo 根目錄建置，
+`README.md` 是首頁（`jekyll-readme-index`），各目錄的 `README.md` 成為該目錄的索引頁。
+
+- **文件裡一律用相對路徑連結**（`docs/06-amr/01-amr-forklift.md`、`../../runs/loop.mp4`）。
+  `jekyll-relative-links` 會把 `.md` 連結改寫成對應的 `.html`，同一份 markdown 在 GitHub
+  與網站上都能點。寫成絕對路徑或 `/` 開頭會在網站上壞掉（站台有 baseurl）。
+- **版面規則**：層級靠細線、留白與字級，不用卡片與色塊；關鍵路徑色只有一個（鏽橙）；
+  表格只用細分隔線，不加粗外框、彩色表頭或斑馬紋。深色模式共用同一組語意變數。
+- **改完版面要實際渲染出來看**，只確認建置成功不算數。本地預覽：
+
+  ```bash
+  docker run --rm --network none -u "$(id -u):$(id -g)" -e HOME=/tmp \
+    --tmpfs /tmp -v "$PWD":/srv/jekyll -w /srv/jekyll acan-jekyll:gh-pages \
+    jekyll build --destination /srv/jekyll/_site
+  ```
 
 ## 版本與相依性
 

@@ -1,7 +1,9 @@
 # 16｜棧板材質實驗：木頭 vs 塑膠（20 kg 載重摩擦測試）
 
 > 參考來源：[Contact parameters / friction — MuJoCo XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；範例已實測通過。
 
 ## 學習目標

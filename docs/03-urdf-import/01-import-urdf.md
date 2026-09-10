@@ -1,6 +1,7 @@
 # 04｜URDF 模型匯入 MuJoCo
 
 > 原文來源：[Modeling — URDF extensions](https://mujoco.readthedocs.io/en/stable/modeling.html#urdf-extensions)、[XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
 
 ## 學習目標

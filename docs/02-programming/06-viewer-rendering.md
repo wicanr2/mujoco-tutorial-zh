@@ -1,7 +1,9 @@
 # 11｜視覺化：互動式 Viewer 與離屏渲染
 
 > 參考來源：[Python bindings — mujoco.viewer / Renderer](https://mujoco.readthedocs.io/en/stable/python.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0（無顯示器，離屏渲染用 `MUJOCO_GL=osmesa` 實測）
 
 ## 學習目標

@@ -1,7 +1,9 @@
 # 17｜門架前傾實驗：棧板滑落邊界（木頭 vs 塑膠、重心偏移）
 
 > 參考來源：[Contact parameters — MuJoCo XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；範例已實測。
 
 ## 學習目標

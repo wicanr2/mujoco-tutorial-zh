@@ -1,7 +1,9 @@
 # 19｜Blender 程序化建模：木棧板 / 塑膠棧板 + 匯入 MuJoCo
 
 > 參考來源：[mesh — MuJoCo XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html#asset-mesh)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-10
+>
 > 測試環境：Linux、Blender 4.2.11（headless）、MuJoCo 3.12.0、Python 3.12.3；範例已實測通過。
 
 ## 學習目標

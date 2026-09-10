@@ -1,7 +1,9 @@
 # 07｜更多 Python 範例：感測器、伺服、Keyframe、平行取樣、mjSpec
 
 > 參考來源：[API Reference](https://mujoco.readthedocs.io/en/stable/APIreference/)、[Modeling](https://mujoco.readthedocs.io/en/stable/modeling.html)、[Model Editing（mjSpec）](https://mujoco.readthedocs.io/en/stable/programming/modeledit.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；本章所有範例皆已實測，輸出為實際執行結果。
 
 ## 學習目標

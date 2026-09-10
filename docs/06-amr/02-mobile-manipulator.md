@@ -1,7 +1,9 @@
 # 14｜AMR 實驗（二）：搬運車上的機械手臂（逆運動學 IK）
 
 > 參考來源：[mj_jacSite — MuJoCo API Reference](https://mujoco.readthedocs.io/en/stable/APIreference/)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；範例已實測通過。
 
 ## 學習目標

@@ -1,6 +1,7 @@
 # 06｜Gazebo 與 MuJoCo：物理引擎外掛機制與模型互通
 
 > 來源：[Gazebo Sim: Physics engines](https://gazebosim.org/api/sim/9/physics.html)、[Switching physics engines](https://gazebosim.org/api/physics/6/switchphysicsengines.html)、[Use a custom engine with Gazebo Physics](https://gazebosim.org/api/physics/9/usecustomengine.html)、[gz-physics GitHub](https://github.com/gazebosim/gz-physics)、[gz-physics#299: MuJoCo plugin 實驗](https://github.com/ignitionrobotics/ign-physics/issues/299)
+>
 > 擷取日期：2026-09-09
 >
 > ⚠️ 本章依 AGENTS.md 規範如實標示可行性：**官方並無維護中的 MuJoCo 物理引擎外掛**；文中所述客製外掛做法需在 Gazebo 環境實作，本機未安裝 Gazebo，程式碼未實測。

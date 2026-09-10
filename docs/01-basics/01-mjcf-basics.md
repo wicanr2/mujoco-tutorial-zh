@@ -1,6 +1,7 @@
 # 02｜MJCF 建模基礎：body、geom、joint、defaults
 
 > 原文來源：[Modeling — MuJoCo Documentation](https://mujoco.readthedocs.io/en/stable/modeling.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
 
 ## 學習目標

@@ -1,6 +1,7 @@
 # 01｜MuJoCo 是什麼？導論與安裝
 
 > 原文來源：[MuJoCo Documentation — Overview](https://mujoco.readthedocs.io/en/stable/overview.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
 
 ## 學習目標

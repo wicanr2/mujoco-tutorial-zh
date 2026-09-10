@@ -1,8 +1,11 @@
 # 10｜進階任務：車桿 Swing-up（能量整形 + LQR）
 
 > 參考來源：[mjd_transitionFD — MuJoCo API Reference](https://mujoco.readthedocs.io/en/stable/APIreference/)、Åström & Furuta, *Swinging up a pendulum by energy control* (Automatica, 2000)
+>
 > 擷取日期：2026-09-09
+>
 > 相依套件：`pip install scipy`（LQR 解 Riccati 方程用）
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；已實測成功。
 
 ## 學習目標

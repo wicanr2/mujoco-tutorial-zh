@@ -1,7 +1,9 @@
 # 13｜AMR 實驗（一）：叉車建模與牙叉控制
 
 > 參考來源：[Modeling — MuJoCo Documentation](https://mujoco.readthedocs.io/en/stable/modeling.html)、[XML Reference](https://mujoco.readthedocs.io/en/stable/XMLreference.html)（stable，MuJoCo 3.x）
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；範例已實測通過。
 
 ## 學習目標

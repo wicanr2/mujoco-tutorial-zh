@@ -1,0 +1,222 @@
+/* 語意色：一個顏色一個意思，全站固定。關鍵路徑色只有一個（鏽橙）。 */
+:root {
+  --paper:      #faf8f5;   /* 紙面 */
+  --ink:        #262220;   /* 正文 */
+  --ink-2:      #57504a;   /* 次要說明 */
+  --ink-3:      #8b8279;   /* 輔助資訊 */
+  --rule:       #e3ded6;   /* 細分隔線 */
+  --rule-2:     #c6bdb1;   /* 較明顯的線 */
+  --key:        #a4531d;   /* 關鍵路徑：連結、當前位置 */
+  --key-soft:   #f2e6d9;   /* 關鍵路徑的淡填色 */
+  --panel:      #f3efe8;   /* 程式碼、需要邊界的內容 */
+  --ok:         #3f6b46;
+  --warn:       #96701c;
+  --bad:        #93372c;
+
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "SFMono-Regular", Menlo, Consolas, "Noto Sans Mono CJK TC", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #171513; --ink: #e8e2da; --ink-2: #b3aaa0; --ink-3: #857c72;
+    --rule: #322d28; --rule-2: #4b443c; --key: #d98a4a; --key-soft: #2c231b;
+    --panel: #1e1b18; --ok: #7fae86; --warn: #c9a34a; --bad: #d18378;
+  }
+}
+
+/* 字級基準只有一個，其他一律 rem */
+html { font-size: 17px; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.95;
+  letter-spacing: .01em;
+  font-weight: 400;
+}
+
+/* ---------- 站頭 ---------- */
+.site-head {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2.4rem 1.6rem 1rem;
+  border-bottom: 2px solid var(--rule-2);
+}
+.site-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 660;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .02em;
+}
+.site-nav { margin-top: .55rem; font-size: .85rem; line-height: 1.9; }
+.site-nav a {
+  color: var(--ink-2);
+  text-decoration: none;
+  margin-right: 1.15rem;
+  border-bottom: 1px solid transparent;
+}
+.site-nav a:hover { color: var(--key); border-bottom-color: var(--key); }
+.site-nav a.ext { color: var(--ink-3); }
+
+/* ---------- 內容 ---------- */
+.page {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0 1.6rem 4rem;
+}
+
+.page h1 {
+  font-size: 1.65rem;
+  font-weight: 660;
+  line-height: 1.5;
+  letter-spacing: .01em;
+  margin: 2.6rem 0 .3rem;
+  padding-bottom: .55rem;
+  border-bottom: 2px solid var(--rule-2);
+}
+.page h2 {
+  font-size: 1.28rem;
+  font-weight: 660;
+  line-height: 1.6;
+  margin: 3.4rem 0 1rem;      /* 上方留白明顯大於下方 */
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+.page h2 code, .page h3 code, .page h4 code {
+  font-size: .84em;
+  font-weight: 400;
+  background: none;
+  padding: 0;
+}
+.page h3 {
+  font-size: 1.08rem;
+  font-weight: 660;
+  line-height: 1.7;
+  margin: 2.4rem 0 .7rem;
+}
+.page h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin: 2rem 0 .6rem;
+}
+
+.page p { margin: 0 0 1.5rem; }        /* 段距大於一個行高 */
+
+.page a { color: var(--key); text-decoration: none; border-bottom: 1px solid var(--key-soft); }
+.page a:hover { border-bottom-color: var(--key); }
+
+.page ul, .page ol { margin: 0 0 1.5rem; padding-left: 1.5rem; }
+.page li { margin-bottom: .55rem; }
+.page li > p { margin-bottom: .55rem; }  /* kramdown 鬆式清單 */
+.page li:last-child, .page li > p:last-child { margin-bottom: 0; }
+.page ul ul, .page ol ol, .page ul ol, .page ol ul { margin: .55rem 0 0; }
+
+.page blockquote {
+  margin: 0 0 1.5rem;
+  padding: .1rem 0 .1rem 1.1rem;
+  border-left: 2px solid var(--rule-2);
+  color: var(--ink-2);
+}
+.page blockquote p:last-child { margin-bottom: 0; }
+
+.page hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0; }
+
+.page img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: .4rem 0 1.6rem;
+  border: 1px solid var(--rule);   /* 深色渲染圖在紙面上要有邊界 */
+  border-radius: 2px;
+}
+.page td img, .page th img { margin: .3rem 0; }
+
+.page strong { font-weight: 660; }
+
+/* ---------- 表格：只用細線，無粗外框、無彩色表頭、無斑馬紋 ---------- */
+.page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.8rem;
+  font-size: .93rem;
+  line-height: 1.75;
+}
+.page thead th {
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  text-align: left;
+  padding: .55rem .9rem .55rem 0;
+  border-bottom: 1px solid var(--rule-2);
+  white-space: nowrap;
+}
+.page tbody td {
+  padding: .75rem .9rem .75rem 0;   /* 表格列 padding ≥ .7rem */
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.page thead th:last-child, .page tbody td:last-child { padding-right: 0; }
+.page tbody tr:last-child td { border-bottom: 0; }
+.page td.num, .page th.num {
+  text-align: right;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.table-scroll { overflow-x: auto; margin-bottom: 1.8rem; }
+.table-scroll table { margin-bottom: 0; }
+
+/* ---------- 程式碼：對 Rouge 的包裝層下手 ---------- */
+.page code {
+  font-family: var(--mono);
+  font-size: .87em;
+  margin: 0 .12em;                 /* 不黏住前後中文字 */
+  padding: .1em .32em;
+  background: var(--panel);
+  border-radius: 2px;
+}
+.page pre {
+  font-family: var(--mono);
+  font-size: .84rem;
+  line-height: 1.72;
+  margin: 0 0 1.8rem;
+  padding: .95rem 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow-x: auto;
+  letter-spacing: 0;
+}
+.page pre code { margin: 0; padding: 0; background: none; font-size: 1em; }
+.page .highlighter-rouge { margin: 0 0 1.8rem; }
+.page .highlighter-rouge .highlight { margin: 0; background: none; }
+.page .highlighter-rouge pre.highlight { margin: 0; }
+
+/* ---------- 站尾 ---------- */
+.site-foot {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.6rem 1.6rem 3.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: .85rem;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+.site-foot p { margin: 0 0 .7rem; }
+.site-foot p:last-child { margin-bottom: 0; }
+.site-foot .muted { color: var(--ink-3); }
+.site-foot a { color: var(--key); text-decoration: none; border-bottom: 1px solid var(--key-soft); }
+
+@media (max-width: 640px) {
+  html { font-size: 16px; }
+  .site-head { padding-top: 1.8rem; }
+  .page h1 { font-size: 1.45rem; }
+  .page h2 { font-size: 1.18rem; margin-top: 2.8rem; }
+}

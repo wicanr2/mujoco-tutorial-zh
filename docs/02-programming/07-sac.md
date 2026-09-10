@@ -1,7 +1,9 @@
 # 12｜SAC：Off-policy 對照實驗
 
 > 參考來源：[Stable-Baselines3 SAC](https://stable-baselines3.readthedocs.io/en/master/modules/sac.html)、[SAC 論文（Haarnoja et al., 2018）](https://arxiv.org/abs/1801.01290)
+>
 > 擷取日期：2026-09-09
+>
 > 相依套件：`pip install gymnasium stable-baselines3`（實測 sb3 2.9.0、torch 2.14.0，Linux CPU）
 
 ## 學習目標

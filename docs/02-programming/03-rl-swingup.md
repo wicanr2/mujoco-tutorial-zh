@@ -1,7 +1,9 @@
 # 08｜RL 訓練範例：單擺 Swing-up（ARS 隨機搜索）
 
 > 參考來源：[MuJoCo Overview — Performance / multi-threading](https://mujoco.readthedocs.io/en/stable/overview.html)、[API Reference](https://mujoco.readthedocs.io/en/stable/APIreference/)；ARS 演算法出自論文 [Simple random search of static linear policies (Mania et al., 2018)](https://arxiv.org/abs/1803.07055)
+>
 > 擷取日期：2026-09-09
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；已實測，約 21 秒完成 30 輪訓練。
 
 ## 學習目標

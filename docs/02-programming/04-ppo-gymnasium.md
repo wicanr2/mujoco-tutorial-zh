@@ -1,7 +1,9 @@
 # 09｜接軌標準 RL 工具鏈：Gymnasium + Stable-Baselines3 PPO
 
 > 參考來源：[Gymnasium 文件](https://gymnasium.farama.org/)、[Stable-Baselines3 文件](https://stable-baselines3.readthedocs.io/)、[PPO 論文（Schulman et al., 2017）](https://arxiv.org/abs/1707.06347)
+>
 > 擷取日期：2026-09-09
+>
 > 相依套件：`pip install gymnasium stable-baselines3`（實測 sb3 2.9.0、gymnasium 1.3.0、torch 2.14.0，Linux）
 
 ## 學習目標

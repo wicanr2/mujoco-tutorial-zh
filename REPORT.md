@@ -1,7 +1,9 @@
 # MuJoCo 繁體中文教學專案 — 成果報告
 
 > 更新日期：2026-09-10
+>
 > Repo：<https://github.com/wicanr2/mujoco-tutorial-zh>
+>
 > 成果摘要與影片見 [README.md](README.md)；本檔放完整數據、除錯案例與可行性結論。
 
 ## 一、專案目標

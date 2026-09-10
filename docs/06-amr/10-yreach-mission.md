@@ -1,6 +1,7 @@
 # 22｜y-reach 取放任務：錄影 + 6DOF 軌跡記錄
 
 > 擷取日期：2026-09-10
+>
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3、imageio/matplotlib；範例已實測通過。
 
 ## 學習目標
