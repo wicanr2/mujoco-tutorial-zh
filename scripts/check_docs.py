@@ -199,6 +199,25 @@ def check_claimed_counts():
     }
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     report = (ROOT / "REPORT.md").read_text(encoding="utf-8")
+
+    # 出處筆數：SOURCES.md 的資料列（扣掉表頭與分隔線）
+    src_rows = sum(1 for l in (ROOT / "sources" / "SOURCES.md").read_text(encoding="utf-8").splitlines()
+                   if l.startswith("| ") and not l.startswith(("| 教學章節", "| ---")))
+    for m in re.finditer(r"(\d+) 筆資料出處", report):
+        if int(m.group(1)) != src_rows:
+            bad.append(f"REPORT.md: 宣稱 {m.group(1)} 筆出處，實際 {src_rows} 筆")
+    for m in re.finditer(r"出處登記（(\d+) 筆）", report):
+        if int(m.group(1)) != src_rows:
+            bad.append(f"REPORT.md: 宣稱出處登記 {m.group(1)} 筆，實際 {src_rows} 筆")
+
+    # 除錯案例條數：REPORT 第五節的編號清單
+    sec = report.split("## 五、除錯案例清單")
+    if len(sec) > 1:
+        cases = len(re.findall(r"^\d+\. ", sec[1].split("## 六、")[0], re.M))
+        zh = {20: "二十", 25: "二十五", 26: "二十六", 27: "二十七", 28: "二十八", 30: "三十"}
+        for m in re.finditer(r"(二十[一二三四五六七八九]?|三十[一二三四五六七八九]?)條除錯案例", readme):
+            if zh.get(cases) != m.group(1):
+                bad.append(f"README.md: 宣稱「{m.group(1)}條」除錯案例，實際 {cases} 條")
     for text, name in ((readme, "README.md"), (report, "REPORT.md")):
         for m in re.finditer(r"(\d+) 篇教學", text):
             if int(m.group(1)) != actual["章節"]:
