@@ -28,6 +28,7 @@
   - [15｜六軸手臂的 6D IK：位置與姿態同時控制](06-amr/03-ik-6d.md)
   - [16｜棧板材質實驗：木頭 vs 塑膠（20 kg 載重摩擦測試）](06-amr/04-pallet-materials.md)
   - [17｜門架前傾實驗：棧板滑落邊界（木頭 vs 塑膠、重心偏移）](06-amr/05-tilt-boundary.md)
+  - [18｜真實 mesh 叉車模型：MR1533（TB3 資產）+ Blender headless 渲染](06-amr/06-mr1533-mesh.md)
 
 ## 附錄
 

@@ -1,0 +1,85 @@
+<mujoco model="mr1533_mujoco">
+  <compiler angle="radian" meshdir="meshes/mr1533/"/>
+
+  <!-- MR1533 三輪舵輪叉車（mesh 取自 TB3 實驗的 Blender 模型，僅作視覺；
+       碰撞用簡化盒體。關節配置依 urdf/mr1533_light.urdf） -->
+
+  <asset>
+    <mesh name="chassis"   file="forward_fixed.obj"/>
+    <mesh name="mast"      file="lift_fixed.obj"/>
+    <mesh name="carriage"  file="fork_liftA1.obj"/>
+    <mesh name="tiltfix"   file="tilt_fixed.obj"/>
+    <mesh name="forks"     file="fork_tilt.obj"/>
+    <mesh name="wheel"     file="front_left.obj"/>
+  </asset>
+
+  <default>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="2"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light pos="2 -3 4" dir="-0.4 0.6 -1"/>
+    <geom name="floor" type="plane" size="10 10 0.1" rgba="0.25 0.25 0.28 1"/>
+
+    <!-- 底盤：平面三自由度（x/y/yaw），原點在前輪軸中點地面 -->
+    <body name="base" pos="0 0 0">
+      <joint name="move_x" type="slide" axis="1 0 0" damping="50"/>
+      <joint name="move_y" type="slide" axis="0 1 0" damping="50"/>
+      <joint name="yaw"    type="hinge" axis="0 0 1" damping="50"/>
+      <inertial pos="0.85 0 0.6" mass="2000" diaginertia="800 800 800"/>
+      <!-- 碰撞：簡化盒 -->
+      <geom type="box" size="0.55 0.65 0.30" pos="1.15 0 0.35" rgba="0.6 0.6 0.62 1" group="3"/>
+      <!-- 視覺：真實 mesh -->
+      <geom class="visual" type="mesh" mesh="chassis" rgba="0.75 0.76 0.78 1"/>
+      <geom class="visual" type="mesh" mesh="wheel" pos="0  0.454 0.127" rgba="0.05 0.05 0.05 1"/>
+      <geom class="visual" type="mesh" mesh="wheel" pos="0 -0.454 0.127" rgba="0.05 0.05 0.05 1"/>
+
+      <!-- 門架（固定段）：URDF stage 簡化為固定 -->
+      <body name="mast" pos="0.85 0 0">
+        <inertial pos="0 0 1.17" mass="150" diaginertia="70 60 10"/>
+        <geom class="visual" type="mesh" mesh="mast" rgba="0.35 0.36 0.38 1"/>
+        <geom type="box" size="0.04 0.45 1.1" pos="0 0 1.17" rgba="0.35 0.36 0.38 1" group="3"/>
+
+        <!-- 升降第一級 z1（0~1.5 m） -->
+        <body name="carriage1" pos="-0.14 0 0">
+          <joint name="lift1" type="slide" axis="0 0 1" range="0 1.5" damping="20"/>
+          <inertial pos="0 0 1.3" mass="60" diaginertia="26 24 2.5"/>
+          <geom class="visual" type="mesh" mesh="carriage" rgba="0.35 0.36 0.38 1"/>
+
+          <!-- 升降第二級 z2（0~1.5 m） -->
+          <body name="carriage2" pos="-0.09 0 0.29">
+            <joint name="lift2" type="slide" axis="0 0 1" range="0 1.5" damping="20"/>
+            <inertial pos="0 0 0.24" mass="50" diaginertia="2.2 1.2 1.3"/>
+            <geom class="visual" type="mesh" mesh="tiltfix" rgba="0.35 0.36 0.38 1"/>
+
+            <!-- 牙叉（可前傾 tilt，URDF 上限 5°） -->
+            <body name="fork" pos="-0.12 0 0">
+              <joint name="tilt" type="hinge" axis="0 1 0" range="-0.3 0.3" damping="10"/>
+              <inertial pos="-0.5 0 0.3" mass="40" diaginertia="5 5 1"/>
+              <geom class="visual" type="mesh" mesh="forks" rgba="0.3 0.3 0.32 1"/>
+              <!-- 碰撞：兩根叉齒（mesh 量測：x -1.15~0.09, y ±(0.15~0.48), z -0.23~-0.19） -->
+              <geom type="box" size="0.48 0.16 0.02" pos="-0.62  0.315 -0.21" rgba="0.3 0.3 0.32 1" group="3" friction="0.1 0.05 0.01"/>
+              <geom type="box" size="0.48 0.16 0.02" pos="-0.62 -0.315 -0.21" rgba="0.3 0.3 0.32 1" group="3" friction="0.1 0.05 0.01"/>
+              <site name="fork_tip" pos="-1.1 0 -0.21" size="0.01"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <velocity name="vx"   joint="move_x" kv="5000" ctrlrange="-1.5 1.5"/>
+    <velocity name="vy"   joint="move_y" kv="5000" ctrlrange="-1.5 1.5"/>
+    <velocity name="wyaw" joint="yaw"    kv="2000" ctrlrange="-1.5 1.5"/>
+    <position name="lift1_ctl" joint="lift1" kp="30000" kv="3000" ctrllimited="true" ctrlrange="0 1.5"/>
+    <position name="lift2_ctl" joint="lift2" kp="20000" kv="2000" ctrllimited="true" ctrlrange="0 1.5"/>
+    <position name="tilt_ctl"  joint="tilt"  kp="5000"  kv="500"  ctrllimited="true" ctrlrange="-0.3 0.3"/>
+  </actuator>
+
+  <sensor>
+    <framepos objtype="site" objname="fork_tip"/>
+  </sensor>
+</mujoco>
