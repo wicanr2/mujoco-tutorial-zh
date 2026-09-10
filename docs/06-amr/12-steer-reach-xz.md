@@ -52,6 +52,10 @@ drive_to(-0.65) → lift1=0.39（叉齒對準層板下方空隙）
 結果：取貨 → 搬運 → 放置 全程驗證通過 ✓
 ```
 
+[![貨架取放八階段](../assets/strip_reach_xz.png)](../assets/strip_reach_xz.png)
+
+從貨架層板取貨到放回地面的八個階段。注意第 5 格：貨保持在低位退出貨架，離架之後才升高。
+
 影片：[runs/reach_xz.mp4](../../runs/reach_xz.mp4)
 
 ### 三個讓這個流程成立的關鍵

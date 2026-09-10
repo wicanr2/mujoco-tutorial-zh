@@ -40,6 +40,10 @@ runs/mission.mp4: 571 幀（30 fps，19 秒）
 
 軌跡解讀：棧板 z 在 t≈5.5 s 到最高的 0.54（抬起）、x 從 -1.35 跟到 0.06、y 從 0.45 跟到 -0.55（reach 外伸時一度到 -1.07）；roll/pitch 在插入與放置瞬間有小尖峰（接觸衝擊），其餘時間平穩。
 
+[![取放任務全程](../assets/strip_mission.png)](../assets/strip_mission.png)
+
+取放任務全程：牙叉插入 → 抬起 → 搬運 → 放回地面。
+
 影片：[runs/mission.mp4](../../runs/mission.mp4)
 
 ## 錄影與記錄的做法

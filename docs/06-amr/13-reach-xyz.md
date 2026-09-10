@@ -38,6 +38,10 @@ drive_to(-0.65) → lift1=0.39 → stage -0.65（X 深插，之後全程保持�
 結果：reach X/Y/Z 取貨 → 搬運 → 側移對位 → 放置 全程驗證通過 ✓
 ```
 
+[![reach X/Y/Z 取放過程](../assets/strip_reach_xyz.png)](../assets/strip_reach_xyz.png)
+
+比 24 章多一段 y 向 reach 側移對位。
+
 影片：[runs/reach_xyz.mp4](../../runs/reach_xyz.mp4)
 
 ## 討論

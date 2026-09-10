@@ -22,13 +22,15 @@ steer = (REPO_ROOT / "models" / "mr1533_steer.xml").read_text()
 steer = steer.replace('meshdir="meshes/mr1533/"', f'meshdir="{MESHES / "mr1533"}/"')
 steer = steer.replace('file="../yreach_carriage.stl"', f'file="{MESHES / "yreach_carriage.stl"}"')
 
-# 貨架：兩根立柱 + 兩層橫梁（層板 z=0.35）；木頭棧板放在層板上
+# 貨架：兩根立柱 + 兩層橫梁（層板 z=0.35）；木頭棧板放在層板上。
+# 貨架的 geom 不掛 group 3 —— 渲染時 `opt.geomgroup[3] = 0` 是用來藏棧板的碰撞盒的，
+# 貨架跟著掛 3 就會一起隱形，錄影裡看起來像在地面上取放。group 只影響顯示不影響物理。
 RACK = """
     <body name="rack" pos="-1.2 0 0">
-      <geom type="box" size="0.05 0.05 0.7" pos="0  0.60 0.7" rgba="0.2 0.3 0.5 1" group="3"/>
-      <geom type="box" size="0.05 0.05 0.7" pos="0 -0.60 0.7" rgba="0.2 0.3 0.5 1" group="3"/>
-      <geom type="box" size="0.35 0.55 0.025" pos="-0.3 0 0.325" rgba="0.3 0.4 0.6 1" group="3"/>
-      <geom type="box" size="0.35 0.55 0.025" pos="-0.3 0 0.875" rgba="0.3 0.4 0.6 1" group="3"/>
+      <geom type="box" size="0.05 0.05 0.7" pos="0  0.60 0.7" rgba="0.2 0.3 0.5 1"/>
+      <geom type="box" size="0.05 0.05 0.7" pos="0 -0.60 0.7" rgba="0.2 0.3 0.5 1"/>
+      <geom type="box" size="0.35 0.55 0.025" pos="-0.3 0 0.325" rgba="0.3 0.4 0.6 1"/>
+      <geom type="box" size="0.35 0.55 0.025" pos="-0.3 0 0.875" rgba="0.3 0.4 0.6 1"/>
     </body>
     <body name="pallet_wood" pos="-1.5 0 0.35" euler="0 0 1.5707963">
       <freejoint/>

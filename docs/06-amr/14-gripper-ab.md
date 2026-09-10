@@ -31,6 +31,10 @@ weld 抓取啟動（rel_pos=[-0.062 0.021 -0.129]）
 結果：A 取 B 放驗證通過 ✓
 ```
 
+[![夾爪 A 桌取、B 桌放](../assets/strip_gripper.png)](../assets/strip_gripper.png)
+
+方塊從 A 台被夾起、搬到 B 台放下。
+
 影片：[runs/gripper.mp4](../../runs/gripper.mp4)
 
 ## 關鍵技巧：weld 抓取（不重吸）

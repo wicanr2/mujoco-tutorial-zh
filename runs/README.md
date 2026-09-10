@@ -84,3 +84,15 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_loop_steer.py
 
 無顯示器環境必須設 `MUJOCO_GL=osmesa`（或 `egl`），否則渲染會失敗。重跑會覆蓋這裡的檔案，
 需要保留舊版時先複製到 `workspace/backup/`。
+
+## 過程圖條
+
+六支錄影各有一張過程圖條（`docs/assets/strip_<實驗名>.png`），在對應章節裡就看得到，
+不必下載影片。用 `scripts/make_video_strips.py` 從這裡的 `.mp4` 抽幀產生 —— 改動實驗
+腳本、重錄影片之後要一起重產：
+
+```bash
+python scripts/make_video_strips.py                    # 全部
+python scripts/make_video_strips.py reach_xz           # 單一支
+python scripts/make_video_strips.py --suggest reach_xz # 重挑時間點時看候選
+```

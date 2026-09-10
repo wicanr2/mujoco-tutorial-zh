@@ -35,6 +35,10 @@ runs/fork_cyclic.mp4: 831 幀（27.7 秒）
 結果：連續上上下下左右左右驗證通過 ✓
 ```
 
+[![升降與側移的極值畫面](../assets/strip_fork_cyclic.png)](../assets/strip_fork_cyclic.png)
+
+升降與側移的極值畫面 — 每格取自升到頂、降到底、側移兩端這些轉折點。
+
 影片：[runs/fork_cyclic.mp4](../../runs/fork_cyclic.mp4)
 
 ## 除錯紀錄

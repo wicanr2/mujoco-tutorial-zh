@@ -65,6 +65,7 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `make_yreach_blender.py` | 程序化建 y 向 reach 滑台，匯出 STL | Blender 4.x |
 | `render_mr1533_blender.py` | 用原始 .blend 檔渲染 MR1533 展示圖 | Blender 4.x + TB3 資產 |
 | `make_strips.py` | 把實驗過程做成多幀圖條 | MuJoCo 離屏渲染 |
+| `make_video_strips.py` | 從 `runs/` 的錄影抽幀拼成圖條（動作轉折點自動選幀） | imageio、Pillow |
 | `verify_examples.sh` | 逐支重跑範例並記錄 exit code 與耗時 | — |
 | `check_docs.py` | 靜態稽核：絕對路徑、連結、模型可載入、章節結構、清單與數字一致性 | mujoco |
 

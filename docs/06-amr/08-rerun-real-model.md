@@ -18,7 +18,7 @@
 
 `models/mr1533_pallet_template.xml` = MR1533 叉車（2000 kg）+ Blender 棧板（1.0×0.8 m、20 kg、枕木沿叉齒方向）：
 
-![取貨流程](../assets/strip_pickup.png)
+[![取貨流程](../assets/strip_pickup.png)](../assets/strip_pickup.png)
 
 上圖四幀：接近 → 牙叉插入棧板下方 → 抬起 → 停穩（`scripts/make_strips.py` 產生）。
 
@@ -55,7 +55,7 @@ tilt=-12.4°  棧板 z=0.250  俯仰=12.4°
 → 棧板俯仰角完全跟隨牙叉，直到前端著地
 ```
 
-![前傾卸貨](../assets/strip_tilt.png)
+[![前傾卸貨](../assets/strip_tilt.png)](../assets/strip_tilt.png)
 
 四幀：抬起 → 前傾 8° → 前傾 14° → 棧板前端著地（最終 z=0.142）。
 

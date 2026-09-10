@@ -34,6 +34,11 @@ runs/loop.mp4: 4500 幀
 
 ![xy 軌跡](../../runs/loop_traj.png)
 
+[![繞圈過程](../assets/strip_loop.png)](../assets/strip_loop.png)
+
+軌跡圖看路徑，圖條看車身姿態 — 錄影的相機跟著車走，所以圖條裡的背景幾乎不變，要看走位還是得看上面那張 xy 軌跡。每格標的是剛通過的 waypoint。
+
+
 圖分三格：左為 xy 軌跡與 waypoint、中為底盤朝向 yaw、右為舵輪轉向角與驅動角速度。
 
 軌跡是圓角正方形，轉彎時外擺 0.41 m（x 最遠到 2.41，waypoint 在 2.0）— 舵輪不能原地轉，
