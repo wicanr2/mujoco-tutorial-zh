@@ -163,6 +163,17 @@ assets/css/main.css    # 網站樣式
 Docker，只能用 userland 執行，本機端跟著用同一種方式，兩邊的驗證結果才對得起來。
 `requirements.txt` 是這套環境的實測版本組合。
 
+GPU 主機是**共用的**，而且 GPU 是 vGPU 切出來的，能力有缺口：
+
+- **開跑前重看一次負載**（`uptime`、`nvidia-smi`）。盤點有時效，半小時前的快照不算數。
+  CPU 最多用一半 — 腳本的執行緒數／平行環境數要能用環境變數調（`WORKERS`、`N_ENVS`），
+  把上限寫進腳本本體，不要只寫在對話裡。
+- **PyTorch 可用、JAX/XLA 不可用**（vGPU 不支援 CUDA VMM）。「這台有 GPU」不是一個布林值，
+  每個框架要各自實測；一個框架跑得動不能推論另一個。細節見 28 章。
+- **只在自己的工作目錄下寫檔**，不裝系統套件（用 `uv` 建 venv），不把 git 憑證複製上去。
+- 吞吐、耗時這類**牆鐘時間量測要記錄當下的 load average**，並在文件標明它是共用主機上量的；
+  絕對值不可比，同一時段連續跑出來的倍率才可比。
+
 ## 網站（GitHub Pages）
 
 <https://wicanr2.github.io/mujoco-tutorial-zh/> 由 Jekyll 從 repo 根目錄建置，

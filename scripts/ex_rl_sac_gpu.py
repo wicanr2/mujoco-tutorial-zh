@@ -8,6 +8,8 @@
 import sys
 sys.path.insert(0, ".")  # 讓 import 找到 ex_rl_ppo
 
+import os
+
 import mujoco
 import gymnasium as gym
 import numpy as np
@@ -62,7 +64,11 @@ def make_env():
 
 
 if __name__ == "__main__":
-    env = SubprocVecEnv([make_env for _ in range(8)])
+    # 平行環境數。預設 8（12 章的原始設定）；在共用主機上跑時用 N_ENVS 調低，
+    # 別把整台機器的 CPU 佔滿 —— GPU 版的瓶頸在梯度更新，不在取樣。
+    n_envs = int(os.environ.get("N_ENVS", "8"))
+    print(f"平行環境數 = {n_envs}", flush=True)
+    env = SubprocVecEnv([make_env for _ in range(n_envs)])
     model = SAC("MlpPolicy", env, learning_rate=1e-3, buffer_size=100_000,
                 batch_size=256, learning_starts=500, seed=0, verbose=0,
                 device="cuda")

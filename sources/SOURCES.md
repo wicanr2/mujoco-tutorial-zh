@@ -8,6 +8,9 @@
 | docs/00-intro | https://github.com/google-deepmind/mujoco | 2026-09-09 | latest | 安裝方式 pip install mujoco |
 | docs/01-basics | https://mujoco.readthedocs.io/en/stable/modeling.html | 2026-09-09 | stable (3.x) | Kinematic tree、Default settings、Coordinate frames |
 | docs/02-programming | https://mujoco.readthedocs.io/en/stable/programming/ | 2026-09-09 | stable (3.x) | 架構、命名慣例、mjModel/mjData |
+| docs/02-programming | https://mujoco.readthedocs.io/en/stable/mjx.html | 2026-09-11 | stable (3.x) | MJX 用法、Feature Parity 表、MJX-JAX 與 MJX-Warp 分工 |
+| docs/02-programming | https://github.com/google-deepmind/mujoco_warp | 2026-09-11 | latest | MJX-Warp 的底層實作 |
+| docs/02-programming | https://docs.jax.dev/en/latest/ | 2026-09-11 | latest | jax.vmap / lax.scan / JIT 與非同步執行語意 |
 | docs/03-urdf-import | https://mujoco.readthedocs.io/en/stable/modeling.html#urdf-extensions | 2026-09-09 | stable (3.x) | `<mujoco>` 擴充區段、URDF 預設值差異、建議工作流程 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/5.1.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html | 2026-09-09 | Isaac Sim 5.1 | MJCF Importer 擴充 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html | 2026-09-09 | latest | MJCFImporter Python API |

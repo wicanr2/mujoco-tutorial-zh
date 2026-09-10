@@ -24,3 +24,9 @@ scipy==1.18.1
 gymnasium==1.3.0
 stable-baselines3==2.9.0
 torch==2.14.0
+
+# 選用：MJX 批次模擬（28 章）。本機環境未安裝，版本未鎖 —— 下面的版本是
+# 遠端 GPU 主機上實測過的組合。GPU 後端另需對應 CUDA 版本的 plugin
+# （Blackwell 要 jax[cuda13]；jax[cuda12] 不支援 compute capability 12.0）。
+# mujoco-mjx==3.12.0
+# jax==0.11.1

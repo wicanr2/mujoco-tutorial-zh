@@ -1,6 +1,6 @@
 # MuJoCo 繁體中文教學與模擬實驗
 
-用 MuJoCo 物理引擎寫的 27 篇繁體中文教學、35 支 Python 腳本，以及一整條 AMR 叉車搬運實驗線 —
+用 MuJoCo 物理引擎寫的 28 篇繁體中文教學、36 支 Python 腳本，以及一整條 AMR 叉車搬運實驗線 —
 從盒子堆出來的簡化模型，一路做到真實 mesh 舵輪叉車的完整取放任務。每個實驗都留下影片、
 CSV 軌跡記錄與實測數字，文件裡的每個數字都能在對應的 log 找到出處。
 
@@ -56,12 +56,14 @@ mesh 車體、真實舵輪底盤、真實貨架，最後串成完整的搬運任
 | ARS（手寫 numpy） | -0.30 | 21 秒 | CPU | [08](docs/02-programming/03-rl-swingup.md) |
 | PPO（SB3，150k 步） | -0.11 | 6 分鐘 | CPU | [09](docs/02-programming/04-ppo-gymnasium.md) |
 | SAC（SB3，60k 步） | 未收斂 | 30 分鐘 | CPU | [12](docs/02-programming/07-sac.md) |
-| SAC（zoo 超參，60k 步） | -0.21 | 4 分鐘 | RTX Pro 6000 | [12](docs/02-programming/07-sac.md) |
+| SAC（zoo 超參，60k 步） | -0.21 | 4 分鐘 | RTX Pro 6000（8 環境） | [12](docs/02-programming/07-sac.md) |
+| SAC（同上，2026-09-11 重跑） | -0.20 | 86 秒 | RTX Pro 6000（4 環境） | [12](docs/02-programming/07-sac.md) |
 
 SAC 在 CPU 上沒學起來，不是環境或回報設計有問題（同一個環境 PPO 與 ARS 都收斂），而是
 off-policy 演算法需要夠高的更新頻率；CPU 被迫把 `train_freq` 調低就學不動，換 GPU 補回來
 之後 60k 步就收斂 — 比 PPO 少一半以上的樣本。訓練好的權重都收在 [`policies/`](policies/)，
-可以直接載入試玩。
+可以直接載入試玩。2026-09-11 在同一張卡上重跑確認：同設定連跑兩次每個檢查點逐位相同，
+把 GPU 訓練出的權重帶回本機用 CPU 回放，評估值也一樣。
 
 ## 幾個值得記下來的結論
 
@@ -90,8 +92,18 @@ off-policy 演算法需要夠高的更新頻率；CPU 被迫把 `train_freq` 調
 壓到 15%。三個修好之後，貨的漂移峰值從 110 cm 降到 6.8 cm。**判定實驗成功要看整段軌跡，不是最後
 一幀** —— 這裡的終點值是 1.0 cm，只印終點就看不到過程中滑出去的那 6.8 cm。
 
-二十七條除錯案例的完整清單在 [REPORT.md](REPORT.md)，每一條在對應章節都有現象、原因與解法。
-三輪稽核的完整紀錄（含更正了什麼、驗證過哪些仍正確）也在同一份文件。
+**「這台有 GPU」不是一個布林值。** 12 章的 SAC 在 RTX Pro 6000 上訓練正常、
+`torch.cuda.is_available()` 回 `True`，同一張卡上 JAX/XLA 卻完全起不來：這是 vGPU 切出來的
+裝置，沒有暴露 CUDA 的虛擬記憶體管理（VMM）API，而 XLA 的記憶體配置器硬性需要它。
+錯誤訊息（`no supported devices found for platform CUDA`）長得像安裝沒弄好，換 jax 版本、
+換 CUDA 版本都救不回來。虛擬化環境要逐個框架實測，不能拿一個框架跑得動去推論另一個。
+
+**固定 seed 不等於可重現，平行環境數也要對齊。** 12 章同一支腳本、同一個 `seed=0`，
+4 個平行環境收斂到 -0.2012、8 個是 -0.2101。seed 鎖住的是隨機數列，不是資料進 replay buffer
+的順序。要比較兩次訓練，得先確認取樣結構一樣。
+
+三十二條除錯案例的完整清單在 [REPORT.md](REPORT.md)，每一條在對應章節都有現象、原因與解法。
+四輪稽核的完整紀錄（含更正了什麼、驗證過哪些仍正確）也在同一份文件。
 
 ## 教學目錄
 
@@ -99,7 +111,7 @@ off-policy 演算法需要夠高的更新頻率；CPU 被迫把 `train_freq` 調
 
 **基礎**：[01 導論與安裝](docs/00-intro/01-what-is-mujoco.md)｜[02 MJCF 建模](docs/01-basics/01-mjcf-basics.md)｜[03 程式設計入門](docs/02-programming/01-simulation-loop.md)｜[04 URDF 匯入](docs/03-urdf-import/01-import-urdf.md)｜[05 Isaac Sim 整合](docs/04-isaac-sim/01-isaac-sim-mujoco.md)｜[06 Gazebo 整合](docs/05-gazebo/01-gazebo-mujoco.md)
 
-**程式設計與 RL**：[07 五個 Python 範例](docs/02-programming/02-more-examples.md)｜[08 ARS 手寫 RL](docs/02-programming/03-rl-swingup.md)｜[09 Gymnasium + PPO](docs/02-programming/04-ppo-gymnasium.md)｜[10 車桿 swing-up](docs/02-programming/05-cartpole-swingup.md)｜[11 Viewer 與離屏渲染](docs/02-programming/06-viewer-rendering.md)｜[12 SAC 對照實驗](docs/02-programming/07-sac.md)
+**程式設計與 RL**：[07 五個 Python 範例](docs/02-programming/02-more-examples.md)｜[08 ARS 手寫 RL](docs/02-programming/03-rl-swingup.md)｜[09 Gymnasium + PPO](docs/02-programming/04-ppo-gymnasium.md)｜[10 車桿 swing-up](docs/02-programming/05-cartpole-swingup.md)｜[11 Viewer 與離屏渲染](docs/02-programming/06-viewer-rendering.md)｜[12 SAC 對照實驗](docs/02-programming/07-sac.md)｜[28 MJX 批次模擬](docs/02-programming/08-mjx-gpu.md)
 
 **AMR 實驗**：13–27 篇，見上方成果表。
 
@@ -142,7 +154,7 @@ python scripts/check_docs.py     # 絕對路徑、連結、模型、章節結構
 ## 目錄結構
 
 ```
-docs/       教學文件（27 篇）與插圖 assets/
+docs/       教學文件（28 篇）與插圖 assets/
 models/     MJCF / URDF 模型與 mesh（MR1533 叉車、Blender 棧板、y-reach 滑台）
 scripts/    可執行範例、Blender 建模腳本、驗證工具
 runs/       實驗輸出：影片、CSV、軌跡圖
@@ -155,13 +167,14 @@ LICENSE     授權條款
 ## 環境
 
 範例在下列組合實測通過，版本鎖在 [requirements.txt](requirements.txt)。最近一次全面重跑
-驗證是 2026-09-10，34 支腳本裡跑了 32 支、全數通過（另兩支需要 CUDA 或要跑 30 分鐘），
+驗證是 2026-09-10，當時的 34 支腳本跑了 32 支、全數通過（另兩支需要 CUDA 或要跑 30 分鐘），
 逐項紀錄見 [REPORT.md](REPORT.md) 的「重跑驗證紀錄」一節：
 
 - Ubuntu 24.04、Python 3.12.3、MuJoCo 3.12.0
 - RL 章節：Stable-Baselines3 2.9.0、Gymnasium 1.3.0、PyTorch 2.14.0
 - Blender 建模：Blender 4.2.11 LTS（headless EEVEE）
-- GPU 訓練（12 章）：RTX Pro 6000，環境已於實驗後清除
+- GPU 訓練（12、28 章）：NVIDIA RTX Pro 6000 Blackwell（vGPU）、PyTorch 2.14.0+cu130。
+  同一張卡上 PyTorch 正常但 JAX/XLA 起不來，原因與判斷方式見 [28 章](docs/02-programming/08-mjx-gpu.md)
 
 ## 授權、出處與致謝
 

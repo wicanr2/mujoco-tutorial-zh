@@ -33,6 +33,9 @@ jobs:
         run: python scripts/check_docs.py
 
       - name: 重跑基礎與 AMR 非渲染範例
+        env:
+          # runner 只有 2 核；ex_mjx_throughput.py 預設開 4 條執行緒
+          WORKERS: "2"
         run: |
           PYTHON=python bash scripts/verify_examples.sh ci \
             scripts/hello_mujoco.py scripts/run_pendulum.py scripts/pd_control.py \
@@ -40,7 +43,7 @@ jobs:
             scripts/ex_keyframe.py scripts/ex_mjspec.py scripts/ex_parallel_rollout.py \
             scripts/ex_cartpole_swingup.py scripts/ex_ik6d.py scripts/ex_mobile_manipulator.py \
             scripts/ex_forklift.py scripts/ex_pallet_materials.py scripts/ex_tilt_boundary.py \
-            scripts/ex_mr1533.py scripts/ex_yreach.py
+            scripts/ex_mr1533.py scripts/ex_yreach.py scripts/ex_mjx_throughput.py
 
       - name: 檢查是否有腳本失敗
         run: |

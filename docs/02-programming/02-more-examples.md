@@ -96,7 +96,7 @@ def rollout(seed):
     return data.qpos.copy()
 ```
 
-實測輸出：16 條 rollout 全部完成，最終 qpos 分布各異（雙擺混沌特性）。這個模式正是 RL 蒐集訓練資料的基礎；更大規模時可改用 GPU 後端 MJX / MuJoCo Warp。
+實測輸出：16 條 rollout 全部完成，最終 qpos 分布各異（雙擺混沌特性）。這個模式正是 RL 蒐集訓練資料的基礎；更大規模時執行緒會先撞到 GIL，改用批次向量化的 [MJX](08-mjx-gpu.md)（28 章有三種做法的吞吐對照）或 MuJoCo Warp。
 
 ## 範例 5：mjSpec 程序化建模
 

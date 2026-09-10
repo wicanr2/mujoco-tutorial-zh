@@ -214,7 +214,14 @@ def check_claimed_counts():
     sec = report.split("## 五、除錯案例清單")
     if len(sec) > 1:
         cases = len(re.findall(r"^\d+\. ", sec[1].split("## 六、")[0], re.M))
-        zh = {20: "二十", 25: "二十五", 26: "二十六", 27: "二十七", 28: "二十八", 30: "三十"}
+        # 查表每加一條案例就要手動補一格，補漏了檢查就會誤報。改成算出來的。
+        digits = "零一二三四五六七八九"
+        def to_zh(n):
+            if n < 10:
+                return digits[n]
+            tens, ones = divmod(n, 10)
+            return ("" if tens == 1 else digits[tens]) + "十" + (digits[ones] if ones else "")
+        zh = {cases: to_zh(cases)}
         for m in re.finditer(r"(二十[一二三四五六七八九]?|三十[一二三四五六七八九]?)條除錯案例", readme):
             if zh.get(cases) != m.group(1):
                 bad.append(f"README.md: 宣稱「{m.group(1)}條」除錯案例，實際 {cases} 條")

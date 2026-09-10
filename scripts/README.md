@@ -55,6 +55,7 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `ex_reach_xyz.py` | [25](../docs/06-amr/13-reach-xyz.md) | 貨架取放 X/Y/Z 全軸 | `runs/reach_xyz.*` |
 | `ex_gripper_ab.py` | [26](../docs/06-amr/14-gripper-ab.md) | 夾爪 A 取 B 放 | `runs/gripper.*` |
 | `ex_loop_steer.py` | [27](../docs/06-amr/15-steer-loop.md) | 舵輪繞圈 waypoint 追蹤 | `runs/loop.*` |
+| `ex_mjx_throughput.py` | [28](../docs/02-programming/08-mjx-gpu.md) | MJX 批次與 CPU 的吞吐對照 | 需 `mujoco-mjx`、`jax` |
 
 ## 建模與工具
 

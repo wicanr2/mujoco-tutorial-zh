@@ -14,7 +14,7 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 
 ## 二、產出總覽
 
-27 篇教學、35 支 Python 腳本、6 組錄影實驗、34 筆資料出處登記。
+28 篇教學、36 支 Python 腳本、6 組錄影實驗、37 筆資料出處登記。
 
 ### 基礎系列（docs/00–05）
 
@@ -36,7 +36,8 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 | 09 | RL：Gymnasium + PPO | 6 分鐘收斂至 -0.11 |
 | 10 | 車桿 swing-up（能量整形 + mjd_transitionFD + LQR） | 1.19 秒盪起後穩定 |
 | 11 | Viewer 與離屏渲染（osmesa） | 實測 + 渲染圖 |
-| 12 | RL：SAC 對照實驗 | CPU 未收斂（如實記錄）→ GPU 收斂至 -0.21 |
+| 12 | RL：SAC 對照實驗 | CPU 未收斂（如實記錄）→ GPU 收斂至 -0.21；2026-09-11 重跑可重現 |
+| 28 | MJX：批次 rollout 與 vGPU 限制 | 遠端 GPU 主機實測（CPU 後端吞吐 3.0×；GPU 後端因 vGPU 不可用） |
 
 ### AMR 系列（docs/06-amr）
 
@@ -58,7 +59,7 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 | 26 | 搬運車夾爪 A 取 B 放（weld 抓取） | 箱子最終落在 B 桌面 |
 | 27 | 舵輪繞圈 waypoint 追蹤 | 8 點到達 7 點，4500 幀 |
 
-附錄：`docs/glossary.md` 中英術語對照表、`sources/SOURCES.md` 資料出處登記（34 筆）。
+附錄：`docs/glossary.md` 中英術語對照表、`sources/SOURCES.md` 資料出處登記（37 筆）。
 
 ## 三、RL 對照實驗數據
 
@@ -70,11 +71,16 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 | PPO（SB3） | -0.11 | 6 分鐘 | 150k 步 | CPU |
 | SAC（`train_freq=4`、`lr=3e-4`） | 未收斂（≈ -2.0） | 30 分鐘 | 60k 步 | CPU |
 | SAC（zoo 超參：`train_freq=1`、`lr=1e-3`、8 環境） | -0.21 | 4 分鐘 | 60k 步 | RTX Pro 6000 |
+| SAC（同上，4 環境，2026-09-11 重跑） | -0.20 | 86 秒 | 60k 步 | RTX Pro 6000 |
 
 SAC 的樣本效率需要足夠的更新頻率。CPU 上為了跑得動而降低 `train_freq`，60k 步內回報幾乎
 不動；GPU 補回更新頻率後同樣 60k 步就收斂，用的樣本不到 PPO 的一半。同一個環境 PPO 與 ARS
-都收斂，可以排除環境與回報函數的問題。遠端 GPU 訓練環境已於實驗後清除，權重保留在
-`policies/swingup_sac_gpu.zip`。
+都收斂，可以排除環境與回報函數的問題。權重保留在 `policies/swingup_sac_gpu.zip`。
+
+2026-09-11 在同一張卡上重跑，確認三件事：訓練前評估 -1.9651 與原紀錄逐位相同；同設定連跑
+兩次每個檢查點的數字完全一致；把 GPU 訓練出的權重帶回本機用 CPU 回放，評估值同為 -0.2012。
+換掉平行環境數則會走上不同軌跡（4 環境 -0.2012、8 環境 -0.2101）— `seed` 鎖住的是隨機數列，
+不是資料進 replay buffer 的順序，比較兩次訓練時 `N_ENVS` 要一起對齊。
 
 ## 四、AMR 實驗數據
 
@@ -169,6 +175,14 @@ z=0；25 章搬運 2.05 m、漂移峰值 12.1 cm、側移對位 0.49 m、落地 
 26. 判定條件只檢查終點位置時，「掉下去」會被算成「放下去」— 搬運與放置類實驗要檢查過程（z 單調下降、貨與車的相對位移），不是最後一幀
 27. 模型與腳本裡的絕對路徑在作者的機器上永遠正常，別人 clone 下來直接失敗 — 要驗可攜性只能換一個工作目錄或換一台機器跑
 
+**GPU 與批次模擬**
+
+28. vGPU 切出來的裝置不支援 CUDA VMM，XLA 的記憶體配置器硬性需要它 — 同一張卡 PyTorch 正常、JAX 完全起不來，換版本救不回來（28 章）
+29. 只接 `ImportError` 會讓腳本整支崩掉：MJX 裝好但 GPU 後端起不來時丟的是 `RuntimeError`，而且在 `put_model()` 內部才丟
+30. JAX 的第一次呼叫含 JIT 編譯、且執行是非同步的 — 計時要跑第二次並加 `block_until_ready()`，否則量到的是編譯時間或發指令的時間
+31. 抽樣一小批再外推是為了省時間；小模型全量跑完只要幾秒時，外推只是在結論裡多加一個誤差來源
+32. 固定 `seed` 只鎖住隨機數列，不鎖平行環境數 — `N_ENVS` 不同就是不同的訓練軌跡（12 章 4 環境 -0.2012、8 環境 -0.2101）
+
 ## 六、Isaac Sim / Gazebo 可行性結論
 
 **Isaac Sim** 綁定 PhysX，物理引擎不可替換。可行路徑是模型互通：MJCF/URDF Importer
@@ -191,7 +205,7 @@ z=0；25 章搬運 2.05 m、漂移峰值 12.1 cm、側移對位 0.49 m、落地 
 
 ### 第一輪：重跑比對
 
-用 `scripts/verify_examples.sh` 把 35 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
+用 `scripts/verify_examples.sh` 把 36 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
 成立，**全部 exit code 0**；三支 Blender 腳本另外用 Blender 4.2.11 跑過，也都通過。沒跑的
 2 支是 `ex_rl_sac.py`（CPU 上要 30 分鐘且已知不收斂，結論已記在 12 章）與
 `ex_rl_sac_gpu.py`（需要 CUDA）。
@@ -375,7 +389,9 @@ CSV 也加了 `rel_x/y/z`（棧板在牙叉座標系中的位置），漂移可�
 - 本機：Ubuntu 24.04、Python 3.12.3、MuJoCo 3.12.0、numpy 2.5.3、scipy 1.18.1、
   imageio 2.37.4、matplotlib 3.11.1、Blender 4.2.11 LTS（headless EEVEE）
 - RL：Stable-Baselines3 2.9.0、Gymnasium 1.3.0、PyTorch 2.14.0
-- GPU 訓練：RTX Pro 6000（torch cu130），環境已清除
+- GPU（12、28 章）：NVIDIA RTX Pro 6000 Blackwell DC-96Q（**vGPU**，compute capability 12.0）、
+  torch 2.14.0+cu130、jax 0.11.1。PyTorch 可用；JAX/XLA 因 vGPU 不支援 CUDA VMM 而無法初始化
+  CUDA 後端，MJX 只能跑 CPU 後端（見第 28 章）
 - 版本鎖定在 `requirements.txt`
 
 ## 九、後續工作
@@ -386,3 +402,6 @@ CSV 也加了 `rel_x/y/z`（棧板在牙叉座標系中的位置），漂移可�
 3. AMR 線：差速底盤、滿載爬坡穩定性、用 RL 訓練對位策略
 4. 外部事實（第六節的 Isaac Sim / Gazebo 現況）定期重查，目前查證日期是 2026-09-10
 5. 渲染批次目前是手動觸發（一次約 40 分鐘）。要改成定期跑的話，排程比每次 push 合理
+6. **MJX 的 GPU 後端吞吐尚未取得**。28 章的對照表只有 CPU 後端的數字，因為手上這張卡是
+   vGPU、XLA 起不來。要補這一格需要非虛擬化的實體 GPU；在那之前不對 MJX 的 GPU 加速倍率
+   做任何宣稱

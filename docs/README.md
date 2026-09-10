@@ -20,6 +20,7 @@
   - [10｜進階任務：車桿 Swing-up（能量整形 + LQR）](02-programming/05-cartpole-swingup.md)
   - [11｜視覺化：互動式 Viewer 與離屏渲染](02-programming/06-viewer-rendering.md)
   - [12｜SAC：Off-policy 對照實驗](02-programming/07-sac.md)
+  - [28｜MJX：把整批 rollout 交給 XLA（以及 vGPU 上的限制）](02-programming/08-mjx-gpu.md)
 - **03 URDF 匯入**
   - [04｜URDF 模型匯入 MuJoCo](03-urdf-import/01-import-urdf.md)
 - **04 Isaac Sim 中使用/替換 MuJoCo**
