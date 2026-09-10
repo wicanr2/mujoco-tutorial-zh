@@ -33,6 +33,7 @@ policies/              # 訓練好的策略權重（.npy / .zip）
 sources/SOURCES.md     # 資料出處登記
 workspace/             # 本機工作區，不進版控（見 workspace/README.md）
 requirements.txt       # 實測過的套件版本
+LICENSE                # 授權條款（source-available，基於 RRSAL-1.0）
 ```
 
 ### 檔案歸屬（決定東西該放哪）
@@ -45,6 +46,7 @@ requirements.txt       # 實測過的套件版本
 | 訓練好的策略權重 | `policies/` | 是 |
 | 教學文件與插圖 | `docs/` | 是 |
 | 重跑 log、備份、訓練中間檔 | `workspace/` | 否 |
+| 授權條款 | 根目錄 `LICENSE` | 是（發行包也要帶一份） |
 | MuJoCo 執行時警告紀錄（`MUJOCO_LOG.TXT`） | 產生於 cwd | 否 |
 
 新增檔案前先對照這張表；沒有對應欄位的產物，預設放 `workspace/`。
