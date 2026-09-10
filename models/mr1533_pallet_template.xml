@@ -47,7 +47,7 @@
             <geom class="visual" type="mesh" mesh="tiltfix" rgba="0.35 0.36 0.38 1"/>
 
             <body name="fork" pos="-0.12 0 0">
-              <joint name="tilt" type="hinge" axis="0 1 0" range="-0.3 0.3" damping="10"/>
+              <joint name="tilt" type="hinge" axis="0 1 0" range="-0.5 0.5" damping="10"/>
               <inertial pos="-0.5 0 0.3" mass="40" diaginertia="5 5 1"/>
               <geom class="visual" type="mesh" mesh="forks" rgba="0.3 0.3 0.32 1"/>
               <geom type="box" size="0.48 0.16 0.015" pos="-0.62  0.315 -0.205" group="3" friction="0.1 0.05 0.01"/>
@@ -73,12 +73,12 @@
   </worldbody>
 
   <actuator>
-    <velocity name="vx"   joint="move_x" kv="5000" ctrlrange="-1.5 1.5"/>
-    <velocity name="vy"   joint="move_y" kv="5000" ctrlrange="-1.5 1.5"/>
+    <velocity name="vx"   joint="move_x" kv="40000" ctrlrange="-1.5 1.5"/>
+    <velocity name="vy"   joint="move_y" kv="40000" ctrlrange="-1.5 1.5"/>
     <velocity name="wyaw" joint="yaw"    kv="2000" ctrlrange="-1.5 1.5"/>
     <position name="lift1_ctl" joint="lift1" kp="30000" kv="3000" ctrllimited="true" ctrlrange="0 1.5"/>
     <position name="lift2_ctl" joint="lift2" kp="20000" kv="2000" ctrllimited="true" ctrlrange="0 1.5"/>
-    <position name="tilt_ctl"  joint="tilt"  kp="5000"  kv="500"  ctrllimited="true" ctrlrange="-0.3 0.3"/>
+    <position name="tilt_ctl"  joint="tilt"  kp="5000"  kv="500"  ctrllimited="true" ctrlrange="-0.5 0.5"/>
   </actuator>
 
   <sensor>
