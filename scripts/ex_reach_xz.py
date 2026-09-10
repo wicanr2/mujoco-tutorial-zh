@@ -46,6 +46,13 @@ xml = steer.replace("</asset>", assets + "</asset>").replace("</worldbody>", RAC
 model = mujoco.MjModel.from_xml_string(xml)
 data = mujoco.MjData(model)
 pid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "pallet_wood")
+fid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "yreach")
+
+
+def rel_to_fork():
+    """棧板在牙叉座標系中的位置。滑動要在這個參考系量（20 章的教訓）。"""
+    R = data.xmat[fid].reshape(3, 3)
+    return R.T @ (data.xpos[pid] - data.xpos[fid])
 
 renderer = mujoco.Renderer(model, 480, 640)
 cam = mujoco.MjvCamera()
@@ -62,67 +69,93 @@ def step(ctrl, seconds):
         data.ctrl[:] = ctrl
         mujoco.mj_step(model, data)
         if not log_rows or data.time - log_rows[-1][0] >= 0.0199:
-            log_rows.append([data.time, *data.qpos[:7], *ctrl, *data.xpos[pid]])
+            log_rows.append([data.time, *data.qpos[:7], *ctrl,
+                             *data.xpos[pid], *rel_to_fork()])
             if int(data.time * 30) > len(frames) - 1:
                 renderer.update_scene(data, camera=cam, scene_option=opt)
                 frames.append(renderer.render().copy())
 
 
-def drive_to(tx, hold=(0, 0), timeout=10.0):
-    """閉迴圈開到 (tx, 0)，朝向 -x（讓牙叉朝貨架）。"""
+def drive_to(tx, hold=(0, 0), tilt=0.0, stage=0.0, timeout=10.0, gain=1.0, cap=2.0):
+    """閉迴圈開到 x=tx，全程保持航向 0（車體 -x 側是牙叉，本來就朝著貨架）。
+
+    `hold` / `tilt` / `stage` 是「行進中要保持的通道值」。不傳就會被歸零 —— 那正是
+    第 22、23、25 章都踩過的坑：共用控制函式會偷改你以為不變的通道。載著貨行進時
+    stage 要維持深插、tilt 要維持後傾，否則貨會被甩出叉齒。
+
+    `gain` / `cap` 預設得很保守（線速度約 0.23 m/s）。載重 20 kg 靠摩擦坐在叉齒上，
+    加速度大了就會相對滑動 —— 慢，是這裡的正確答案。
+    """
     for _ in range(int(timeout / model.opt.timestep)):
         ex = tx - data.qpos[0]
         w, xi, yi, zi = data.qpos[3:7]
         yaw = np.arctan2(2*(w*zi+xi*yi), 1-2*(yi*yi+zi*zi))
-        heading_err = (np.pi - yaw + np.pi) % (2*np.pi) - np.pi
+        heading_err = (0.0 - yaw + np.pi) % (2*np.pi) - np.pi
         steer = np.clip(1.2 * heading_err, -1.2, 1.2)
-        drive = np.clip(4.0 * ex / 0.115, -8, 8) * max(0.15, 1 - abs(heading_err))
-        step([drive, steer, 0, hold[0], hold[1], 0, 0], model.opt.timestep)
+        drive = np.clip(gain * ex / 0.115, -cap, cap) * max(0.15, 1 - abs(heading_err))
+        step([drive, steer, stage, hold[0], hold[1], tilt, 0], model.opt.timestep)
         if abs(ex) < 0.03:
             break
-    step([0, 0, 0, 0, 0, 0, 0], 0.5)
+    step([0, 0, stage, hold[0], hold[1], tilt, 0], 0.5)
 
 
 # 叉齒世界高度 = 0.29+lift1+lift2-0.39+0.185 ≈ 0.085 + lift1 + lift2
 # 層板頂 z=0.35 → 棧板底 z=0.35，叉齒需到 0.30 進入、再升 0.15 抬起
+STAGE = -0.65      # 深插到位後全程保持，不收回
+TILT = 0.08        # 後傾，讓貨靠上滑架背板（23 章的做法）
+
 print("開到貨架前...")
 drive_to(-0.65)
 print("牙叉對準層板下方（lift1=0.39）...")
 step([0, 0, 0, 0.39, 0, 0, 0], 2.0)
 print("stage 前移插入（stage=-0.65）...")
-step([0, 0, -0.65, 0.39, 0, 0, 0], 3.0)
+step([0, 0, STAGE, 0.39, 0, 0, 0], 3.0)
 p0 = data.xpos[pid].copy()
 print(f"  插入後棧板 = {np.round(p0, 3)}")
-print("微升離開層板（+4cm）...")
-step([0, 0, -0.65, 0.48, 0.08, 0, 0], 1.5)
-print(f"  微升後棧板 z = {data.xpos[pid][2]:.3f}")
-print("（深插已到位，省略 stage 收回 — 避免棧板傾斜）")
-print("升到搬運高度（lift1=0.70, lift2=0.35）...")
-step([0, 0, 0, 0.70, 0.35, 0, 0], 2.0)
+print("微升離開層板（+4cm）並後傾...")
+step([0, 0, STAGE, 0.48, 0.08, TILT, 0], 1.5)
 lifted_z = float(data.xpos[pid][2])
-print(f"  抬起後棧板 z = {lifted_z:.3f}")
-print("往前開離開貨架...")
-drive_to(0.8, hold=(0.70, 0.35), timeout=20.0)
+print(f"  微升後棧板 z = {lifted_z:.3f}")
+rel_home = rel_to_fork()          # 漂移的基準時刻：貨剛離開層板、還沒開始移動
+
+# 在貨架內升到搬運高度會讓棧板頂部逼近上層層板（實測只剩 8 mm 餘裕），擦到就翻。
+# 真實叉車也是先退出來再升高。
+print("保持低位退出貨架...")
+drive_to(0.3, hold=(0.48, 0.08), tilt=TILT, stage=STAGE, timeout=25.0)
+print(f"  退出後棧板 z = {data.xpos[pid][2]:.3f}")
+print("離架後才升到搬運高度（lift1=0.70, lift2=0.35）...")
+step([0, 0, STAGE, 0.70, 0.35, TILT, 0], 2.0)
+carry_z = float(data.xpos[pid][2])
+print(f"  搬運高度棧板 z = {carry_z:.3f}")
+print("搬到目的地...")
+drive_to(1.5, hold=(0.70, 0.35), tilt=TILT, stage=STAGE, timeout=20.0)
 print("放低（lift1=0.02）...")
-step([0, 0, 0, 0.02, 0.0, 0, 0], 2.5)
+step([0, 0, STAGE, 0.02, 0.0, TILT, 0], 2.5)
+step([0, 0, STAGE, 0.02, 0.0, 0, 0], 1.5)
 print(f"放下後棧板 = {np.round(data.xpos[pid], 3)}")
 
 with open("runs/reach_xz_log.csv", "w", newline="") as f:
     w = csv.writer(f)
     w.writerow(["time", "bx", "by", "bz", "qw", "qx", "qy", "qz",
                 "drive", "steer", "stage", "lift1", "lift2", "tilt", "reach",
-                "px", "py", "pz"])
+                "px", "py", "pz", "rel_x", "rel_y", "rel_z"])
     w.writerows(log_rows)
 
 import imageio
 imageio.mimsave("runs/reach_xz.mp4", frames, fps=30)
 print(f"runs/reach_xz.mp4: {len(frames)} 幀")
 
-pz = data.xpos[pid][2]
-px = data.xpos[pid][0]
+pz = float(data.xpos[pid][2])
+px = float(data.xpos[pid][0])
+drift = float(np.linalg.norm(rel_to_fork() - rel_home))
+moved = px - float(p0[0])
 print(f"最終棧板 x = {px:.2f}, z = {pz:.3f}")
-# 這章驗證的是「取貨」：stage 深插 + lift 把棧板抬離層板（層板頂面 z=0.35）。
-# 搬運段的貨會從水平叉齒上滑落（相對滑動約 0.55 m），那是本章未解決的限制，
-# 說明在 docs/06-amr/12-steer-reach-xz.md，這裡不把它算進驗收。
-assert lifted_z > 0.60, f"取貨失敗：棧板沒有被抬離層板（z={lifted_z:.3f}）"
-print("結果：貨架取貨（reach X + lift Z）驗證通過 ✓（搬運段的滑落見文件）")
+print(f"棧板被搬運了 {moved:.2f} m；全程在牙叉座標系中漂移 {drift*100:.1f} cm")
+
+# 驗收要對準「真正想證明的事」：貨被抬離層板、跟著車走完全程、最後放到地面。
+# 只檢查終點位置會把「掉下去」算成「放下去」（見 REPORT 第七節第三輪）。
+assert lifted_z > 0.42, f"取貨失敗：棧板沒有離開層板（z={lifted_z:.3f}）"
+assert drift < 0.10, f"搬運失敗：貨在叉齒上漂移 {drift*100:.1f} cm，超過 10 cm"
+assert moved > 1.5, f"搬運失敗：棧板只移動 {moved:.2f} m"
+assert pz < 0.10, f"放置失敗：棧板沒有降到地面（z={pz:.3f}）"
+print("結果：取貨 → 搬運 → 放置 全程驗證通過 ✓")
