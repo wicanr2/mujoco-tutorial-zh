@@ -231,6 +231,24 @@ def check_claimed_counts():
     return sorted(set(bad))
 
 
+def check_csv_headers():
+    """runs/ 的每個 CSV，header 欄數要與資料欄數一致。
+
+    事故：25 章的 log 加了 rel_x/y/z 三欄，但 header 是單行寫法沒被一起改到，
+    寫出 18 欄 header 配 21 欄資料的檔案 —— 讀的人會把欄位對錯。
+    """
+    import csv as _csv
+    bad = []
+    for p in sorted((ROOT / "runs").glob("*.csv")):
+        with p.open(encoding="utf-8") as f:
+            r = _csv.reader(f)
+            head = next(r, None)
+            row = next(r, None)
+        if head and row and len(head) != len(row):
+            bad.append(f"{p.relative_to(ROOT)}: header {len(head)} 欄、資料 {len(row)} 欄")
+    return bad
+
+
 CHECKS = [
     ("絕對路徑", check_absolute_paths),
     ("文件相對連結", check_relative_links),
@@ -242,6 +260,7 @@ CHECKS = [
     ("孤兒圖片", check_orphan_assets),
     ("相依套件登記", check_requirements),
     ("宣稱數量", check_claimed_counts),
+    ("CSV 欄位一致", check_csv_headers),
 ]
 
 

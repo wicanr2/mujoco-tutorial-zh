@@ -9,8 +9,8 @@
 | --- | --- | --- | --- |
 | `mission.mp4` / `mission_log.csv` / `mission_traj.png` | `scripts/ex_yreach_mission.py` | [22](../docs/06-amr/10-yreach-mission.md) | 取放任務 19 秒：對位→插入→抬起→搬運→reach 外伸→放置→退出（571 幀、951 筆） |
 | `fork_cyclic.mp4` / `fork_cyclic_log.csv` / `fork_cyclic_traj.png` | `scripts/ex_fork_cyclic.py` | [23](../docs/06-amr/11-fork-cyclic.md) | 連續動作 27.7 秒：載棧板升降 ×3 + 側移 ×3（831 幀），量循環中的漂移 |
-| `reach_xz.mp4` / `reach_xz_log.csv` | `scripts/ex_reach_xz.py` | [24](../docs/06-amr/12-steer-reach-xz.md) | 舵輪底盤從貨架層板取貨、退出、升高、搬運 2.07 m、放到地面（漂移 1.0 cm） |
-| `reach_xyz.mp4` / `reach_xyz_log.csv` | `scripts/ex_reach_xyz.py` | [25](../docs/06-amr/13-reach-xyz.md) | 同流程加 y 向 reach 側移對位 0.49 m 再放置（漂移 3.3 cm） |
+| `reach_xz.mp4` / `reach_xz_log.csv` | `scripts/ex_reach_xz.py` | [24](../docs/06-amr/12-steer-reach-xz.md) | 舵輪底盤從貨架層板取貨、退出、升高、搬運 2.07 m、放到地面（漂移峰值 6.8 cm） |
+| `reach_xyz.mp4` / `reach_xyz_log.csv` | `scripts/ex_reach_xyz.py` | [25](../docs/06-amr/13-reach-xyz.md) | 同流程加 y 向 reach 側移對位 0.49 m 再放置（漂移峰值 12.1 cm） |
 | `gripper.mp4` / `gripper_log.csv` | `scripts/ex_gripper_ab.py` | [26](../docs/06-amr/14-gripper-ab.md) | 搬運車三軸手臂 + 二指夾爪，A 桌取箱 B 桌放下 |
 | `loop.mp4` / `loop_log.csv` / `loop_traj.png` | `scripts/ex_loop_steer.py` | [27](../docs/06-amr/15-steer-loop.md) | 舵輪繞圈 waypoint 追蹤，2×2 m 正方形兩圈（4500 幀） |
 

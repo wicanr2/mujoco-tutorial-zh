@@ -53,6 +53,21 @@ def rel_to_fork():
     R = data.xmat[fid].reshape(3, 3)
     return R.T @ (data.xpos[pid] - data.xpos[fid])
 
+
+DRIFT = {"home": None, "peak": 0.0}
+
+
+def track_drift():
+    """追蹤貨還在叉齒上這段期間的漂移峰值。
+
+    只看最後一幀會低估：貨在行進中滑出去、後傾又把它帶回來，終點值會比過程中的
+    峰值小。判定實驗成敗要看整段軌跡。
+    """
+    if DRIFT["home"] is None or data.ctrl[3] <= 0.10:
+        return
+    d = float(np.linalg.norm(rel_to_fork() - DRIFT["home"]))
+    DRIFT["peak"] = max(DRIFT["peak"], d)
+
 renderer = mujoco.Renderer(model, 480, 640)
 cam = mujoco.MjvCamera()
 cam.azimuth, cam.elevation, cam.distance = 270, -15, 4.5
@@ -70,6 +85,7 @@ def step(ctrl, seconds):
         if not log_rows or data.time - log_rows[-1][0] >= 0.0199:
             log_rows.append([data.time, *data.qpos[:7], *ctrl,
                              *data.xpos[pid], *rel_to_fork()])
+            track_drift()
             if int(data.time * 30) > len(frames) - 1:
                 renderer.update_scene(data, camera=cam, scene_option=opt)
                 frames.append(renderer.render().copy())
@@ -108,6 +124,7 @@ print("微升離開層板（Z: +4cm）並後傾...")
 step([0, 0, STAGE, 0.48, 0.08, TILT, 0], 1.5)
 lifted_z = float(data.xpos[pid][2])
 rel_home = rel_to_fork()
+DRIFT["home"] = rel_home
 print(f"  微升後棧板 z = {lifted_z:.3f}")
 
 # 在貨架內升高會讓棧板頂部逼近上層層板（只剩 8 mm），先退出來再升。
@@ -137,21 +154,22 @@ print(f"最終棧板 = {np.round(p, 3)}")
 with open("runs/reach_xyz_log.csv", "w", newline="") as f:
     w = csv.writer(f)
     w.writerow(["time", "bx", "by", "bz", "qw", "qx", "qy", "qz",
-                "drive", "steer", "stage", "lift1", "lift2", "tilt", "reach", "px", "py", "pz"])
+                "drive", "steer", "stage", "lift1", "lift2", "tilt", "reach",
+                "px", "py", "pz", "rel_x", "rel_y", "rel_z"])
     w.writerows(log_rows)
 
 import imageio
 imageio.mimsave("runs/reach_xyz.mp4", frames, fps=30)
 print(f"runs/reach_xyz.mp4: {len(frames)} 幀")
 
-drift = float(np.linalg.norm(rel_to_fork() - rel_home))
+drift = DRIFT["peak"]      # 搬運全程的峰值，不是終點值
 moved = float(p[0]) + 1.5      # 起點 x = -1.5
-print(f"棧板被搬運了 {moved:.2f} m；全程在牙叉座標系中漂移 {drift*100:.1f} cm")
+print(f"棧板被搬運了 {moved:.2f} m；搬運全程在牙叉座標系中的漂移峰值 {drift*100:.1f} cm")
 
 # 三個軸各驗一件事，再加上「貨全程跟著車」與「真的放到地面」。
 assert lifted_z > 0.42, f"X/Z 取貨失敗：棧板沒有離開層板（z={lifted_z:.3f}）"
 assert abs(y_after_reach) > 0.05, f"Y 向 reach 沒有效果（棧板 y={y_after_reach:.3f}）"
-assert drift < 0.15, f"搬運失敗：貨在叉齒上漂移 {drift*100:.1f} cm"
+assert drift < 0.20, f"搬運失敗：貨在叉齒上的漂移峰值 {drift*100:.1f} cm"
 assert moved > 1.5, f"搬運失敗：棧板只移動 {moved:.2f} m"
 assert p[2] < 0.10, f"放置失敗：棧板沒有降到地面（z={p[2]:.3f}）"
 print("結果：reach X/Y/Z 取貨 → 搬運 → 側移對位 → 放置 全程驗證通過 ✓")

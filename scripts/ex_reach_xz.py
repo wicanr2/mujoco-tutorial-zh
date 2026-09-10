@@ -54,6 +54,21 @@ def rel_to_fork():
     R = data.xmat[fid].reshape(3, 3)
     return R.T @ (data.xpos[pid] - data.xpos[fid])
 
+
+DRIFT = {"home": None, "peak": 0.0}
+
+
+def track_drift():
+    """追蹤貨還在叉齒上這段期間的漂移峰值。
+
+    只看最後一幀會低估：貨在行進中滑出去、後傾又把它帶回來，終點值會比過程中的
+    峰值小。判定實驗成敗要看整段軌跡。
+    """
+    if DRIFT["home"] is None or data.ctrl[3] <= 0.10:
+        return
+    d = float(np.linalg.norm(rel_to_fork() - DRIFT["home"]))
+    DRIFT["peak"] = max(DRIFT["peak"], d)
+
 renderer = mujoco.Renderer(model, 480, 640)
 cam = mujoco.MjvCamera()
 cam.azimuth, cam.elevation, cam.distance = 270, -15, 4.0
@@ -71,6 +86,7 @@ def step(ctrl, seconds):
         if not log_rows or data.time - log_rows[-1][0] >= 0.0199:
             log_rows.append([data.time, *data.qpos[:7], *ctrl,
                              *data.xpos[pid], *rel_to_fork()])
+            track_drift()
             if int(data.time * 30) > len(frames) - 1:
                 renderer.update_scene(data, camera=cam, scene_option=opt)
                 frames.append(renderer.render().copy())
@@ -116,7 +132,8 @@ print("微升離開層板（+4cm）並後傾...")
 step([0, 0, STAGE, 0.48, 0.08, TILT, 0], 1.5)
 lifted_z = float(data.xpos[pid][2])
 print(f"  微升後棧板 z = {lifted_z:.3f}")
-rel_home = rel_to_fork()          # 漂移的基準時刻：貨剛離開層板、還沒開始移動
+rel_home = rel_to_fork()
+DRIFT["home"] = rel_home          # 漂移的基準時刻：貨剛離開層板、還沒開始移動
 
 # 在貨架內升到搬運高度會讓棧板頂部逼近上層層板（實測只剩 8 mm 餘裕），擦到就翻。
 # 真實叉車也是先退出來再升高。
@@ -147,15 +164,15 @@ print(f"runs/reach_xz.mp4: {len(frames)} 幀")
 
 pz = float(data.xpos[pid][2])
 px = float(data.xpos[pid][0])
-drift = float(np.linalg.norm(rel_to_fork() - rel_home))
+drift = DRIFT["peak"]      # 搬運全程的峰值，不是終點值
 moved = px - float(p0[0])
 print(f"最終棧板 x = {px:.2f}, z = {pz:.3f}")
-print(f"棧板被搬運了 {moved:.2f} m；全程在牙叉座標系中漂移 {drift*100:.1f} cm")
+print(f"棧板被搬運了 {moved:.2f} m；搬運全程在牙叉座標系中的漂移峰值 {drift*100:.1f} cm")
 
 # 驗收要對準「真正想證明的事」：貨被抬離層板、跟著車走完全程、最後放到地面。
 # 只檢查終點位置會把「掉下去」算成「放下去」（見 REPORT 第七節第三輪）。
 assert lifted_z > 0.42, f"取貨失敗：棧板沒有離開層板（z={lifted_z:.3f}）"
-assert drift < 0.10, f"搬運失敗：貨在叉齒上漂移 {drift*100:.1f} cm，超過 10 cm"
+assert drift < 0.10, f"搬運失敗：貨在叉齒上的漂移峰值 {drift*100:.1f} cm，超過 10 cm"
 assert moved > 1.5, f"搬運失敗：棧板只移動 {moved:.2f} m"
 assert pz < 0.10, f"放置失敗：棧板沒有降到地面（z={pz:.3f}）"
 print("結果：取貨 → 搬運 → 放置 全程驗證通過 ✓")
