@@ -95,9 +95,9 @@ off-policy 演算法需要夠高的更新頻率；CPU 被迫把 `train_freq` 調
 
 **AMR 實驗**：13–27 篇，見上方成果表。
 
-Isaac Sim 與 Gazebo 兩章是文件整理，沒有實機環境可測 — 兩邊都不能真的把物理引擎換成
-MuJoCo（Isaac Sim 綁定 PhysX，Gazebo 的 MuJoCo 外掛只有未維護的 MVP），所以教學寫成模型
-互通與雙引擎工作流程，並在文中標明可行性邊界。
+Isaac Sim 與 Gazebo 兩章是文件整理，沒有實機環境可測。Isaac Sim 綁定 PhysX，引擎不可替換；
+Gazebo 那邊官方的 MuJoCo 外掛已在 2026-03 併進 gz-physics 主線並持續開發，但還沒進發行版、
+功能也不齊。兩章因此寫成模型互通與雙引擎工作流程，並標明可行性邊界與查證日期。
 
 ## 快速開始
 

@@ -12,11 +12,14 @@
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/5.1.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html | 2026-09-09 | Isaac Sim 5.1 | MJCF Importer 擴充 |
 | docs/04-isaac-sim | https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html | 2026-09-09 | latest | MJCFImporter Python API |
 | docs/04-isaac-sim | https://github.com/isaac-sim/IsaacSim/discussions/160 | 2026-09-09 | Isaac Sim 6.0.0+ | MJCF 轉換器以 mujoco-usd-converter 重寫 |
+| docs/04-isaac-sim | https://github.com/newton-physics/mujoco-usd-converter | 2026-09-10 | 0.5.0（Alpha） | MJCF → OpenUSD 轉換器本體，Apache-2.0，可獨立使用 |
 | docs/04-isaac-sim | https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html | 2026-09-09 | main | Isaac Lab 匯入 MJCF 範例（Unitree H1） |
 | docs/05-gazebo | https://gazebosim.org/api/sim/9/physics.html | 2026-09-09 | Gazebo Sim 9 | 物理引擎外掛架構，預設 DART |
 | docs/05-gazebo | https://gazebosim.org/api/physics/6/switchphysicsengines.html | 2026-09-09 | gz-physics 6 | 執行期切換引擎（DART/Bullet） |
 | docs/05-gazebo | https://gazebosim.org/api/physics/9/usecustomengine.html | 2026-09-09 | gz-physics 9 | 客製引擎外掛教學 |
-| docs/05-gazebo | https://github.com/ignitionrobotics/ign-physics/issues/299 | 2026-09-09 | （實驗分支） | MuJoCo gz-physics 外掛 MVP 現況 |
+| docs/05-gazebo | https://github.com/gazebosim/gz-physics/issues/299 | 2026-09-10 | 仍 open | MuJoCo gz-physics 外掛的功能分工與進度追蹤 |
+| docs/05-gazebo | https://github.com/gazebosim/gz-physics/pull/811 | 2026-09-10 | 已於 2026-03-14 合併 | MuJoCo 外掛初步實作（21 檔、+2158 行） |
+| docs/05-gazebo | https://github.com/gazebosim/gz-physics/blob/main/mujoco/README.md | 2026-09-10 | main 分支 | 外掛已實作的 Feature 與 TODO 清單 |
 | docs/02-programming/02 | https://mujoco.readthedocs.io/en/stable/programming/modeledit.html | 2026-09-09 | stable (3.x) | mjSpec 程序化建模 |
 | docs/02-programming/03 | https://arxiv.org/abs/1803.07055 | 2026-09-09 | 2018 論文 | ARS 隨機搜索演算法 |
 | docs/02-programming/04 | https://stable-baselines3.readthedocs.io/ | 2026-09-09 | sb3 2.9.0 | PPO 實作 |

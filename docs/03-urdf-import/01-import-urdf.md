@@ -50,7 +50,15 @@ MuJoCo 允許在 URDF 的 `<robot>` 底下加一個自訂的 `<mujoco>` 元素�
 - **`discardvisual`**：URDF 的預設是 `false`（visual 也保留為 geom）；設 `true` 只留 collision。
 - **預設值差異**：`strippath`、`angle`、`fusestatic`、`discardvisual` 在 URDF 模式下的預設值與 MJCF 不同（例如 URDF 預設 `angle="radian"`）。
 
-> ⚠️ **陷阱**：MJCF 會用 XML schema 檢查，URDF（含內嵌的 `<mujoco>` 區段）**不會**。屬性名打錯字會被靜靜忽略，不報錯 — 行為不如預期時先檢查拼字。
+> ⚠️ **陷阱**：MJCF 會用 XML schema 檢查，URDF（含內嵌的 `<mujoco>` 區段）**不會**。
+> 屬性名打錯字會被靜靜忽略，不報錯 — 行為不如預期時先檢查拼字。
+>
+> 同一個拼錯放在兩種格式下的實測對照：
+>
+> | 放在哪 | 寫成 `balanceinertiaX="true"` |
+> | --- | --- |
+> | MJCF 的 `<compiler>` | 報錯 `Schema violation: unrecognized attribute` |
+> | URDF 內嵌的 `<mujoco><compiler>` | 載入成功，設定被忽略 |
 
 ## 完整範例：二連桿機械臂
 

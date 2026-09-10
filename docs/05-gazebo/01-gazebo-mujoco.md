@@ -1,6 +1,6 @@
 # 06｜Gazebo 與 MuJoCo：物理引擎外掛機制與模型互通
 
-> 來源：[Gazebo Sim: Physics engines](https://gazebosim.org/api/sim/9/physics.html)、[Switching physics engines](https://gazebosim.org/api/physics/6/switchphysicsengines.html)、[Use a custom engine with Gazebo Physics](https://gazebosim.org/api/physics/9/usecustomengine.html)、[gz-physics GitHub](https://github.com/gazebosim/gz-physics)、[gz-physics#299: MuJoCo plugin 實驗](https://github.com/ignitionrobotics/ign-physics/issues/299)
+> 來源：[Gazebo Sim: Physics engines](https://gazebosim.org/api/sim/9/physics.html)、[Switching physics engines](https://gazebosim.org/api/physics/6/switchphysicsengines.html)、[Use a custom engine with Gazebo Physics](https://gazebosim.org/api/physics/9/usecustomengine.html)、[gz-physics GitHub](https://github.com/gazebosim/gz-physics)、[gz-physics#299: MuJoCo plugin](https://github.com/gazebosim/gz-physics/issues/299)
 >
 > 擷取日期：2026-09-09
 >
@@ -38,10 +38,20 @@ gz sim --physics-engine gz-physics-bullet world.sdf
 
 gz-physics 的設計允許第三方實作新引擎外掛（官方教學：[Use a custom engine](https://gazebosim.org/api/physics/9/usecustomengine.html)）。針對 MuJoCo：
 
-- 社群曾有**實驗性的 MuJoCo 外掛 MVP**（[ign-physics#299](https://github.com/ignitionrobotics/ign-physics/issues/299)，traversaro 的分支），展示了固定基座雙擺在 Gazebo 中由 MuJoCo 驅動；
-- 但該工作**停留在原型階段，未合併、未維護**，不等於可用的官方支援。
+**官方 MuJoCo 外掛已經在 gz-physics 主線裡，正在逐項補功能。**（現況查證日期：2026-09-10）
 
-結論：**現階段在 Gazebo 中「換用 MuJoCo」需要自己實作 gz-physics 外掛**，屬於進階研究題目，不是開箱即用的功能。若你的目標只是「同一個機器人在兩個模擬器跑」，走模型互通路線實際得多。
+- 初步實作（[PR #811](https://github.com/gazebosim/gz-physics/pull/811)，21 個檔案、+2158 行）
+  於 **2026-03-14 合併**進主線。`mujoco/` 目錄現在與 `dartsim/`、`bullet/`、`tpe/` 並列。
+- 之後持續開發：vendored MuJoCo 升到 3.11.0（2026-08-07）、關節速度命令（2026-09-05）、
+  支援 `ConstructSdfCollision` 讓 gz-sim 能顯示接觸點（2026-09-09）。
+- **還沒進正式發行版**：最新的 gz-physics9 9.0.0 發布於 2025-10-14，早於合併日 —
+  要用得自己從主線建置。
+- **功能覆蓋還不完整**：官方 [`mujoco/README.md`](https://github.com/gazebosim/gz-physics/blob/main/mujoco/README.md)
+  逐一列出已實作的 Feature 與 TODO（例如 EntityManagement 的「以名稱取得 entity」「移除模型」
+  仍未做）。開發分工與進度追蹤在 [issue #299](https://github.com/gazebosim/gz-physics/issues/299)（仍 open）。
+
+結論：在 Gazebo 中換用 MuJoCo 已經從「要自己從頭寫外掛」變成「從主線建置、功能還不齊」。
+生產環境現階段仍建議走模型互通路線；要嘗鮮或參與開發，官方外掛是可用的起點。
 
 ## 模型互通：URDF ↔ SDF ↔ MJCF
 
@@ -66,11 +76,13 @@ gz-physics 的設計允許第三方實作新引擎外掛（官方教學：[Use a
 3. 在外掛內部把請求轉成 MJCF/`mjSpec` 建模型，每步呼叫 `mj_step` 並回填狀態；
 4. 以 `--physics-engine` 或 SDF `<physics type="...">` 載入。
 
-工作量與限制需先有心理準備：gz-physics 的 Feature 集合龐大，MuJoCo 的廣義座標資料結構與 DART 式的 entity 抽象之間的映射（尤其接觸點回報、感測器）是最難的部分 — 這正是當年 MVP 停住的地方。
+工作量與限制需先有心理準備：gz-physics 的 Feature 集合龐大，MuJoCo 的廣義座標資料結構與
+DART 式的 entity 抽象之間的映射（尤其接觸點回報、感測器）是最難的部分 — 官方外掛的 TODO
+清單也集中在這幾塊。想動手前先讀 `mujoco/src/` 底下已完成的 Feature 實作，那是最好的範本。
 
 ## 常見錯誤與除錯
 
-- **以為有現成 MuJoCo 外掛可裝**：沒有；網路上的教學多指向未維護的實驗分支。
+- **`apt` 裝不到 MuJoCo 外掛**：它在 gz-physics 主線，但還沒進發行版 — 要自己從原始碼建置。
 - **URDF 轉 SDF 後行為不同**：檢查 `<gazebo>` 擴充標籤、慣性、以及 DART 與 MuJoCo 的接觸參數差異。
 - **Gazebo 版本**：外掛 API 隨 gz-physics 大版本變動，教學連結請對應你安裝的 Gazebo 發行版（Harmonic = gz-physics 7/8 等）。
 
@@ -79,4 +91,4 @@ gz-physics 的設計允許第三方實作新引擎外掛（官方教學：[Use a
 - [Gazebo Sim: Physics engines](https://gazebosim.org/api/sim/9/physics.html)
 - [Switching physics engines](https://gazebosim.org/api/physics/6/switchphysicsengines.html)
 - [Use a custom engine with Gazebo Physics](https://gazebosim.org/api/physics/9/usecustomengine.html)
-- [gz-physics](https://github.com/gazebosim/gz-physics) 與 [MuJoCo 外掛實驗 issue #299](https://github.com/ignitionrobotics/ign-physics/issues/299)
+- [gz-physics](https://github.com/gazebosim/gz-physics)、[MuJoCo 外掛說明](https://github.com/gazebosim/gz-physics/blob/main/mujoco/README.md)、[進度追蹤 issue #299](https://github.com/gazebosim/gz-physics/issues/299)

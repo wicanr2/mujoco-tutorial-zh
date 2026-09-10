@@ -41,7 +41,12 @@ Isaac Sim 的物理模擬**深度綁定 NVIDIA PhysX**（GPU 加速、與 USD �
 
 Isaac Sim 內建兩個匯入器：
 
-- **MJCF Importer**（`isaacsim.asset.importer.mjcf`）：把 MJCF 轉成 USD。Isaac Sim 6.0.0 起以新的 Python 後端 `mujoco-usd-converter` 完全重寫（見 [Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)）。
+- **MJCF Importer**（`isaacsim.asset.importer.mjcf`）：把 MJCF 轉成 USD。Isaac Sim 6.0.0 起
+  以新的 Python 後端 [`mujoco-usd-converter`](https://github.com/newton-physics/mujoco-usd-converter)
+  重寫（見 [Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)）。該工具由
+  newton-physics 維護、Apache-2.0、也發佈在 PyPI（查證 2026-09-10 為 0.5.0），可獨立當 Python
+  模組或 CLI 用，不必開 Isaac Sim。**官方自述仍是 Alpha**：轉換涵蓋視覺幾何與材質、body、
+  碰撞幾何、site、關節與致動器，已知限制列在專案的 CHANGELOG。
 - **URDF Importer**（`isaacsim.asset.importer.urdf`）：把 URDF 轉成 USD。
 
 ### GUI 方式

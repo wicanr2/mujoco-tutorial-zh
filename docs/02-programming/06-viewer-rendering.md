@@ -49,11 +49,12 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
 ```python
 renderer = mujoco.Renderer(model, height=480, width=640)
 renderer.update_scene(data)             # 捕捉當前狀態
-img = renderer.render().copy()          # (H, W, 3) uint8
+img = renderer.render()                 # (H, W, 3) uint8，每次回傳新陣列
 ```
 
-`render()` 回傳的是 renderer 內部的緩衝區，收集連續影格時要 `.copy()`，否則清單裡每個
-元素都指向同一張畫面（[22 章](../06-amr/10-yreach-mission.md) 錄影時踩過這個坑）。
+`render()` 不帶參數時每次配置一個新陣列，收集連續影格可以直接 append。要重用緩衝區
+省記憶體得自己傳 `render(out=buf)` — 那時清單裡每個元素都指向 `buf`，收集前要 `.copy()`
+（[22 章](../06-amr/10-yreach-mission.md)）。
 
 實測輸出（t = 0、0.2、0.4、0.6 秒）：
 
@@ -93,7 +94,7 @@ renderer.scene.flags[mujoco.mjtRndFlag.mjRND_CONTACTPOINT] = True
 ## 常見錯誤與除錯
 
 - **`GLFWError: X11: Failed to open display`**：無顯示器環境忘了設 `MUJOCO_GL=osmesa` 或 `egl`。
-- **畫面全黑**：模型沒有 `<light>` — MuJoCo 不做全域光照，沒燈就是黑的（本章範例圖片第一次渲染就是這樣，補了 `<light>` 與地板才正常）。
+- **畫面極暗**：模型沒有 `<light>`。MuJoCo 只有一盞預設頭燈，不做全域光照 — 本章模型拿掉 `<light>` 後畫面平均亮度從 24.5 掉到 15.4（255 階），深色材質配上沒有地板時看起來就是一片黑。補 `<light>` 與地板才有正常明暗。
 - **`viewer.sync()` 畫面不動**：`sync()` 要在 `mj_step` 之後呼叫；且互動迴圈裡別忘了 `time.sleep`，否則播放速度會遠快於即時。
 - **渲染耗時**：Renderer 建立有成本，迴圈內不要每步都 `mujoco.Renderer(...)`，建立一次重複用。
 

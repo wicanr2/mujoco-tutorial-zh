@@ -26,7 +26,7 @@ for step in range(400):  # 0.8 秒，約半個擺盪週期
     mujoco.mj_step(model, data)
     if step % 100 == 0:
         renderer.update_scene(data)
-        frames.append(renderer.render().copy())   # render() 回傳內部 buffer，不 copy 會全部指向同一張
+        frames.append(renderer.render())   # 不帶 out= 時每次回傳新陣列，直接收集即可
 
 for i, f in enumerate(frames):
     Image.fromarray(f).save(f"docs/assets/viewer_frame{i}.png")
