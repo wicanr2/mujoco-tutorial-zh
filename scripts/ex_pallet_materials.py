@@ -55,9 +55,19 @@ def experiment(name, friction, rgba):
 
     p = data.xpos[pallet_id]
     slip = np.linalg.norm([p[0] - home[0], p[1] - data.qpos[1] - home[1]])  # 扣除牙叉位移
+    # 只看高度會漏判「脫離叉齒但卡在中間」的情況（20 章踩過）。
+    # 直接問接觸：棧板還跟叉齒碰在一起嗎。
+    fb = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "forks")
+    pb = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "pallet")
+    # mj_name2id 找不到時回傳 -1，比對永遠不成立、檢查會靜默失效。
+    # （19 章的模型叫 "fork" 不是 "forks"，就是這樣被騙過去的。）
+    assert fb >= 0 and pb >= 0, "body 名稱找不到，接觸檢查會靜默失效"
+    still_on_forks = any(
+        {model.geom_bodyid[c.geom1], model.geom_bodyid[c.geom2]} == {fb, pb}
+        for c in (data.contact[i] for i in range(data.ncon)))
     fell = p[2] < 0.05  # 腳底原本在 0.082，掉到地板表示摔下來
-    print(f"  相對滑動量 = {slip * 100:.1f} cm, 掉落 = {fell}")
-    return slip, fell
+    print(f"  相對滑動量 = {slip * 100:.1f} cm, 掉落 = {fell}, 仍在叉齒上 = {still_on_forks}")
+    return slip, fell, still_on_forks
 
 
 results = {}
@@ -65,10 +75,11 @@ for name, cfg in MATERIALS.items():
     results[name] = experiment(name, **cfg)
 
 print("\n===== 比較 =====")
-for name, (slip, fell) in results.items():
-    status = "✗ 掉落" if fell else "✓ 仍在牙叉上"
+for name, (slip, fell, on_forks) in results.items():
+    status = "✗ 掉落" if fell else ("✓ 仍在牙叉上" if on_forks else "✗ 脫離叉齒")
     print(f"{name}: 相對滑動 {slip * 100:.1f} cm, {status}")
 
-for name, (slip, fell) in results.items():
+for name, (slip, fell, on_forks) in results.items():
     assert not fell, f"{name} 掉落了！"
+    assert on_forks, f"{name} 已經脫離叉齒（高度沒掉到地面，但接觸沒了）"
 print("\n結果：兩種棧板都通過上下左右移動驗證 ✓")

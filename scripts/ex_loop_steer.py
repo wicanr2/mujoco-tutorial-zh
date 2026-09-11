@@ -65,6 +65,12 @@ print("繞圈開始（2×2 m 正方形 × 2 圈）...")
 run(150.0)
 print(f"結束：wp_i = {wp_i}（到達過 {wp_i} 個 waypoint）, x={data.qpos[0]:.2f}, y={data.qpos[1]:.2f}")
 
+# 轉彎外擺：舵輪不能原地轉，路徑必然衝過 waypoint 再繞回來。
+# 量法是單軸超調 —— 軌跡的 x / y 最遠點減掉該邊 waypoint 的座標。
+_xy = np.array([[r[1], r[2]] for r in log_rows])
+print(f"轉彎外擺：x 最遠 {_xy[:, 0].max():.2f}（waypoint 2.0，超調 {_xy[:, 0].max()-2.0:.2f} m）、"
+      f"y 最遠 {_xy[:, 1].max():.2f}（超調 {_xy[:, 1].max()-2.0:.2f} m）")
+
 with open("runs/loop_log.csv", "w", newline="") as f:
     w = csv.writer(f)
     w.writerow(["time", "x", "y", "z", "yaw", "steer", "drive", "wp_i"])

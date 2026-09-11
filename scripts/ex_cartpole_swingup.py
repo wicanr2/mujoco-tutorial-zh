@@ -68,6 +68,8 @@ for _ in range(8000):           # 16 秒
 x, th = data.qpos
 print(f"swing-up 時刻: {t_up:.2f} s")
 print(f"最終狀態: x = {x:.3f} m, θ = {th:.3f} rad（應都接近 0）")
+# 最終停在原點還不夠：要確認它真的從垂下盪上來過，而不是一開始就在平衡點附近。
+assert t_up is not None, "從來沒有進入 LQR 區間（|theta| < 0.4），沒有完成 swing-up"
 assert abs(x) < 0.05 and abs(th) < 0.05, "swing-up 失敗"
 
 os.makedirs("runs", exist_ok=True)

@@ -143,5 +143,14 @@ imageio.mimsave("runs/gripper.mp4", frames, fps=30)
 print(f"runs/gripper.mp4: {len(frames)} 幀")
 
 p = data.xpos[box_id]
+
+# 只檢查終點的話，箱子被「推」到 B 桌也會算通過。加一條過程檢查：它必須真的被舉高過。
+# log 的第 9 欄（索引 9）是箱子的 z。
+pz = np.array([r[9] for r in log_rows])
+z_max = float(pz.max())
+z_rise = z_max - float(pz[0])
+print(f"箱子最高到過 z={z_max:.3f}（起點 {pz[0]:.3f}，抬升 {z_rise*100:.1f} cm）")
+
+assert z_rise > 0.10, f"抓取失敗：箱子只被抬高 {z_rise*100:.1f} cm，可能是被推過去的"
 assert abs(p[0] - 0.9) < 0.15 and abs(p[1] + 0.5) < 0.15 and p[2] < 0.5, "A取B放失敗"
 print("結果：A 取 B 放驗證通過 ✓")
