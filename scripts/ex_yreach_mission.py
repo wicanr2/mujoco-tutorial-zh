@@ -47,6 +47,27 @@ data = mujoco.MjData(model)
 print(f"模型載入：nv={model.nv}, nu={model.nu}, nbody={model.nbody}")
 
 pid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "pallet_wood")
+fid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "yreach")
+
+
+def rel_to_fork():
+    """棧板在牙叉座標系中的位置。載具會轉動與側移，滑動要在這個參考系量。"""
+    R = data.xmat[fid].reshape(3, 3)
+    return R.T @ (data.xpos[pid] - data.xpos[fid])
+
+
+DRIFT = {"home": None, "peak": 0.0}
+
+
+def track_drift():
+    """貨在叉齒上這段期間的漂移峰值。
+
+    只看最後一幀會低估：貨可能中途滑出去又被帶回來。判定要看整段軌跡。
+    """
+    if DRIFT["home"] is None or data.ctrl[3] <= 0.10:
+        return
+    DRIFT["peak"] = max(DRIFT["peak"],
+                        float(np.linalg.norm(rel_to_fork() - DRIFT["home"])))
 qadr = model.jnt_qposadr[model.body_jntadr[pid]]
 
 # ===== 記錄器 =====
@@ -80,6 +101,7 @@ def step(ctrl, seconds):
             pr, pp, py = quat2rpy(pq)
             log_rows.append([data.time, bx, by, 0.11, 0, 0, byaw,
                              *data.qpos[qadr:qadr+3], pr, pp, py])
+            track_drift()
             if int(data.time * 30) > len(frames) - 1:
                 renderer.update_scene(data, camera=cam, scene_option=opt)
                 frames.append(renderer.render().copy())
@@ -100,9 +122,12 @@ def drive_to(tx, ty, reach=0.0, lift=(0, 0), timeout=6.0):
 
 
 step([0, 0, 0, 0, 0, 0, 0], 0.5)                       # 靜置
+p_start = data.xpos[pid].copy()
 drive_to(0.0, 0.45)                                    # 對準木頭棧板中心
 drive_to(-0.95, 0.45)                                  # 後退插入（叉尖到棧板中心）
 step([0, 0, 0, 0.35, 0.2, 0, 0], 2.0)                  # 抬起
+z_lifted = float(data.xpos[pid][2])
+DRIFT["home"] = rel_to_fork()                          # 漂移的基準：貨剛離地、還沒開始搬
 drive_to(0.4, 0.45, lift=(0.35, 0.2))                  # 前進退出貨架
 drive_to(0.4, -0.45, lift=(0.35, 0.2))                 # 橫移到塑膠棧板後方空位
 step([0, 0, 0, 0.35, 0.2, 0, -0.45], 1.0)              # reach 外伸：把棧板送得更遠
@@ -141,5 +166,13 @@ fig.tight_layout()
 fig.savefig("runs/mission_traj.png", dpi=110)
 print("runs/mission_traj.png")
 
-assert p[2] < 0.1, "棧板沒有放下"
-print("結果：取放任務完成 ✓")
+# 判定要對準「真正想證明的事」：貨被抬起來、全程跟著車、搬到了目的地、最後放到地面。
+# 只檢查最終高度的話，貨掉在半路也會被算成「放下去了」（24 章踩過這個坑）。
+moved = float(np.linalg.norm(np.asarray(p)[:2] - p_start[:2]))
+drift = DRIFT["peak"]
+print(f"棧板被搬運了 {moved:.2f} m；搬運全程在牙叉座標系中的漂移峰值 {drift*100:.1f} cm")
+assert z_lifted > 0.25, f"取貨失敗：棧板沒有被抬離地面（z={z_lifted:.3f}）"
+assert drift < 0.15, f"搬運失敗：貨在叉齒上的漂移峰值 {drift*100:.1f} cm"
+assert moved > 0.8, f"搬運失敗：棧板只移動 {moved:.2f} m"
+assert p[2] < 0.1, f"放置失敗：棧板沒有降到地面（z={p[2]:.3f}）"
+print("結果：取貨 → 搬運 → 放置 全程驗證通過 ✓")

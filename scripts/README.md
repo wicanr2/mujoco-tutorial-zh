@@ -70,6 +70,7 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `make_model_figures.py` | 從模型檔直接模擬並渲染圖條（01 / 02 / 04 章的模型長什麼樣） | MuJoCo 離屏渲染、Pillow |
 | `verify_examples.sh` | 逐支重跑範例並記錄 exit code 與耗時 | — |
 | `check_docs.py` | 靜態稽核：絕對路徑、連結、模型可載入、章節結構、清單與數字一致性 | mujoco |
+| `check_links.py` | 檢查文件裡的外部連結是否還通（需要網路，不進 CI） | — |
 
 Blender 腳本的用法（`--` 後面接 repo 根目錄）：
 
