@@ -72,9 +72,35 @@ if (blocks.length) {
     const div = document.createElement('div');
     div.className = 'mermaid';
     div.textContent = code.textContent;
+    div.dataset.src = code.textContent;   // 留著原文，切換深色模式時要重畫
     code.parentElement.replaceWith(div);
   });
   await mermaid.run({ querySelector: '.mermaid' });
+
+  // 配色是在初始化時從 CSS 變數讀進去的，之後切換系統主題不會自己更新。
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+    const css2 = getComputedStyle(document.documentElement);
+    const v2 = (n) => css2.getPropertyValue(n).trim();
+    mermaid.initialize({
+      startOnLoad: false, theme: 'base', securityLevel: 'strict',
+      flowchart: { curve: 'basis', padding: 14, useMaxWidth: true },
+      themeVariables: {
+        fontFamily: v2('--sans'), fontSize: '15px',
+        background: v2('--paper'), primaryColor: v2('--panel'),
+        primaryTextColor: v2('--ink'), primaryBorderColor: v2('--rule-2'),
+        secondaryColor: v2('--key-soft'), secondaryBorderColor: v2('--key'),
+        tertiaryColor: v2('--paper'), tertiaryBorderColor: v2('--rule'),
+        lineColor: v2('--ink-3'), textColor: v2('--ink'), nodeBorder: v2('--rule-2'),
+        clusterBkg: 'transparent', clusterBorder: v2('--rule'),
+        edgeLabelBackground: v2('--paper'),
+      },
+    });
+    document.querySelectorAll('.mermaid').forEach((d) => {
+      d.removeAttribute('data-processed');
+      d.textContent = d.dataset.src;
+    });
+    await mermaid.run({ querySelector: '.mermaid' });
+  });
 }
 </script>
 
