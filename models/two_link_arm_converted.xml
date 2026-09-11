@@ -2,15 +2,17 @@
   <compiler angle="radian"/>
 
   <worldbody>
-    <geom size="0.05 0.05 0.025" type="box"/>
+    <geom size="0.05 0.05 0.025" type="box" contype="0" conaffinity="0" group="1" density="0"/>
     <body name="link1" pos="0 0 0.025">
       <inertial pos="0 0 -0.25" mass="1" diaginertia="0.02 0.02 0.001"/>
       <joint name="joint1" range="-3.14 3.14" actuatorfrcrange="-10 10" axis="0 1 0"/>
-      <geom size="0.02 0.25" pos="0 0 -0.25" quat="0.707107 0.707107 0 0" type="cylinder"/>
+      <geom size="0.02 0.25" pos="0 0 -0.25" type="cylinder" contype="0" conaffinity="0" group="1" density="0"/>
+      <geom size="0.02 0.25" pos="0 0 -0.25" type="cylinder"/>
       <body name="link2" pos="0 0 -0.5">
         <inertial pos="0 0 -0.2" mass="0.5" diaginertia="0.007 0.007 0.001"/>
         <joint name="joint2" range="-3.14 3.14" actuatorfrcrange="-10 10" axis="0 1 0"/>
-        <geom size="0.015 0.2" pos="0 0 -0.2" quat="0.707107 0.707107 0 0" type="cylinder"/>
+        <geom size="0.015 0.2" pos="0 0 -0.2" type="cylinder" contype="0" conaffinity="0" group="1" density="0"/>
+        <geom size="0.015 0.2" pos="0 0 -0.2" type="cylinder"/>
       </body>
     </body>
   </worldbody>

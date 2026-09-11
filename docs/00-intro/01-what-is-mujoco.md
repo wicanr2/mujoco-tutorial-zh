@@ -104,6 +104,11 @@ python scripts/hello_mujoco.py
 
 預期會看到球的高度低於初始值 2.0，表示重力正在作用。
 
+[![球自由落下](../assets/strip_hello_ball.png)](../assets/strip_hello_ball.png)
+
+同一段模擬在四個時間點的畫面（`scripts/make_model_figures.py` 產生）。地板的陰影
+會跟著球的高度變化 — 這是 MuJoCo 預設就有的 headlight 打出來的，模型裡只放了一盞燈。
+
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；實測輸出 `球的高度 z = 1.211...`。
 
 ## 常見錯誤與除錯

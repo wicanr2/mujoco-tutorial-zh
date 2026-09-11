@@ -16,9 +16,17 @@
 | `tilt_boundary_log.csv` / `tilt_kp_sweep.csv` / `tilt_boundary.png` | `scripts/ex_tilt_boundary.py` ＋ `scripts/make_curves.py` | [17](../docs/06-amr/05-tilt-boundary.md) | 門架前傾掃描三案例，兩種座標系的滑移對照，以及 kp 對追隨誤差的影響 |
 | `cartpole_log.csv` / `cartpole_traj.png` | `scripts/ex_cartpole_swingup.py` ＋ `scripts/make_curves.py` | [10](../docs/02-programming/05-cartpole-swingup.md) | 車桿 swing-up 16 秒：能量整形盪起、1.20 s 切 LQR 後穩定 |
 | `rl_ars_log.csv` / `rl_ppo_log.csv` / `rl_sac_gpu_log.csv` / `rl_curves.png` | `scripts/ex_rl_swingup.py`、`ex_rl_ppo.py`、`ex_rl_sac_gpu.py` ＋ `scripts/make_curves.py` | [08](../docs/02-programming/03-rl-swingup.md)、[09](../docs/02-programming/04-ppo-gymnasium.md)、[12](../docs/02-programming/07-sac.md) | 三種演算法在同一個單擺 swing-up 任務上的學習曲線 |
+| `pd_control_log.csv` / `pd_kp_sweep.csv` / `pd_control.png` | `scripts/pd_control.py` ＋ `scripts/make_curves.py` | [03](../docs/02-programming/01-simulation-loop.md) | PD 控制的響應曲線與 KP 掃描（穩態誤差 14.6° → 0.3°，永遠不歸零） |
+| `sensors_log.csv` / `servo_log.csv` / `parallel_rollout_log.csv` / `more_examples.png` | `scripts/ex_sensors.py`、`ex_position_servo.py`、`ex_parallel_rollout.py` ＋ `scripts/make_curves.py` | [07](../docs/02-programming/02-more-examples.md) | 觸覺感測器的接觸尖峰、伺服追隨正弦的相位落後、16 條平行 rollout 的發散 |
+| `mjx_throughput.csv` / `mjx_throughput.png` | 遠端主機的 `scripts/ex_mjx_throughput.py` 輸出（見下方說明）＋ `scripts/make_curves.py` | [28](../docs/02-programming/08-mjx-gpu.md) | 三種做法的模擬吞吐對照 |
 
 影片一律 30 fps。時間序列的 CSV 一律 50 Hz 取樣、第一欄為模擬時間 `time`（秒）；
 學習曲線的 CSV 以訓練進度為橫軸（`iteration` 或 `steps`），不是時間。
+
+`mjx_throughput.csv` 不是每次重跑的產物：它記的是一次效能量測的結果（2026-09-11，
+遠端 8 核主機、load average 0.39），而效能數字每跑一次就不一樣。腳本
+`ex_mjx_throughput.py` 只印到 stdout、不寫這個檔，否則 CI 的「重跑後 `runs/` 不得變動」
+會每次都失敗。
 
 `rl_sac_gpu_log.csv` 的資料來自 2026-09-11 在遠端 RTX Pro 6000 上的那次訓練
 （`N_ENVS=4`，見 [12 章](../docs/02-programming/07-sac.md)），不是本機跑出來的 —— 本機沒有
@@ -131,3 +139,19 @@ python scripts/make_video_strips.py --suggest reach_xz # 重挑時間點時看�
 | --- | --- |
 | `iteration`（ARS）/ `steps`（PPO、SAC） | 訓練進度。ARS 每輪跑 16 個 episode × 1000 步 = 16,000 環境步 |
 | `reward_per_step` | 以固定 seed 評估的平均回報／步，越接近 0 越好 |
+
+### pd_control_log.csv / pd_kp_sweep.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `theta`, `omega` | 擺角（rad，垂下為 0）與角速度 |
+| `ctrl` | PD 控制器輸出的力矩（N·m） |
+| `kp`, `theta_final`, `error_rad`, `error_deg` | KP 掃描：各增益下的穩態角與殘餘誤差 |
+
+### sensors_log.csv / servo_log.csv / parallel_rollout_log.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `z`, `touch_N`, `acc_z` | 球的世界高度、觸覺感測器讀值（N）、加速度計 z 分量。200 Hz 取樣 — 接觸力是只持續幾個 timestep 的尖峰，50 Hz 會整個錯過 |
+| `target`, `actual`, `error` | 伺服的目標角、實際角與誤差（rad） |
+| `run`, `q0`, `q1` | 平行 rollout 的編號與兩個關節角；16 條軌跡疊在同一個檔案裡 |

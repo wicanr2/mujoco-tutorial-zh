@@ -7,9 +7,10 @@
 ## 學習目標
 
 - 直接在 MuJoCo 中載入 URDF
-- 學會用 `<mujoco>` 擴充區段補上 URDF 缺少的資訊
+- 學會用 `<mujoco>` 擴充區段補上 URDF 缺少的資訊，以及它**不能**放什麼
+- 知道匯入後 visual 與 collision 各自變成什麼，怎麼分開檢視
 - 了解 URDF → MJCF 的建議工作流程
-- 認識匯入時的常見陷阱
+- 認識匯入時的常見陷阱（靜默忽略、幾何軸向、固定底座的碰撞）
 
 ## 前置知識
 
@@ -47,7 +48,9 @@ MuJoCo 允許在 URDF 的 `<robot>` 底下加一個自訂的 `<mujoco>` 元素�
 
 - **`meshdir`**：指定 mesh 檔的搜尋目錄 — URDF 沒有這個概念，mesh 路徑問題幾乎都靠它解決。
 - **`balanceinertia`**：許多現成 URDF 的慣性參數不符合物理（編譯器會拒絕），開啟後自動修正。
-- **`discardvisual`**：URDF 的預設是 `false`（visual 也保留為 geom）；設 `true` 只留 collision。
+- **`discardvisual`**：**URDF 模式下預設是 `true`**（MJCF 是 `false`）—— 不寫這個屬性，
+  `<visual>` 會被整個丟掉，只剩 collision 幾何。想保留外觀就要明寫 `discardvisual="false"`。
+  實測：本章模型不寫時載入後有 2 個 geom，寫了之後有 5 個。
 - **預設值差異**：`strippath`、`angle`、`fusestatic`、`discardvisual` 在 URDF 模式下的預設值與 MJCF 不同（例如 URDF 預設 `angle="radian"`）。
 
 > ⚠️ **陷阱**：MJCF 會用 XML schema 檢查，URDF（含內嵌的 `<mujoco>` 區段）**不會**。
@@ -101,6 +104,37 @@ python scripts/load_urdf.py
 
 > 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3。轉存產生的 `models/two_link_arm_converted.xml` 已一併收錄供對照。
 
+[![URDF 手臂在重力下擺動](../assets/strip_two_link_arm.png)](../assets/strip_two_link_arm.png)
+
+從 `qpos = [1.0, 0.5]` 放開後的四個時間點（`scripts/make_model_figures.py` 產生）。
+
+## visual 與 collision 是兩組幾何
+
+載入後這個模型有 **5 個 geom**，不是 3 個：
+
+```
+g0 (world) contype=0 conaffinity=0 group=1     ← 底座的 visual
+g1 (link1) contype=0 conaffinity=0 group=1     ← link1 的 visual
+g2 (link1) contype=1 conaffinity=1 group=0     ← link1 的 collision
+g3 (link2) contype=0 conaffinity=0 group=1
+g4 (link2) contype=1 conaffinity=1 group=0
+```
+
+MuJoCo 匯入 URDF 時自動把 `<visual>` 設成 `contype=0 conaffinity=0`（不參與碰撞）
+並放進 group 1，`<collision>` 放進 group 0 —— 也就是自動做了**視覺與碰撞分離**。
+渲染時不指定 group，兩組會疊在一起顯示：
+
+[![visual 與 collision 對照](../assets/strip_two_link_arm_groups.png)](../assets/strip_two_link_arm_groups.png)
+
+右邊沒有底座，因為這個模型的底座只寫了 `<visual>`、沒有 `<collision>`（原因見下方除錯紀錄第 4 條）。
+要只看其中一組：
+
+```python
+opt = mujoco.MjvOption()
+opt.geomgroup[0] = 0        # 藏起 collision，只留 visual
+renderer.update_scene(data, camera=cam, scene_option=opt)
+```
+
 ## 官方建議的工作流程
 
 擴充區段能讓 URDF 更好用，但仍受限於 URDF 的表達能力。若要完整發揮 MuJoCo，官方建議：
@@ -113,6 +147,33 @@ python scripts/load_urdf.py
 實務上 URDF 通常是靜態的、MJCF 才是常被編輯的，所以「轉一次之後只管 MJCF」最常見。
 
 ## 常見錯誤與除錯
+
+1. **`<visual>` 整組不見了**。`discardvisual` 這個 compiler 屬性對 URDF 的預設值是
+   `true`（MJCF 是 `false`），不寫就會把 `<visual>` 全部丟掉 —— 畫面上看到的其實是
+   collision 幾何。本章的模型明寫 `discardvisual="false"` 才保得住。
+   這個坑很難察覺：模型照樣載入、照樣模擬，只是「長得不像預期」，而你會以為是
+   自己的幾何寫錯。
+
+2. **`<mujoco>` 區段只吃 `compiler`、`option`、`size` 三個子元素**（查證日期 2026-09-11）。
+   寫 `<default>`、`<contact>` 之類的會被**靜默忽略**，不報錯也不生效。官方明說
+   URDF 不做 schema 檢查、連 MuJoCo 專屬元素也不檢查，所以拼錯的屬性名同樣是靜默忽略。
+   要用完整功能，照官方建議轉存 MJCF 之後再加。
+
+3. **URDF 的 `<cylinder>` 沿 z 軸**。`<origin rpy="1.5707963 0 0"/>` 會把它轉成沿 y 橫躺 —— 
+   若關節的 `origin` 是沿 z 排列（例如 `xyz="0 0 -0.5"`），連桿看起來就會是分離的短棒。
+   驗證方法是把 geom 的旋轉矩陣第三行印出來看軸向指到哪：
+
+   ```python
+   R = data.geom_xmat[i].reshape(3, 3)
+   print("圓柱軸向 =", R[:, 2])      # 應該是 [0, 0, ±1]
+   ```
+
+4. **固定底座被併進 world 之後，父子碰撞排除不涵蓋它**。MuJoCo 會自動排除父子 body
+   之間的碰撞，但所有 body 都是 world 的後代，world 不適用這條規則。本章的 `joint1`
+   就位在底座頂面，`link1` 繞它轉的時候必然掃進底座裡，每一步產生假的接觸力（實測
+   穿透 50 mm、1 秒內 1899 次接觸，手臂直接被彈到 `qpos = [3.14, -3.05]`）。
+   **縮短連桿的 collision 沒有用** —— 關節在底座表面上，再短也會掃進去。
+   解法是底座不給 `<collision>`：它是固定的，本來就不需要參與碰撞。
 
 - **mesh 找不到**：用 `<mujoco><compiler meshdir="..."/></mujoco>` 指定目錄；URDF 常見的 `package://` 路徑要改成相對路徑。
 - **編譯器拒絕載入、報慣性錯誤**：加上 `balanceinertia="true"`；或檢查 `<inertial>` 的 inertia 是否正定。

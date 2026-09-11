@@ -210,7 +210,155 @@ def cartpole():
     print(f"{out.relative_to(REPO_ROOT)}  (切換於 {t_switch:.2f}s)")
 
 
-TARGETS = {"rl": rl_curves, "tilt": tilt_boundary, "cartpole": cartpole}
+
+def pd_control():
+    """03 章：PD 控制的響應與穩態誤差。"""
+    d = read_csv("pd_control_log.csv")
+    t = [float(r["time"]) for r in d]
+    th = [float(r["theta"]) for r in d]
+    u = [float(r["ctrl"]) for r in d]
+    target = np.pi / 2
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.4, 4.0))
+
+    # 控制力矩的初始尖峰有 6.3，和角度共用一條 y 軸的話，1.44 與 1.571 的差距會被
+    # 壓成一條線 —— 而那正是這張圖要看的東西。力矩放第二軸。
+    ax1.axhline(target, color="#999", lw=1.0, ls="--")
+    ax1.text(0.12, target + 0.035, f"target = pi/2 = {target:.3f}", fontsize=8.5, color="#666")
+    ax1.plot(t, th, color=ACCENT, lw=2.0, label="theta (rad)")
+    ax1.set_ylim(0, 1.85)
+
+    ax1b = ax1.twinx()
+    ax1b.plot(t, u, color="#5c8a5c", lw=1.1, alpha=0.8, label="control torque")
+    ax1b.set_ylabel("control torque (N·m)", fontsize=9, color="#5c8a5c")
+    ax1b.tick_params(labelsize=8.5, colors="#5c8a5c")
+    ax1b.spines["top"].set_visible(False)
+
+    ax1.annotate("", xy=(3.6, target), xytext=(3.6, th[-1]),
+                 arrowprops=dict(arrowstyle="<->", color="#a33", lw=1.2))
+    ax1.text(3.72, (target + th[-1]) / 2 - 0.055,
+             f"steady-state error\n{target - th[-1]:.3f} rad ({np.degrees(target - th[-1]):.1f}°)",
+             fontsize=8.5, color="#a33")
+    ax1.set_xlabel("time (s)", fontsize=9.5)
+    ax1.set_ylabel("pendulum angle (rad)", fontsize=9.5)
+    ax1.set_title("Ch.03 PD control: response (KP=4, KD=0.8)",
+                  fontsize=10.5, color=INK, pad=10)
+    ax1.legend(frameon=False, fontsize=8.5, loc="lower right",
+               bbox_to_anchor=(1.0, 0.08))
+    style(ax1)
+
+    sw = read_csv("pd_kp_sweep.csv")
+    kp = [float(r["kp"]) for r in sw]
+    err = [float(r["error_deg"]) for r in sw]
+    ax2.plot(kp, err, "o-", color="#4a6fa5", lw=1.6, ms=5)
+    for x, y in zip(kp, err):
+        ax2.annotate(f"{y:.1f}°", (x, y), textcoords="offset points",
+                     xytext=(6, 5), fontsize=8, color="#4a6fa5")
+    ax2.set_xscale("log")
+    ax2.set_xlabel("KP (log scale)", fontsize=9.5)
+    ax2.set_ylabel("steady-state error (deg)", fontsize=9.5)
+    ax2.set_title("Error shrinks with KP but never reaches zero",
+                  fontsize=10.5, color=INK, pad=10)
+    ax2.set_ylim(-1, 16)
+    style(ax2)
+
+    fig.tight_layout()
+    out = RUNS / "pd_control.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    print(f"{out.relative_to(REPO_ROOT)}")
+
+
+def more_examples():
+    """07 章：感測器、position 伺服、平行 rollout 各一格。"""
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(13.6, 4.0))
+
+    d = read_csv("sensors_log.csv")
+    t = [float(r["time"]) for r in d]
+    ax1.plot(t, [float(r["z"]) for r in d], color="#4a6fa5", lw=1.6, label="height z (m)")
+    ax1b = ax1.twinx()
+    ax1b.plot(t, [float(r["touch_N"]) for r in d], color=ACCENT, lw=1.4, label="touch (N)")
+    ax1b.set_ylabel("touch force (N)", fontsize=9, color=ACCENT)
+    ax1b.tick_params(labelsize=8.5, colors=ACCENT)
+    ax1b.spines["top"].set_visible(False)
+    ax1.set_xlabel("time (s)", fontsize=9.5)
+    ax1.set_ylabel("height (m)", fontsize=9.5)
+    ax1.set_title("Touch sensor: ball drop", fontsize=10.5, color=INK, pad=10)
+    ax1.legend(frameon=False, fontsize=8.5, loc="upper right")
+    style(ax1)
+
+    d = read_csv("servo_log.csv")
+    t = [float(r["time"]) for r in d]
+    ax2.plot(t, [float(r["target"]) for r in d], color="#999", lw=1.3, ls="--", label="target")
+    ax2.plot(t, [float(r["actual"]) for r in d], color=ACCENT, lw=1.7, label="actual")
+    ax2.plot(t, [float(r["error"]) for r in d], color="#a33", lw=1.0, alpha=0.7, label="error")
+    ax2.set_xlabel("time (s)", fontsize=9.5)
+    ax2.set_ylabel("angle (rad)", fontsize=9.5)
+    ax2.set_title("Position servo tracking sin(t)", fontsize=10.5, color=INK, pad=10)
+    ax2.legend(frameon=False, fontsize=8.5, loc="upper left")
+    style(ax2)
+
+    d = read_csv("parallel_rollout_log.csv")
+    runs = defaultdict(list)
+    for r in d:
+        runs[int(r["run"])].append((float(r["q0"]), float(r["q1"])))
+    cmap = plt.get_cmap("tab20")
+    for i, (k, pts) in enumerate(sorted(runs.items())):
+        c = cmap(i % 20)
+        ax3.plot([p[0] for p in pts], [p[1] for p in pts], lw=0.9, color=c, alpha=0.85)
+        ax3.plot(pts[-1][0], pts[-1][1], "o", ms=3.5, color=c)
+    ax3.set_xlabel("joint 1 angle (rad)", fontsize=9.5)
+    ax3.set_ylabel("joint 2 angle (rad)", fontsize=9.5)
+    ax3.set_title(f"{len(runs)} parallel rollouts (double pendulum)",
+                  fontsize=10.5, color=INK, pad=10)
+    style(ax3)
+
+    fig.tight_layout()
+    out = RUNS / "more_examples.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    print(f"{out.relative_to(REPO_ROOT)}")
+
+
+def mjx_throughput():
+    """28 章：三種做法的吞吐長條圖。"""
+    d = read_csv("mjx_throughput.csv")
+    # CSV 的 method 是中文（腳本 stdout 直接轉出來的），圖上要換成英文：
+    # matplotlib 的預設字型沒有 CJK，直接畫會變成一排豆腐。
+    EN = {"CPU 單執行緒": "CPU, single thread",
+          "CPU 4 執行緒": "CPU, 4 threads",
+          "MJX 批次（cpu）": "MJX batched (CPU backend)",
+          "MJX 批次（gpu）": "MJX batched (GPU backend)"}
+    names = [EN.get(r["method"], r["method"]) for r in d]
+    sps = [int(r["steps_per_sec"]) for r in d]
+    rel = [float(r["relative"]) for r in d]
+    colors = ["#4a6fa5", "#8a8a8a", ACCENT]
+
+    fig, ax = plt.subplots(figsize=(8.4, 3.4))
+    y = np.arange(len(names))
+    ax.barh(y, sps, color=colors[:len(names)], height=0.55)
+    for i, (v, r) in enumerate(zip(sps, rel)):
+        ax.text(v + 30000, i, f"{v:,} steps/s   ({r:.1f}x)", va="center",
+                fontsize=9, color=INK)
+    ax.set_yticks(y)
+    ax.set_yticklabels(names, fontsize=9.5)
+    ax.invert_yaxis()
+    ax.set_xlim(0, max(sps) * 1.42)
+    ax.set_xlabel("simulation steps per second", fontsize=9.5)
+    ax.set_title("Ch.28 Throughput: 2048 trajectories x 500 steps (double pendulum)",
+                 fontsize=10.5, color=INK, pad=12)
+    style(ax)
+    ax.grid(axis="y", lw=0)
+    fig.tight_layout()
+    out = RUNS / "mjx_throughput.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    print(f"{out.relative_to(REPO_ROOT)}")
+
+
+TARGETS = {"pd": pd_control, "ex07": more_examples,
+           "mjx": mjx_throughput,
+           "rl": rl_curves, "tilt": tilt_boundary, "cartpole": cartpole}
 
 if __name__ == "__main__":
     for name in sys.argv[1:] or list(TARGETS):

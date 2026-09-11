@@ -67,6 +67,7 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `make_strips.py` | 把實驗過程做成多幀圖條 | MuJoCo 離屏渲染 |
 | `make_video_strips.py` | 從 `runs/` 的錄影抽幀拼成圖條（動作轉折點自動選幀） | imageio、Pillow |
 | `make_curves.py` | 把 `runs/` 的 CSV 畫成圖：RL 學習曲線、門架前傾、車桿軌跡 | matplotlib |
+| `make_model_figures.py` | 從模型檔直接模擬並渲染圖條（01 / 02 / 04 章的模型長什麼樣） | MuJoCo 離屏渲染、Pillow |
 | `verify_examples.sh` | 逐支重跑範例並記錄 exit code 與耗時 | — |
 | `check_docs.py` | 靜態稽核：絕對路徑、連結、模型可載入、章節結構、清單與數字一致性 | mujoco |
 

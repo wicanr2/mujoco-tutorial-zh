@@ -3,8 +3,13 @@
 
   <!-- MuJoCo 擴充區段：嵌入在 URDF 的 robot 元素底下 -->
   <mujoco>
-    <compiler angle="radian" balanceinertia="true"/>
+    <!-- discardvisual 對 URDF 的預設值是 true（MJCF 是 false）：不寫這個屬性，
+         URDF 的 <visual> 會被整個丟掉，畫面上看到的其實是 collision 幾何。 -->
+    <compiler angle="radian" balanceinertia="true" discardvisual="false"/>
     <option gravity="0 0 -9.81" timestep="0.002"/>
+    <!-- 只有 compiler / option / size 這三個子元素會生效。寫 default、contact
+         之類的會被靜默忽略（URDF 不做 schema 檢查，連 MuJoCo 專屬元素也不檢查）。
+         要用 MuJoCo 的完整功能，官方建議先轉存成 MJCF 再加。 -->
   </mujoco>
 
   <link name="base">
@@ -17,10 +22,9 @@
       <origin xyz="0 0 0"/>
       <geometry><box size="0.1 0.1 0.05"/></geometry>
     </visual>
-    <collision>
-      <origin xyz="0 0 0"/>
-      <geometry><box size="0.1 0.1 0.05"/></geometry>
-    </collision>
+    <!-- 固定底座不給 collision：joint1 就位在底座頂面，link1 繞它轉的時候
+         一定會掃進底座裡，而底座匯入後會併進 world，MuJoCo 的父子碰撞排除
+         不涵蓋 world，於是每一步都產生假的接觸力。底座本來就不需要碰撞。 -->
   </link>
 
   <link name="link1">
@@ -30,11 +34,11 @@
       <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.001"/>
     </inertial>
     <visual>
-      <origin xyz="0 0 -0.25" rpy="1.5707963 0 0"/>
+      <origin xyz="0 0 -0.25"/>
       <geometry><cylinder radius="0.02" length="0.5"/></geometry>
     </visual>
     <collision>
-      <origin xyz="0 0 -0.25" rpy="1.5707963 0 0"/>
+      <origin xyz="0 0 -0.25"/>
       <geometry><cylinder radius="0.02" length="0.5"/></geometry>
     </collision>
   </link>
@@ -54,11 +58,11 @@
       <inertia ixx="0.007" ixy="0" ixz="0" iyy="0.007" iyz="0" izz="0.001"/>
     </inertial>
     <visual>
-      <origin xyz="0 0 -0.2" rpy="1.5707963 0 0"/>
+      <origin xyz="0 0 -0.2"/>
       <geometry><cylinder radius="0.015" length="0.4"/></geometry>
     </visual>
     <collision>
-      <origin xyz="0 0 -0.2" rpy="1.5707963 0 0"/>
+      <origin xyz="0 0 -0.2"/>
       <geometry><cylinder radius="0.015" length="0.4"/></geometry>
     </collision>
   </link>

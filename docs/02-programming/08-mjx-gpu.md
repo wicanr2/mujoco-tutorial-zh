@@ -69,6 +69,8 @@ out = batched(qpos0); out.block_until_ready()   # 第二次：穩態吞吐
 | CPU 4 執行緒 | 4.45 s | 230,276 | 0.4× |
 | MJX 批次（**CPU 後端**） | 0.52 s | 1,982,366 | 3.2× |
 
+[![吞吐對照](../../runs/mjx_throughput.png)](../../runs/mjx_throughput.png)
+
 幾件事值得注意：
 
 **多執行緒比單執行緒還慢**（0.4×，慢了一倍半）。`mj_step` 執行期間會釋放 GIL，但每一步前後的

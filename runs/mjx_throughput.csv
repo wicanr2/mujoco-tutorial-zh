@@ -1,0 +1,4 @@
+method,seconds,steps_per_sec,relative
+CPU 單執行緒,1.7,617503,1.0
+CPU 4 執行緒,4.4,230276,0.4
+MJX 批次（cpu）,0.5,1982366,3.2
