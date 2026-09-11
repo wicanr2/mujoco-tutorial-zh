@@ -189,6 +189,43 @@ def check_requirements():
     return sorted(set(bad))
 
 
+def check_model_penetration():
+    """模型載入後不該有不收斂的接觸穿透。
+
+    事故：mr1533_pallet_template 的叉齒碰撞盒沒對準棧板叉孔，叉車變成「撞著棧板推」
+    而不是「插進去抬」。棧板照樣被舉起來、腳本照樣印驗證通過，只有量接觸才看得到
+    全程 15 mm 的持續穿透。靜置後仍收不回去的穿透，就是幾何沒對好。
+    """
+    import mujoco
+
+    subs = {"PALLET_FRICTION": "0.6", "PALLET_RGBA": "0.5 0.4 0.2 1",
+            "CG_OFFSET": "0", "PALLET_OBJ": "pallet_wood.stl"}
+    bad = []
+    for p in sorted(list((ROOT / "models").glob("*.xml"))
+                    + list((ROOT / "models").glob("*.urdf"))):
+        text = p.read_text(encoding="utf-8")
+        if any(k in text for k in subs):
+            for k, v in subs.items():
+                text = text.replace(k, v)
+            text = text.replace('meshdir="meshes/', f'meshdir="{ROOT}/models/meshes/')
+            text = text.replace('file="../', f'file="{ROOT}/models/meshes/')
+            m = mujoco.MjModel.from_xml_string(text)
+        else:
+            m = mujoco.MjModel.from_xml_path(str(p))
+        d = mujoco.MjData(m)
+        # 靜置 1 秒讓初始重疊沉降掉，還剩下的才是真的沒對好
+        for _ in range(int(1.0 / m.opt.timestep)):
+            mujoco.mj_step(m, d)
+        worst = max((-d.contact[i].dist for i in range(d.ncon)), default=0.0)
+        if worst > 0.005:          # 5 mm
+            names = {mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, m.geom_bodyid[c.geom1])
+                     + " ↔ " + mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, m.geom_bodyid[c.geom2])
+                     for c in (d.contact[i] for i in range(d.ncon)) if -c.dist > 0.005}
+            bad.append(f"{p.relative_to(ROOT)}: 靜置 1 秒後仍有 {worst*1000:.1f} mm 穿透"
+                       f"（{', '.join(sorted(names))}）")
+    return bad
+
+
 def check_claimed_counts():
     """README / REPORT 宣稱的數量要與實際相符。"""
     bad = []
@@ -266,6 +303,7 @@ CHECKS = [
     ("目錄清單登記", check_inventories),
     ("孤兒圖片", check_orphan_assets),
     ("相依套件登記", check_requirements),
+    ("模型接觸穿透", check_model_penetration),
     ("宣稱數量", check_claimed_counts),
     ("CSV 欄位一致", check_csv_headers),
 ]

@@ -14,6 +14,7 @@
 | `gripper.mp4` / `gripper_log.csv` | `scripts/ex_gripper_ab.py` | [26](../docs/06-amr/14-gripper-ab.md) | 搬運車三軸手臂 + 二指夾爪，A 桌取箱 B 桌放下 |
 | `loop.mp4` / `loop_log.csv` / `loop_traj.png` | `scripts/ex_loop_steer.py` | [27](../docs/06-amr/15-steer-loop.md) | 舵輪繞圈 waypoint 追蹤，2×2 m 正方形兩圈（4500 幀） |
 | `tilt_boundary_log.csv` / `tilt_kp_sweep.csv` / `tilt_boundary.png` | `scripts/ex_tilt_boundary.py` ＋ `scripts/make_curves.py` | [17](../docs/06-amr/05-tilt-boundary.md) | 門架前傾掃描三案例，兩種座標系的滑移對照，以及 kp 對追隨誤差的影響 |
+| `rerun_materials_log.csv` / `rerun_materials.png` | `scripts/ex_rerun_materials.py` ＋ `scripts/make_curves.py` | [20](../docs/06-amr/08-rerun-real-model.md) | 橫移強度 vy 掃描：兩種材質的滑移與是否被甩落 |
 | `cartpole_log.csv` / `cartpole_traj.png` | `scripts/ex_cartpole_swingup.py` ＋ `scripts/make_curves.py` | [10](../docs/02-programming/05-cartpole-swingup.md) | 車桿 swing-up 16 秒：能量整形盪起、1.20 s 切 LQR 後穩定 |
 | `rl_ars_log.csv` / `rl_ppo_log.csv` / `rl_sac_gpu_log.csv` / `rl_curves.png` | `scripts/ex_rl_swingup.py`、`ex_rl_ppo.py`、`ex_rl_sac_gpu.py` ＋ `scripts/make_curves.py` | [08](../docs/02-programming/03-rl-swingup.md)、[09](../docs/02-programming/04-ppo-gymnasium.md)、[12](../docs/02-programming/07-sac.md) | 三種演算法在同一個單擺 swing-up 任務上的學習曲線 |
 | `pd_control_log.csv` / `pd_kp_sweep.csv` / `pd_control.png` | `scripts/pd_control.py` ＋ `scripts/make_curves.py` | [03](../docs/02-programming/01-simulation-loop.md) | PD 控制的響應曲線與 KP 掃描（穩態誤差 14.6° → 0.3°，永遠不歸零） |
@@ -155,3 +156,12 @@ python scripts/make_video_strips.py --suggest reach_xz # 重挑時間點時看�
 | `z`, `touch_N`, `acc_z` | 球的世界高度、觸覺感測器讀值（N）、加速度計 z 分量。200 Hz 取樣 — 接觸力是只持續幾個 timestep 的尖峰，50 Hz 會整個錯過 |
 | `target`, `actual`, `error` | 伺服的目標角、實際角與誤差（rad） |
 | `run`, `q0`, `q1` | 平行 rollout 的編號與兩個關節角；16 條軌跡疊在同一個檔案裡 |
+
+### rerun_materials_log.csv
+
+| 欄位 | 說明 |
+| --- | --- |
+| `vy` | 橫移速度命令（m/s），±vy 來回三次 |
+| `wood_slip_cm` / `plastic_slip_cm` | 棧板相對車體的最終位移 |
+| `wood_fell` / `plastic_fell` | 1 = 棧板被甩落到地面 |
+| `gap_cm` | 兩種材質的差距；只有兩者都沒掉落時才有意義 |

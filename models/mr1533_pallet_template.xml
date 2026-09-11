@@ -50,8 +50,12 @@
               <joint name="tilt" type="hinge" axis="0 1 0" range="-0.5 0.5" damping="10"/>
               <inertial pos="-0.5 0 0.3" mass="40" diaginertia="5 5 1"/>
               <geom class="visual" type="mesh" mesh="forks" rgba="0.3 0.3 0.32 1"/>
-              <geom type="box" size="0.48 0.16 0.015" pos="-0.62  0.315 -0.205" group="3" friction="0.1 0.05 0.01"/>
-              <geom type="box" size="0.48 0.16 0.015" pos="-0.62 -0.315 -0.205" group="3" friction="0.1 0.05 0.01"/>
+              <!-- 叉齒碰撞盒要對準棧板的叉孔，否則叉車是「撞著棧板推」而不是「插進去抬」：
+                   叉孔 z 範圍 0~0.090（枕木高度，板面底在 0.090），y 開口 0.05~0.37
+                   （中間枕木與外側枕木之間）。碰撞盒放在 z 0.060~0.090、y ±0.21，
+                   也與視覺 mesh 的叉架下緣（z=0.060）對齊。 -->
+              <geom type="box" size="0.48 0.14 0.015" pos="-0.62  0.21 -0.215" group="3" friction="0.1 0.05 0.01"/>
+              <geom type="box" size="0.48 0.14 0.015" pos="-0.62 -0.21 -0.215" group="3" friction="0.1 0.05 0.01"/>
               <site name="fork_tip" pos="-1.1 0 -0.21" size="0.01"/>
             </body>
           </body>
@@ -60,7 +64,9 @@
     </body>
 
     <!-- 棧板（Blender 建模，1.0×0.8 m、20 kg）：枕木方向對齊 x（牙叉從 -x 端進入） -->
-    <body name="pallet" pos="-0.4 0 0" euler="0 0 1.5707963">
+    <!-- 棧板要放在叉齒構不到的地方，車才有「倒退插入」這個動作可做。
+         放 -0.4 的話叉齒（x 到 -0.60）初始就埋在棧板裡（x -0.8~0）。 -->
+    <body name="pallet" pos="-1.2 0 0" euler="0 0 1.5707963">
       <freejoint/>
       <inertial pos="0 0 0.06" mass="20" diaginertia="0.15 0.15 0.1"/>
       <geom class="visual" type="mesh" mesh="pallet" rgba="PALLET_RGBA"/>

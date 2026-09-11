@@ -356,7 +356,51 @@ def mjx_throughput():
     print(f"{out.relative_to(REPO_ROOT)}")
 
 
-TARGETS = {"pd": pd_control, "ex07": more_examples,
+
+def rerun_materials():
+    """20 章：橫移強度掃描。材質差異只在「摩擦剛好不夠」的區間看得到。"""
+    d = read_csv("rerun_materials_log.csv")
+    vy = [float(r["vy"]) for r in d]
+    wood = [float(r["wood_slip_cm"]) for r in d]
+    plas = [float(r["plastic_slip_cm"]) for r in d]
+    wf = [int(r["wood_fell"]) for r in d]
+    pf = [int(r["plastic_fell"]) for r in d]
+
+    fig, ax = plt.subplots(figsize=(8.4, 4.4))
+    ax.plot(vy, wood, "-", color="#8a5a2b", lw=1.8, label="wood (mu=0.6)")
+    ax.plot(vy, plas, "-", color="#3a6ea5", lw=1.8, label="plastic (mu=0.35)")
+    # 實心 = 還在叉齒上，空心 = 被甩落
+    for x, y, f, c in [(vy, wood, wf, "#8a5a2b"), (vy, plas, pf, "#3a6ea5")]:
+        for xi, yi, fi in zip(x, y, f):
+            ax.plot(xi, yi, "o", ms=6, color=c,
+                    markerfacecolor=("white" if fi else c), markeredgewidth=1.4)
+
+    # 兩者都留住、差距最大的那一點
+    ok = [i for i in range(len(vy)) if not wf[i] and not pf[i]]
+    if ok:
+        j = max(ok, key=lambda i: abs(wood[i] - plas[i]))
+        ax.annotate("", xy=(vy[j], wood[j]), xytext=(vy[j], plas[j]),
+                    arrowprops=dict(arrowstyle="<->", color=ACCENT, lw=1.4))
+        ax.text(vy[j] + 0.025, (wood[j] + plas[j]) / 2,
+                f"{abs(wood[j]-plas[j]):.1f} cm apart\n(both still on forks)",
+                fontsize=8.5, color=ACCENT, va="center")
+
+    ax.text(0.62, 6, "hollow marker = pallet thrown off", fontsize=8.5, color="#666")
+    ax.set_xlabel("lateral speed command vy (m/s)", fontsize=9.5)
+    ax.set_ylabel("pallet displacement vs. vehicle (cm)", fontsize=9.5)
+    ax.set_title("Ch.20 Material contrast appears only at low lateral speed",
+                 fontsize=10.5, color=INK, pad=12)
+    ax.legend(frameon=False, fontsize=9, loc="upper left")
+    style(ax)
+    fig.tight_layout()
+    out = RUNS / "rerun_materials.png"
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+    print(f"{out.relative_to(REPO_ROOT)}")
+
+
+TARGETS = {"materials": rerun_materials,
+           "pd": pd_control, "ex07": more_examples,
            "mjx": mjx_throughput,
            "rl": rl_curves, "tilt": tilt_boundary, "cartpole": cartpole}
 
