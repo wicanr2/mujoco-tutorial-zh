@@ -268,6 +268,35 @@ def check_version_claims():
     return sorted(set(bad))
 
 
+def check_inline_paths():
+    """文件裡用行內程式碼寫的檔案路徑（`scripts/x.py`）要真的存在。
+
+    markdown 連結有 check_relative_links 管，但文件裡更多的是行內程式碼形式的引用 ——
+    檔案改名或刪掉之後，那些引用不會有任何提示。
+
+    例外是「腳本的輸出」：有些產物體積大或沒有保留價值（例如未收斂的權重），
+    腳本會產生但不進版控。這種路徑只要出現在某支腳本的寫入呼叫裡就不要求它存在。
+    """
+    outputs = set()
+    for py in (ROOT / "scripts").glob("*.py"):
+        text = py.read_text(encoding="utf-8")
+        for m in re.finditer(r"""["']((?:runs|policies|docs|models)/[^"'\s]+)["']""", text):
+            outputs.add(m.group(1))
+
+    pat = re.compile(r"`((?:scripts|models|runs|policies|docs|sources)/[^`\s]+)`")
+    bad = []
+    for md in markdown_files():
+        for m in pat.finditer(md.read_text(encoding="utf-8")):
+            path = m.group(1)
+            # 範本路徑（`runs/<實驗名>.mp4`）與萬用字元不是實際檔案
+            if any(c in path for c in "<>*") or path.endswith("/"):
+                continue
+            if path in outputs or (ROOT / path).exists():
+                continue
+            bad.append(f"{md.relative_to(ROOT)}: `{path}` 不存在")
+    return sorted(set(bad))
+
+
 def check_claimed_counts():
     """README / REPORT 宣稱的數量要與實際相符。"""
     bad = []
@@ -347,6 +376,7 @@ CHECKS = [
     ("相依套件登記", check_requirements),
     ("模型接觸穿透", check_model_penetration),
     ("版本號一致", check_version_claims),
+    ("行內路徑存在", check_inline_paths),
     ("宣稱數量", check_claimed_counts),
     ("CSV 欄位一致", check_csv_headers),
 ]
