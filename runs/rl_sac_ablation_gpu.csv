@@ -1,0 +1,2 @@
+device,train_freq,learning_rate,seconds,final_reward
+cuda,1,0.001,68.5,-0.2012

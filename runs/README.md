@@ -17,6 +17,7 @@
 | `rerun_materials_log.csv` / `rerun_materials.png` | `scripts/ex_rerun_materials.py` ＋ `scripts/make_curves.py` | [20](../docs/06-amr/08-rerun-real-model.md) | 橫移強度 vy 掃描：兩種材質的滑移與是否被甩落 |
 | `cartpole_log.csv` / `cartpole_traj.png` | `scripts/ex_cartpole_swingup.py` ＋ `scripts/make_curves.py` | [10](../docs/02-programming/05-cartpole-swingup.md) | 車桿 swing-up 16 秒：能量整形盪起、1.20 s 切 LQR 後穩定 |
 | `rl_ars_log.csv` / `rl_ppo_log.csv` / `rl_sac_gpu_log.csv` / `rl_curves.png` | `scripts/ex_rl_swingup.py`、`ex_rl_ppo.py`、`ex_rl_sac_gpu.py` ＋ `scripts/make_curves.py` | [08](../docs/02-programming/03-rl-swingup.md)、[09](../docs/02-programming/04-ppo-gymnasium.md)、[12](../docs/02-programming/07-sac.md) | 三種演算法在同一個單擺 swing-up 任務上的學習曲線 |
+| `rl_sac_ablation.csv` / `rl_sac_ablation_gpu.csv` | `scripts/ex_rl_sac_ablation.py` | [12](../docs/02-programming/07-sac.md) | SAC 的 `train_freq` × `learning_rate` 消融：四組 CPU（＋一組 GPU 對照）各跑滿 60k 步，含耗時與最終回報 |
 | `pd_control_log.csv` / `pd_kp_sweep.csv` / `pd_control.png` | `scripts/pd_control.py` ＋ `scripts/make_curves.py` | [03](../docs/02-programming/01-simulation-loop.md) | PD 控制的響應曲線與 KP 掃描（穩態誤差 14.6° → 0.3°，永遠不歸零） |
 | `sensors_log.csv` / `servo_log.csv` / `parallel_rollout_log.csv` / `more_examples.png` | `scripts/ex_sensors.py`、`ex_position_servo.py`、`ex_parallel_rollout.py` ＋ `scripts/make_curves.py` | [07](../docs/02-programming/02-more-examples.md) | 觸覺感測器的接觸尖峰、伺服追隨正弦的相位落後、16 條平行 rollout 的發散 |
 | `mjx_throughput.csv` / `mjx_throughput.png` | 遠端主機的 `scripts/ex_mjx_throughput.py` 輸出（見下方說明）＋ `scripts/make_curves.py` | [28](../docs/02-programming/08-mjx-gpu.md) | 三種做法的模擬吞吐對照 |
@@ -140,6 +141,19 @@ python scripts/make_video_strips.py --suggest reach_xz # 重挑時間點時看�
 | --- | --- |
 | `iteration`（ARS）/ `steps`（PPO、SAC） | 訓練進度。ARS 每輪跑 16 個 episode × 1000 步 = 16,000 環境步 |
 | `reward_per_step` | 以固定 seed 評估的平均回報／步，越接近 0 越好 |
+
+### rl_sac_ablation.csv / rl_sac_ablation_gpu.csv
+
+| 欄位 | 意義 |
+| --- | --- |
+| `device` | `cpu` 或 `cuda` |
+| `train_freq` | 每收集幾步做一次梯度更新（SAC 預設 1） |
+| `learning_rate` | 學習率 |
+| `seconds` | 跑滿 60k 步的牆鐘時間（在閒置的 8 核主機上量，load average < 1） |
+| `final_reward` | 訓練後的平均回報／步（500 步確定性評估） |
+
+主檔固定四列（全部 CPU）；`WITH_GPU=1` 才會另外產生 `_gpu.csv`，這樣沒有 GPU 的機器
+重跑主檔也會位元相同。
 
 ### pd_control_log.csv / pd_kp_sweep.csv
 

@@ -33,8 +33,9 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `ex_rl_ppo.py` | [09](../docs/02-programming/04-ppo-gymnasium.md) | Gymnasium Env + SB3 PPO，約 6 分鐘 | `policies/swingup_ppo.zip` |
 | `ex_rl_sac.py` | [12](../docs/02-programming/07-sac.md) | SAC on CPU（如實記錄未收斂） | `policies/swingup_sac.zip` |
 | `ex_rl_sac_gpu.py` | [12](../docs/02-programming/07-sac.md) | SAC 的 GPU 版，zoo 超參 | `policies/swingup_sac_gpu.zip` |
+| `ex_rl_sac_ablation.py` | [12](../docs/02-programming/07-sac.md) | 掃 `train_freq` × `learning_rate`，四組各跑滿 60k 步（約 4 分鐘） | `runs/rl_sac_ablation.csv` |
 
-`ex_rl_sac_gpu.py` 需要 CUDA 環境，在只有 CPU 的機器上跑會很慢。
+`ex_rl_sac_gpu.py` 需要 CUDA 環境。`ex_rl_sac_ablation.py` 預設只跑 CPU 四組，`WITH_GPU=1` 才多跑一組 GPU 對照；兩支的平行環境數都用 `N_ENVS` 調，在共用主機上別把核心佔滿。
 
 ## AMR 實驗
 

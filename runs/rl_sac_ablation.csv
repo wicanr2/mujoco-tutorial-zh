@@ -1,0 +1,5 @@
+device,train_freq,learning_rate,seconds,final_reward
+cpu,4,0.0003,26.3,-1.8227
+cpu,4,0.001,26.0,-0.3338
+cpu,1,0.0003,81.8,-0.2214
+cpu,1,0.001,83.9,-0.2127
