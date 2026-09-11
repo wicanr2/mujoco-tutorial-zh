@@ -4,7 +4,10 @@
 >
 > 擷取日期：2026-09-09
 >
-> ⚠️ 本章依 AGENTS.md 規範如實標示可行性：**官方並無維護中的 MuJoCo 物理引擎外掛**；文中所述客製外掛做法需在 Gazebo 環境實作，本機未安裝 Gazebo，程式碼未實測。
+> ⚠️ 本章依 AGENTS.md 規範如實標示可行性：**官方 MuJoCo 外掛已於 2026-03-14 併入
+> gz-physics 主線，但尚未進正式發行版、功能覆蓋也還不完整**（現況查證：2026-09-10，
+> 詳見下方「那 MuJoCo 呢？」一節）。文中的客製外掛做法需在 Gazebo 環境實作，
+> 本機未安裝 Gazebo，程式碼未實測。
 
 ## 學習目標
 
@@ -30,7 +33,7 @@ flowchart TD
   API --> DART["dartsim<br/>預設，功能最完整"]
   API --> BUL["bullet<br/>bullet-featherstone"]
   API --> TPE["tpe<br/>官方極簡示範"]
-  API --> MJ["mujoco<br/>2026-03 併入主線，功能補齊中"]
+  API --> MJ["mujoco<br/>2026-03 併入主線<br/>功能補齊中"]
 ```
 
 引擎是掛在 gz-physics 這層抽象介面底下的，所以能在執行期換掉 —— 這正是 Isaac Sim 做不到
