@@ -4,7 +4,7 @@
 >
 > 擷取日期：2026-09-09
 >
-> 測試環境：Linux、MuJoCo 3.12.0（無顯示器，離屏渲染用 `MUJOCO_GL=osmesa` 實測）
+> 測試環境：Linux、MuJoCo 3.13.0（無顯示器，離屏渲染用 `MUJOCO_GL=osmesa` 實測）
 
 ## 學習目標
 

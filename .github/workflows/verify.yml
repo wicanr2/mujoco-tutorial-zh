@@ -27,7 +27,7 @@ jobs:
           python-version: "3.12"
 
       - name: 安裝相依（靜態檢查與非渲染範例只需要這三個）
-        run: pip install mujoco==3.12.0 numpy==2.5.3 scipy==1.18.1
+        run: pip install mujoco==3.13.0 numpy==2.5.3 scipy==1.18.1
 
       - name: 靜態稽核
         run: python scripts/check_docs.py
@@ -92,7 +92,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libosmesa6-dev
 
       - name: 安裝相依
-        run: pip install mujoco==3.12.0 numpy==2.5.3 imageio==2.37.4 imageio-ffmpeg==0.6.0 matplotlib==3.11.1 pillow==12.3.0
+        run: pip install mujoco==3.13.0 numpy==2.5.3 imageio==2.37.4 imageio-ffmpeg==0.6.0 matplotlib==3.11.1 pillow==12.3.0
 
       - name: 重跑渲染與錄影範例
         env:

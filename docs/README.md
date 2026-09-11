@@ -3,7 +3,7 @@
 以 MuJoCo 物理引擎為核心的繁體中文教學文件。成果摘要見 [README.md](../README.md)，
 協作規範見 [AGENTS.md](../AGENTS.md)。
 
-範例環境：Ubuntu 24.04、Python 3.12.3、MuJoCo 3.12.0（版本鎖定在
+範例環境：Ubuntu 24.04、Python 3.12.3、MuJoCo 3.13.0（版本鎖定在
 [requirements.txt](../requirements.txt)）。各章開頭另有該章的測試環境註記。
 
 ## 章節索引

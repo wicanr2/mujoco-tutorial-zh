@@ -30,8 +30,8 @@ mesh 車體、真實舵輪底盤、真實貨架，最後串成完整的搬運任
 | [21 y-reach 車型](docs/06-amr/09-yreach.md) | Blender 建側移滑台掛上 MR1533 | reach ±0.45 m，升降不受影響 |
 | [22 取放任務](docs/06-amr/10-yreach-mission.md) | 完整 pick-and-place，閉迴圈 P 控制 | 19 秒完成，棧板搬移 1.4 m |
 | [23 連續動作](docs/06-amr/11-fork-cyclic.md) | 載貨升降 ×3 + 側移 ×3 | 漂移從 22 cm 降到 1.4 cm |
-| [24 貨架取放 X/Z](docs/06-amr/12-steer-reach-xz.md) | 舵輪底盤 + 環氧地板 + 貨架取放 | 搬運 2.07 m、漂移峰值 6.8 cm、平穩落地 |
-| [25 全軸取放 X/Y/Z](docs/06-amr/13-reach-xyz.md) | 加上 y 向 reach 側移對位 | 搬運 2.05 m、漂移峰值 12.1 cm、側移 0.49 m |
+| [24 貨架取放 X/Z](docs/06-amr/12-steer-reach-xz.md) | 舵輪底盤 + 環氧地板 + 貨架取放 | 搬運 2.10 m、漂移峰值 6.7 cm、平穩落地 |
+| [25 全軸取放 X/Y/Z](docs/06-amr/13-reach-xyz.md) | 加上 y 向 reach 側移對位 | 搬運 2.17 m、漂移峰值 12.1 cm、側移 0.49 m |
 | [26 夾爪 A 取 B 放](docs/06-amr/14-gripper-ab.md) | 三軸手臂 + 二指夾爪 + weld 抓取 | 箱子準確落在 B 桌面 |
 | [27 舵輪繞圈](docs/06-amr/15-steer-loop.md) | 2×2 m 正方形 waypoint 追蹤 | 8 個點到達 7 個，轉彎外擺 0.41 m |
 
@@ -99,8 +99,8 @@ off-policy 演算法需要夠高的更新頻率；CPU 被迫把 `train_freq` 調
 途中從叉齒滑落、掉在半路，判定照樣印「驗證通過」。改成同時檢查抬離層板、牙叉座標系漂移、
 搬運距離與最終落地之後，才暴露出三個真正的問題：`stage` 深插被中途收回（貨翻 63°）、
 在貨架內升高會擦到上層層板（只剩 8 mm 餘裕）、航向目標寫死成 π 讓舵輪車原地打轉並把速度
-壓到 15%。三個修好之後，貨的漂移峰值從 110 cm 降到 6.8 cm。**判定實驗成功要看整段軌跡，不是最後
-一幀** —— 這裡的終點值是 1.0 cm，只印終點就看不到過程中滑出去的那 6.8 cm。
+壓到 15%。三個修好之後，貨的漂移峰值從 110 cm 降到 6.7 cm。**判定實驗成功要看整段軌跡，不是最後
+一幀** —— 這裡的終點值是 0.1 cm，只印終點就看不到過程中滑出去的那 6.7 cm。
 
 **「這台有 GPU」不是一個布林值。** 12 章的 SAC 在 RTX Pro 6000 上訓練正常、
 `torch.cuda.is_available()` 回 `True`，同一張卡上 JAX/XLA 卻完全起不來：這是 vGPU 切出來的
@@ -176,11 +176,14 @@ LICENSE     授權條款
 
 ## 環境
 
-範例在下列組合實測通過，版本鎖在 [requirements.txt](requirements.txt)。最近一次全面重跑
-驗證是 2026-09-10，當時的 34 支腳本跑了 32 支、全數通過（另兩支需要 CUDA 或要跑 30 分鐘），
-逐項紀錄見 [REPORT.md](REPORT.md) 的「重跑驗證紀錄」一節：
+範例在下列組合實測通過，版本鎖在 [requirements.txt](requirements.txt)。最近一次全面重跑是
+2026-09-11 升版到 MuJoCo 3.13.0 時：41 支腳本跑了 36 支、全數通過，輸出與版控裡的位元相同
+（例外是 24／25 章那兩組 —— 同一輪修掉了一個模型缺陷，數字跟著變）。沒跑的 5 支是需要 CUDA
+的 `ex_rl_sac_gpu.py`（改用它訓練好的權重在本機回放驗證）、3 支要在 Blender 裡執行的建模
+腳本，以及 CPU 版 SAC（60k 步在忙碌的機器上要數小時，只驗到前 3000 步）。逐項紀錄見
+[REPORT.md](REPORT.md) 的「稽核紀錄」一節：
 
-- Ubuntu 24.04、Python 3.12.3、MuJoCo 3.12.0
+- Ubuntu 24.04、Python 3.12.3、MuJoCo 3.13.0
 - RL 章節：Stable-Baselines3 2.9.0、Gymnasium 1.3.0、PyTorch 2.14.0
 - Blender 建模：Blender 4.2.11 LTS（headless EEVEE）
 - GPU 訓練（12、28 章）：NVIDIA RTX Pro 6000 Blackwell（vGPU）、PyTorch 2.14.0+cu130。

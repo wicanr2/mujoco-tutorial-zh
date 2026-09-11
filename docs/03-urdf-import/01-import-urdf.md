@@ -102,7 +102,7 @@ python scripts/load_urdf.py
 已轉存 MJCF → models/two_link_arm_converted.xml
 ```
 
-> 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3。轉存產生的 `models/two_link_arm_converted.xml` 已一併收錄供對照。
+> 測試環境：Linux、MuJoCo 3.13.0、Python 3.12.3。轉存產生的 `models/two_link_arm_converted.xml` 已一併收錄供對照。
 
 [![URDF 手臂在重力下擺動](../assets/strip_two_link_arm.png)](../assets/strip_two_link_arm.png)
 

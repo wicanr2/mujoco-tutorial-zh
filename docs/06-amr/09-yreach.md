@@ -2,7 +2,7 @@
 
 > 擷取日期：2026-09-10
 >
-> 測試環境：Linux、Blender 4.2.11（headless）、MuJoCo 3.12.0；範例已實測通過。
+> 測試環境：Linux、Blender 4.2.11（headless）、MuJoCo 3.13.0；範例已實測通過。
 
 ## 學習目標
 

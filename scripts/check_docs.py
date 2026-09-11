@@ -189,6 +189,27 @@ def check_requirements():
     return sorted(set(bad))
 
 
+def _load_model(p):
+    """載入 models/ 底下的模型；模板檔先把佔位符換成代表值。"""
+    import mujoco
+
+    subs = {"PALLET_FRICTION": "0.6", "PALLET_RGBA": "0.5 0.4 0.2 1",
+            "CG_OFFSET": "0", "PALLET_OBJ": "pallet_wood.stl"}
+    text = p.read_text(encoding="utf-8")
+    if any(k in text for k in subs):
+        for k, v in subs.items():
+            text = text.replace(k, v)
+        text = text.replace('meshdir="meshes/', f'meshdir="{ROOT}/models/meshes/')
+        text = text.replace('file="../', f'file="{ROOT}/models/meshes/')
+        return mujoco.MjModel.from_xml_string(text)
+    return mujoco.MjModel.from_xml_path(str(p))
+
+
+def model_files():
+    return sorted(list((ROOT / "models").glob("*.xml"))
+                  + list((ROOT / "models").glob("*.urdf")))
+
+
 def check_model_penetration():
     """模型載入後不該有不收斂的接觸穿透。
 
@@ -198,20 +219,9 @@ def check_model_penetration():
     """
     import mujoco
 
-    subs = {"PALLET_FRICTION": "0.6", "PALLET_RGBA": "0.5 0.4 0.2 1",
-            "CG_OFFSET": "0", "PALLET_OBJ": "pallet_wood.stl"}
     bad = []
-    for p in sorted(list((ROOT / "models").glob("*.xml"))
-                    + list((ROOT / "models").glob("*.urdf"))):
-        text = p.read_text(encoding="utf-8")
-        if any(k in text for k in subs):
-            for k, v in subs.items():
-                text = text.replace(k, v)
-            text = text.replace('meshdir="meshes/', f'meshdir="{ROOT}/models/meshes/')
-            text = text.replace('file="../', f'file="{ROOT}/models/meshes/')
-            m = mujoco.MjModel.from_xml_string(text)
-        else:
-            m = mujoco.MjModel.from_xml_path(str(p))
+    for p in model_files():
+        m = _load_model(p)
         d = mujoco.MjData(m)
         # 靜置 1 秒讓初始重疊沉降掉，還剩下的才是真的沒對好
         for _ in range(int(1.0 / m.opt.timestep)):
@@ -226,10 +236,92 @@ def check_model_penetration():
     return bad
 
 
+def check_self_collision():
+    """機構內部零件在關節工作範圍內不該互相穿透。
+
+    事故：mr1533_steer 的門架滑台碰撞盒與兩個前輪重疊，stage 越過 -0.683 之後就開始
+    干涉，滑到行程底時穿透 17 mm。表面上完全看不出來 —— 腳本照樣印驗證通過、影片也
+    正常，只有量接觸力才看得到那一瞬間 28 kN 的內力，而它把整台車往後推了 2.6 cm。
+    靜置檢查抓不到這種問題，因為它只在關節走到特定位置時才出現。
+
+    掃法是逐關節走過 range（其餘關節留在初始值），排除 world、直系親屬（關節處本來就
+    相鄰）與不同機構（貨物、貨架跟叉齒碰撞正是實驗本體）。剩下的穿透就是機構自己撞
+    自己。其餘關節留在初始值是這個掃法的限制：報出來的組合不保證在實驗中真的會走到，
+    但幾何上重疊就是模型畫錯了，遲早會被某組參數踩到。
+    """
+    import mujoco
+    import numpy as np
+
+    def ancestors(m, b):
+        out = set()
+        while b > 0:
+            b = int(m.body_parentid[b])
+            out.add(b)
+        return out
+
+    def root_of(m, b):
+        while int(m.body_parentid[b]) != 0:
+            b = int(m.body_parentid[b])
+        return b
+
+    # int() 不能省：m.jnt_type[j] 是 numpy.int32，直接和 pybind enum 比較恆為 False，
+    # 篩出來的清單會是空的而且不會報錯。掃描類檢查一定要驗候選集合非空。
+    SLIDE = int(mujoco.mjtJoint.mjJNT_SLIDE)
+    HINGE = int(mujoco.mjtJoint.mjJNT_HINGE)
+
+    bad, scanned = [], 0
+    for p in model_files():
+        m = _load_model(p)
+        d = mujoco.MjData(m)
+        mujoco.mj_forward(m, d)
+        q0 = d.qpos.copy()
+        # 沒有 range 的 hinge（輪子、擺）一樣要掃 —— 它能轉到任何角度，
+        # 「沒設限制」不代表「不會撞到東西」。
+        movable = []
+        for j in range(m.njnt):
+            t, limited = int(m.jnt_type[j]), int(m.jnt_limited[j])
+            if t == SLIDE and limited:
+                movable.append((j, float(m.jnt_range[j][0]), float(m.jnt_range[j][1])))
+            elif t == HINGE:
+                movable.append((j, *(m.jnt_range[j] if limited else (-np.pi, np.pi))))
+        scanned += len(movable)
+        worst = {}
+        for j, lo, hi in movable:
+            adr = int(m.jnt_qposadr[j])
+            for v in np.linspace(lo, hi, 25):
+                d.qpos[:] = q0
+                d.qpos[adr] = v
+                mujoco.mj_forward(m, d)
+                for c in d.contact[:d.ncon]:
+                    b1 = int(m.geom_bodyid[c.geom1])
+                    b2 = int(m.geom_bodyid[c.geom2])
+                    if not b1 or not b2 or b1 == b2:
+                        continue                       # world / 同一個 body
+                    if b1 in ancestors(m, b2) or b2 in ancestors(m, b1):
+                        continue                       # 直系親屬：關節處必然相鄰
+                    if root_of(m, b1) != root_of(m, b2):
+                        continue                       # 不同機構（貨物、貨架）：本來就會碰
+                    if c.dist > -0.001:                # 1 mm 以內當作接觸面貼合
+                        continue
+                    key = (min(b1, b2), max(b1, b2))
+                    if key not in worst or c.dist < worst[key][0]:
+                        worst[key] = (float(c.dist), j, float(v))
+        for (b1, b2), (dist, j, v) in sorted(worst.items(), key=lambda kv: kv[1][0]):
+            n = lambda b: mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, b)
+            jn = mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_JOINT, j)
+            bad.append(f"{p.relative_to(ROOT)}: {n(b1)} ↔ {n(b2)} 穿透 {-dist*1000:.1f} mm"
+                       f"（{jn}={v:.3f}）")
+    if not scanned:
+        bad.append("一個可動關節都沒掃到 —— 檢查本身失效了")
+    return bad
+
+
 def check_version_claims():
-    """文件裡寫的套件版本要與 requirements.txt 一致。
+    """文件與 CI 裡寫的套件版本要與 requirements.txt 一致。
 
     升版時最容易漏掉的就是散在各章開頭的「測試環境」那幾行 —— 沒人會記得它們在哪。
+    CI 的 `pip install mujoco==...` 是同一個問題的第二個藏身處：漏改不會讓 CI 失敗，
+    只會讓它安靜地用舊版跑，於是「CI 綠燈」變成一個假訊號。
     """
     req = {}
     for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines():
@@ -249,10 +341,22 @@ def check_version_claims():
     }
     pat = re.compile(r"(?<![\w.-])(" + "|".join(sorted(alias, key=len, reverse=True))
                      + r")[  ]+v?(\d+\.\d+\.\d+)", re.I)
-    # 描述「別人的專案用哪個版本」時不該比對我們的 requirements.txt
-    # （例如 06 章寫 gz-physics vendored 的 MuJoCo 是 3.11.0）。
-    foreign = re.compile(r"vendor|gz-physics|Isaac|Menagerie|上游", re.I)
+    # 描述「別人的專案用哪個版本」或「另一台機器上的組合」時，不該比對我們的
+    # requirements.txt：06 章寫 gz-physics vendored 的 MuJoCo 是 3.11.0，28 章的吞吐
+    # 是在遠端 GPU 主機上量的（那台的 JAX 綁著自己的 MuJoCo 版本，不跟著本機升）。
+    foreign = re.compile(r"vendor|gz-physics|Isaac|Menagerie|上游|遠端主機", re.I)
     bad = []
+    # CI 的 pip install 也要跟著升
+    pin = re.compile(r"([A-Za-z0-9_.-]+)==(\d+\.\d+\.\d+)")
+    for wf in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
+        for i, line in enumerate(wf.read_text(encoding="utf-8").splitlines(), 1):
+            if "pip install" not in line:
+                continue
+            for m in pin.finditer(line):
+                want = req.get(m.group(1).lower())
+                if want and m.group(2) != want:
+                    bad.append(f"{wf.relative_to(ROOT)}:{i}: {m.group(1)}=={m.group(2)}"
+                               f" 但 requirements.txt 是 {want}")
     for md in markdown_files():
         for i, line in enumerate(md.read_text(encoding="utf-8").splitlines(), 1):
             if foreign.search(line):
@@ -375,6 +479,7 @@ CHECKS = [
     ("孤兒圖片", check_orphan_assets),
     ("相依套件登記", check_requirements),
     ("模型接觸穿透", check_model_penetration),
+    ("機構自我干涉", check_self_collision),
     ("版本號一致", check_version_claims),
     ("行內路徑存在", check_inline_paths),
     ("宣稱數量", check_claimed_counts),

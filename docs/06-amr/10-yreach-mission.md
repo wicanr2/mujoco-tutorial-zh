@@ -2,7 +2,7 @@
 
 > 擷取日期：2026-09-10
 >
-> 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3、imageio/matplotlib；範例已實測通過。
+> 測試環境：Linux、MuJoCo 3.13.0、Python 3.12.3、imageio/matplotlib；範例已實測通過。
 
 ## 學習目標
 
@@ -37,7 +37,7 @@ runs/mission.mp4: 571 幀（30 fps，19 秒）
 結果：取貨 → 搬運 → 放置 全程驗證通過 ✓
 ```
 
-**漂移峰值 14.3 cm，是 [24 章](12-steer-reach-xz.md)（6.8 cm）的兩倍。** 差別在於這裡
+**漂移峰值 14.3 cm，是 [24 章](12-steer-reach-xz.md)（6.7 cm）的兩倍。** 差別在於這裡
 沒有後傾：24 章全程保持 `tilt = 0.08 rad`，貨靠在滑架背板上；本章的 tilt 一直是 0，
 貨純粹靠摩擦坐在叉齒上，起步與橫移的加速度直接讓它相對滑動。後傾在 [23 章](11-fork-cyclic.md)
 量到的效果是把漂移從 22 cm 壓到 1.4 cm — 同一個機制。
@@ -79,7 +79,7 @@ yaw   = atan2(2(wz+xy), 1-2(y²+z²))
 2. **叉齒間距對不上棧板枕木通道**（±0.315 vs 通道中心 ±0.21）：把棧板**整個鏟起來翻掉**。解法：回 Blender 把叉齒改到 ±0.21、縮窄到 0.1 m 寬 — 程序化建模改參數只要 30 秒。
 3. **叉齒太高頂到板面**（prong top 0.10 vs deck bottom 0.09，1 cm 干涉）：把安裝高度降 0.015。
 4. **freejoint 的 qpos 索引**：`mj_name2id(JOINT, body名)` 不一定對，用 `model.body_jntadr[body_id]` 最穩。
-5. **`render(out=...)` 會讓所有影格變成同一張**：`renderer.render()` 不帶參數時每次配置新陣列（MuJoCo 3.12.0 實測），直接 append 是安全的；但傳 `out=buf` 重用同一個陣列時，清單裡每個元素都指向 `buf`，最後全部是最後一張。範例保留 `.copy()` 是防禦性寫法 — dm_control 的 `physics.render()` 確實共用緩衝區，這個習慣從那裡沿用下來。
+5. **`render(out=...)` 會讓所有影格變成同一張**：`renderer.render()` 不帶參數時每次配置新陣列（MuJoCo 3.13.0 實測），直接 append 是安全的；但傳 `out=buf` 重用同一個陣列時，清單裡每個元素都指向 `buf`，最後全部是最後一張。範例保留 `.copy()` 是防禦性寫法 — dm_control 的 `physics.render()` 確實共用緩衝區，這個習慣從那裡沿用下來。
 6. **matplotlib 中文字型**：headless 環境預設 DejaVu Sans 沒有 CJK，圖表標題用英文（或額外裝字型）。
 
 ## 延伸閱讀

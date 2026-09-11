@@ -5,7 +5,10 @@
 > 擷取日期：2026-09-11
 >
 > 測試環境：遠端主機 8 核 CPU、NVIDIA RTX Pro 6000 Blackwell DC-96Q（**vGPU**）、
-> Python 3.12、MuJoCo 3.12.0、jax 0.11.1、torch 2.14.0+cu130
+> Python 3.12、jax 0.11.1、torch 2.14.0+cu130
+>
+> 這一整章的數字都是在**遠端主機**上量的，MuJoCo 3.12.0 —— 那台的版本組合不跟著本機的
+> [requirements.txt](../../requirements.txt) 升，因為 jax plugin 綁著這個 MuJoCo 版本。
 >
 > 相依套件：`pip install mujoco-mjx jax`（GPU 另需對應 CUDA 版本的 jax plugin）
 

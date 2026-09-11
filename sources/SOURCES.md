@@ -41,3 +41,4 @@
 | docs/06-amr/06,09,12 | 本機資產 `~/tmp2/TB3/assets/mr1533_light/`（MR1533 三輪舵輪叉車，OBJ mesh + URDF） | 2026-09-10 | — | 內部實驗資產，非公開來源 |
 | docs/06-amr/07,09 | https://docs.blender.org/api/4.2/ | 2026-09-10 | Blender 4.2 LTS | headless 程序化建模 Python API |
 | （通用模型庫）| https://github.com/google-deepmind/mujoco_menagerie | 2026-09-09 | latest | 官方模型庫，URDF/MJCF 範例來源 |
+| （版本升級）| https://mujoco.readthedocs.io/en/stable/changelog.html | 2026-09-11 | 3.13.0 | 3.12→3.13 的變更：新增 discrete 積分器、Newton＋elliptic cone 單次重因子分解、cylinder geom 單次多點接觸、Plane-Mesh collider 重寫 |

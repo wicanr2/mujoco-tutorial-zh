@@ -68,7 +68,7 @@ model.learn(total_timesteps=150_000)
 
 ## 實測結果
 
-> 測試環境：Linux、Python 3.12.3、MuJoCo 3.12.0、sb3 2.9.0、torch 2.14.0。
+> 測試環境：Linux、Python 3.12.3、MuJoCo 3.13.0、sb3 2.9.0、torch 2.14.0。
 
 ```
 訓練前平均回報/步: -1.9997        ← 完全躺平

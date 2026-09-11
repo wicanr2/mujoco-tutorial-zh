@@ -112,6 +112,13 @@
   <contact>
     <exclude body1="base" body2="swivel"/>
     <exclude body1="base" body2="drive"/>
+    <!-- 門架與叉齒滑台掃過前輪所在的位置：stage 滑過 -0.684、或叉齒在低位時 reach_y
+         橫移超過 0.14 m，碰撞盒就開始重疊。真實機構靠導軌約束不會相碰，模擬裡要明寫
+         排除，否則會出現幾萬牛頓的內力（實測 stage 到底時 28 kN，把整台車往後推 2.6 cm）。 -->
+    <exclude body1="mast_stage" body2="wheel_fl"/>
+    <exclude body1="mast_stage" body2="wheel_fr"/>
+    <exclude body1="yreach" body2="wheel_fl"/>
+    <exclude body1="yreach" body2="wheel_fr"/>
   </contact>
 
   <sensor>

@@ -2,7 +2,7 @@
 
 > 擷取日期：2026-09-10
 >
-> 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3、Blender 4.2.11；全部範例已實測。
+> 測試環境：Linux、MuJoCo 3.13.0、Python 3.12.3、Blender 4.2.11；全部範例已實測。
 
 ## 學習目標
 

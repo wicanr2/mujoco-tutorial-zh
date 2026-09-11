@@ -158,7 +158,7 @@ python scripts/pd_control.py
 
 > 譯註：實測最終角度約 1.44 rad 而非目標的 1.571 rad — 這是純 PD 控制沒有重力補償的正常現象（穩態誤差），剛好可以用來討論為什麼需要積分項或前饋補償。
 >
-> 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；實測輸出 `theta = 1.44 rad`、角速度 `0.0`。
+> 測試環境：Linux、MuJoCo 3.13.0、Python 3.12.3；實測輸出 `theta = 1.44 rad`、角速度 `0.0`。
 
 > 譯註：更進階的做法是把控制器裝進 `mjcb_control` callback，讓 `mj_step` 內部自動呼叫；直接寫在迴圈裡效果相同且較直覺。
 

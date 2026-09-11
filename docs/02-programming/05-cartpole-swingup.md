@@ -6,7 +6,7 @@
 >
 > 相依套件：`pip install scipy`（LQR 解 Riccati 方程用）
 >
-> 測試環境：Linux、MuJoCo 3.12.0、Python 3.12.3；已實測成功。
+> 測試環境：Linux、MuJoCo 3.13.0、Python 3.12.3；已實測成功。
 
 ## 學習目標
 
