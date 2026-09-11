@@ -2,7 +2,8 @@
 
 > 來源：[MJCF Importer Extension — Isaac Sim Documentation](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html)、[isaacsim.asset.importer.mjcf API](https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.asset.importer.mjcf/docs/index.html)、[Importing a New Asset — Isaac Lab](https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html)、[Isaac Sim Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)
 >
-> 擷取日期：2026-09-09
+> 擷取日期：2026-09-09（外部現況於 2026-09-11 重查：Isaac Sim 最新為 6.1.0、
+> `mujoco-usd-converter` 仍是 0.5.0）
 >
 > ⚠️ 本章依 AGENTS.md 規範如實標示可行性：本章範例需在 Isaac Sim 環境執行，**本機未安裝 Isaac Sim，程式碼僅依官方文件整理、未實測**。
 
@@ -43,10 +44,16 @@ Isaac Sim 內建兩個匯入器：
 
 - **MJCF Importer**（`isaacsim.asset.importer.mjcf`）：把 MJCF 轉成 USD。Isaac Sim 6.0.0 起
   以新的 Python 後端 [`mujoco-usd-converter`](https://github.com/newton-physics/mujoco-usd-converter)
-  重寫（見 [Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)）。該工具由
-  newton-physics 維護、Apache-2.0、也發佈在 PyPI（查證 2026-09-10 為 0.5.0），可獨立當 Python
-  模組或 CLI 用，不必開 Isaac Sim。**官方自述仍是 Alpha**：轉換涵蓋視覺幾何與材質、body、
-  碰撞幾何、site、關節與致動器，已知限制列在專案的 CHANGELOG。
+  **完全重寫**。來源是 NVIDIA 在 [Discussion #160](https://github.com/isaac-sim/IsaacSim/discussions/160)
+  的回覆（2026-07-24）—— 那串原本是使用者回報「轉出的 USD 與 Isaac Lab 不相容」，官方在那裡
+  確認修復方式是換掉整個後端。該工具由 newton-physics 維護、Apache-2.0、也發佈在 PyPI
+  （查證 2026-09-11 仍是 0.5.0，2026-08-05 發布），可獨立當 Python 模組或 CLI 用，不必開
+  Isaac Sim。**官方自述仍是 Alpha**：轉換涵蓋視覺幾何與材質、body、碰撞幾何、site、關節與
+  致動器，已知限制列在專案的 CHANGELOG。
+
+  > 換後端也換了 USD 階層：新版**不再把 MuJoCo 的 `worldbody` 建成具名 prim**，改用機器人
+  > 模型的名稱當 default prim root，第一層 body 直接掛在底下。舊版轉出的 USD 若有引用
+  > `worldbody` 路徑，升級後會找不到。（同一則官方回覆，2026-07-24。）
 - **URDF Importer**（`isaacsim.asset.importer.urdf`）：把 URDF 轉成 USD。
 
 ### GUI 方式

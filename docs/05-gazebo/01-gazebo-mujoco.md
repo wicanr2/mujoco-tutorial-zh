@@ -2,7 +2,9 @@
 
 > 來源：[Gazebo Sim: Physics engines](https://gazebosim.org/api/sim/9/physics.html)、[Switching physics engines](https://gazebosim.org/api/physics/6/switchphysicsengines.html)、[Use a custom engine with Gazebo Physics](https://gazebosim.org/api/physics/9/usecustomengine.html)、[gz-physics GitHub](https://github.com/gazebosim/gz-physics)、[gz-physics#299: MuJoCo plugin](https://github.com/gazebosim/gz-physics/issues/299)
 >
-> 擷取日期：2026-09-09
+> 擷取日期：2026-09-09（外部現況於 2026-09-11 重查，下列數字逐項確認無誤：
+> PR #811 於 2026-03-14 合併、21 檔 +2158 行；vendored MuJoCo 3.11.0 於 2026-08-07；
+> issue #299 仍 open；gz-physics9 9.0.0 仍是最新發行版）
 >
 > ⚠️ 本章依 AGENTS.md 規範如實標示可行性：**官方 MuJoCo 外掛已於 2026-03-14 併入
 > gz-physics 主線，但尚未進正式發行版、功能覆蓋也還不完整**（現況查證：2026-09-10，

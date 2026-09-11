@@ -14,7 +14,7 @@ MJCF 建模、程式設計、URDF 匯入、Isaac Sim / Gazebo 整合可行性、
 
 ## 二、產出總覽
 
-28 篇教學、40 支 Python 腳本、6 組錄影實驗、37 筆資料出處登記。
+28 篇教學、41 支 Python 腳本、6 組錄影實驗、37 筆資料出處登記。
 
 ### 基礎系列（docs/00–05）
 
@@ -229,7 +229,7 @@ z=0；25 章搬運 2.05 m、漂移峰值 12.1 cm、側移對位 0.49 m、落地 
 
 ### 第一輪：重跑比對
 
-用 `scripts/verify_examples.sh` 把 40 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
+用 `scripts/verify_examples.sh` 把 41 支腳本中的 29 支逐支重跑一遍，確認文件裡的數字仍然
 成立，**全部 exit code 0**；三支 Blender 腳本另外用 Blender 4.2.11 跑過，也都通過。沒跑的
 2 支是 `ex_rl_sac.py`（CPU 上要 30 分鐘且已知不收斂，結論已記在 12 章）與
 `ex_rl_sac_gpu.py`（需要 CUDA）。
@@ -484,6 +484,39 @@ CSV 也加了 `rel_x/y/z`（棧板在牙叉座標系中的位置），漂移可�
 `assert not fell` 也通過（`fell` 只看高度 < 0.05 m，而脫離叉齒的棧板卡在 0.112 m，
 既不在叉齒上也不算掉落）。三道檢查全部是綠的。只有去量接觸穿透才看得到。
 
+### 第七輪：文件事實查證（2026-09-11）
+
+把「會過期」與「憑印象容易寫錯」的斷言分成三類逐一查。
+
+**本機環境版本**（11 項）：文件各章開頭的「測試環境」與 `requirements.txt` 逐項比對，
+全部一致（MuJoCo 3.12.0、Python 3.12.3、sb3 2.9.0、gymnasium 1.3.0、torch 2.14.0、
+Blender 4.2.11 LTS）。已寫成 `check_docs.py` 的第 13 項檢查 —— 升版時最容易漏掉的
+就是散在各章開頭那幾行，沒人記得它們在哪。
+
+**外部專案狀態**（逐項查 GitHub API，全部正確）：
+
+| 文件的斷言 | 查證結果 |
+| --- | --- |
+| gz-physics PR #811 於 2026-03-14 合併、21 檔 +2158 行 | 完全一致 |
+| vendored MuJoCo 升到 3.11.0（2026-08-07） | commit「Bump vendor Mujoco to latest 3.11.0 (#1029)」同日 |
+| 關節速度命令（2026-09-05）、ConstructSdfCollision（2026-09-09） | 兩個 commit 日期都對 |
+| gz-physics9 9.0.0 發布於 2025-10-14，早於合併日 | 仍是最新發行版 |
+| issue #299 仍 open | 仍 open |
+| `mujoco-usd-converter` 0.5.0、官方自述 Alpha | 仍是 0.5.0，README 仍寫 Alpha |
+
+**MuJoCo 行為斷言**（8 條，寫成 `scripts/check_mujoco_claims.py`）：接觸摩擦取兩 geom
+最大值、四元數 (w,x,y,z)、`render()` 每次回傳新陣列、MJCF 預設 degree／URDF 預設 radian、
+URDF 的 `discardvisual` 預設 true、world 與後代之間沒有自動碰撞排除、`mjd_transitionFD`
+回傳離散 Jacobian —— 全部實測成立。這支腳本已進 CI，升版時會自動告訴你哪一條需要重寫。
+
+**這一輪改了什麼**：05 章補上 Isaac Sim 官方回覆裡的細節（新後端不再建立 `worldbody`
+prim，舊 USD 引用該路徑會失效），並把「Discussion #160」的描述改精確 —— 那串原本是
+使用者回報相容性問題，官方在 2026-07-24 的回覆裡才確認「6.0.0 用 mujoco-usd-converter
+完全重寫」。05／06 兩章的查證日期一併更新。
+
+**沒有發現錯誤的部分**：文件裡沒有「3.12.0 是最新版」這種會過期的斷言 —— 提到版本的
+地方都是「測試環境」，屬於事實陳述。
+
 ## 八、環境與版本
 
 - 本機：Ubuntu 24.04、Python 3.12.3、MuJoCo 3.12.0、numpy 2.5.3、scipy 1.18.1、
@@ -505,3 +538,6 @@ CSV 也加了 `rel_x/y/z`（棧板在牙叉座標系中的位置），漂移可�
 6. **MJX 的 GPU 後端吞吐尚未取得**。28 章的對照表只有 CPU 後端的數字，因為手上這張卡是
    vGPU、XLA 起不來。要補這一格需要非虛擬化的實體 GPU；在那之前不對 MJX 的 GPU 加速倍率
    做任何宣稱
+7. **MuJoCo 3.13.0 已於 2026-09-09 發布**，本專案鎖在 3.12.0。升版前先跑
+   `scripts/check_mujoco_claims.py` 看行為斷言有沒有變，再跑 `verify_examples.sh`
+   重跑範例。`requirements.txt` 鎖版是為了可重現，不是不能升

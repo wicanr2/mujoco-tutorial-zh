@@ -32,6 +32,9 @@ jobs:
       - name: 靜態稽核
         run: python scripts/check_docs.py
 
+      - name: 驗證文件裡的 MuJoCo 行為斷言
+        run: python scripts/check_mujoco_claims.py
+
       - name: 重跑基礎與 AMR 非渲染範例
         env:
           # runner 只有 2 核；ex_mjx_throughput.py 預設開 4 條執行緒

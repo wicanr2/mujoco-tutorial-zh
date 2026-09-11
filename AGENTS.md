@@ -232,7 +232,11 @@ GPU 主機是**共用的**，而且 GPU 是 vGPU 切出來的，能力有缺口�
 ## 版本與相依性
 
 - 套件版本以 `requirements.txt` 為準，那是實際跑過的組合；文件內提到版本時要與它一致。
-- MuJoCo 以最新穩定版為主，升版後需重跑 `scripts/verify_examples.sh` 確認範例仍可執行。
+- MuJoCo 以最新穩定版為主，升版後需重跑 `scripts/verify_examples.sh` 確認範例仍可執行，
+  並跑 `scripts/check_mujoco_claims.py` —— 那支把文件裡「MuJoCo 會這樣做」的斷言
+  （接觸摩擦怎麼合併、四元數慣例、`discardvisual` 的預設值⋯⋯）寫成可執行的驗證。
+  這類敘述在寫的當下查證過，但**升版可能改變行為，而文件不會自己更新**。
+  新寫下這類斷言時，順手加一條進去。
 - 修改程式或模型後，需確認對應教學步驟仍然可執行。
 
 ## 協作流程

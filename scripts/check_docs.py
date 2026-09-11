@@ -226,6 +226,48 @@ def check_model_penetration():
     return bad
 
 
+def check_version_claims():
+    """文件裡寫的套件版本要與 requirements.txt 一致。
+
+    升版時最容易漏掉的就是散在各章開頭的「測試環境」那幾行 —— 沒人會記得它們在哪。
+    """
+    req = {}
+    for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("#") or "==" not in line:
+            continue
+        name, ver = line.split("==", 1)
+        req[name.strip().lower()] = ver.strip()
+
+    # 文件裡的寫法 → requirements.txt 裡的套件名
+    alias = {
+        "mujoco": "mujoco", "numpy": "numpy", "scipy": "scipy",
+        "imageio": "imageio", "matplotlib": "matplotlib", "pillow": "pillow",
+        "torch": "torch", "pytorch": "torch",
+        "gymnasium": "gymnasium",
+        "sb3": "stable-baselines3", "stable-baselines3": "stable-baselines3",
+    }
+    pat = re.compile(r"(?<![\w.-])(" + "|".join(sorted(alias, key=len, reverse=True))
+                     + r")[  ]+v?(\d+\.\d+\.\d+)", re.I)
+    # 描述「別人的專案用哪個版本」時不該比對我們的 requirements.txt
+    # （例如 06 章寫 gz-physics vendored 的 MuJoCo 是 3.11.0）。
+    foreign = re.compile(r"vendor|gz-physics|Isaac|Menagerie|上游", re.I)
+    bad = []
+    for md in markdown_files():
+        for i, line in enumerate(md.read_text(encoding="utf-8").splitlines(), 1):
+            if foreign.search(line):
+                continue
+            for m in pat.finditer(line):
+                pkg = alias[m.group(1).lower()]
+                want = req.get(pkg)
+                # 更正表會同時列出錯的與對的（「MuJoCo 3.12.3 | 3.12.0（筆誤）」），
+                # 同一行已經有正確版本就不是錯誤，是在記錄它被改掉了。
+                if want and m.group(2) != want and want not in line:
+                    bad.append(f"{md.relative_to(ROOT)}:{i}: 寫 {m.group(1)} {m.group(2)}，"
+                               f"requirements.txt 是 {want}")
+    return sorted(set(bad))
+
+
 def check_claimed_counts():
     """README / REPORT 宣稱的數量要與實際相符。"""
     bad = []
@@ -304,6 +346,7 @@ CHECKS = [
     ("孤兒圖片", check_orphan_assets),
     ("相依套件登記", check_requirements),
     ("模型接觸穿透", check_model_penetration),
+    ("版本號一致", check_version_claims),
     ("宣稱數量", check_claimed_counts),
     ("CSV 欄位一致", check_csv_headers),
 ]

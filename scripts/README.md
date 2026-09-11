@@ -71,6 +71,7 @@ MUJOCO_GL=osmesa .venv/bin/python scripts/ex_fork_cyclic.py    # 需要渲染的
 | `verify_examples.sh` | 逐支重跑範例並記錄 exit code 與耗時 | — |
 | `check_docs.py` | 靜態稽核：絕對路徑、連結、模型可載入、章節結構、清單與數字一致性 | mujoco |
 | `check_links.py` | 檢查文件裡的外部連結是否還通（需要網路，不進 CI） | — |
+| `check_mujoco_claims.py` | 把文件裡「MuJoCo 會這樣做」的斷言變成可執行驗證（升版後跑一遍） | mujoco |
 
 Blender 腳本的用法（`--` 後面接 repo 根目錄）：
 
