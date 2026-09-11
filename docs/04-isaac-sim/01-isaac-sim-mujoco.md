@@ -71,15 +71,13 @@ importer = MJCFImporter()
 
 ## 建議工作流程
 
-```
-            ┌──────────── 單一模型來源 ────────────┐
-            │        URDF / MJCF（Git 管理）        │
-            └──────┬───────────────────┬───────────┘
-                   │                   │
-        MjModel.from_xml_path   MJCF/URDF Importer
-                   │                   │
-              MuJoCo 引擎          Isaac Sim (USD/PhysX)
-        控制演算法、動力學驗證    渲染、感測器、sim-to-real
+```mermaid
+flowchart TD
+  SRC["單一模型來源<br/>URDF / MJCF（進 Git 管理）"]
+  SRC -->|"MjModel.from_xml_path"| MJ["MuJoCo 引擎"]
+  SRC -->|"MJCF / URDF Importer"| IS["Isaac Sim<br/>USD / PhysX"]
+  MJ --> MJU["控制演算法<br/>接觸動力學驗證"]
+  IS --> ISU["渲染、感測器<br/>sim-to-real"]
 ```
 
 1. 模型維護在 URDF 或 MJCF（參考 [04｜URDF 匯入](../03-urdf-import/01-import-urdf.md) 的轉換流程）。

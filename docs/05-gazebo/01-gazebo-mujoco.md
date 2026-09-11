@@ -24,6 +24,18 @@
 - **Bullet**：官方提供兩種變體（`bullet`、bullet-featherstone）。
 - **Trivial Physics Engine**：官方示範用的極簡引擎，展示如何寫自己的外掛。
 
+```mermaid
+flowchart TD
+  SIM["Gazebo Sim"] --> API["gz-physics<br/>抽象層（Feature 介面）"]
+  API --> DART["dartsim<br/>預設，功能最完整"]
+  API --> BUL["bullet<br/>bullet-featherstone"]
+  API --> TPE["tpe<br/>官方極簡示範"]
+  API --> MJ["mujoco<br/>2026-03 併入主線，功能補齊中"]
+```
+
+引擎是掛在 gz-physics 這層抽象介面底下的，所以能在執行期換掉 —— 這正是 Isaac Sim 做不到
+的事（見 [05 章](../04-isaac-sim/01-isaac-sim-mujoco.md)）。
+
 切換方式（需在 SDF world 或指令列指定）：
 
 ```xml
@@ -55,10 +67,13 @@ gz-physics 的設計允許第三方實作新引擎外掛（官方教學：[Use a
 
 ## 模型互通：URDF ↔ SDF ↔ MJCF
 
-```
-        URDF ──(sdformat 轉換)──▶ SDF ──▶ Gazebo (DART/Bullet)
-         │
-         └──(MuJoCo 內建解析)──▶ mjModel ──▶ MuJoCo
+```mermaid
+flowchart LR
+  URDF["URDF<br/>兩邊共同的交換格式"]
+  URDF -->|"gz sdf -p"| SDF["SDF"]
+  SDF --> GZ["Gazebo<br/>DART / Bullet"]
+  URDF -->|"MuJoCo 內建解析"| MJM["mjModel"]
+  MJM --> MU["MuJoCo"]
 ```
 
 - Gazebo 原生格式是 **SDF**；`sdformat` 工具可把 URDF 轉成 SDF（`gz sdf -p robot.urdf > robot.sdf`）。
